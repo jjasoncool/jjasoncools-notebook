@@ -1,0 +1,460 @@
+# CentOS7 & fedora #
+## 以下設定若為 fedora 專有套件管理 將會使用dnf指令 ##
+
+### 基本設定 ###
+- 禁止 root 使用 ssh 登入
+    >   CentOS 7 預設容許任何帳號透過 ssh 登入，包括 root 和一般帳號，為了不讓 root 帳號被黑客暴力入侵，我們必須禁止 root 帳號的 ssh 功能，事實上 root 也沒有必要 ssh 登入伺服器，因為只要使用 su 或 sudo (當然需要輸入 root 的密碼) 普通帳號便可以擁有 root 的權限。
+  1. 使用 vim (或任何文本編輯器) 開啓 **/etc/ssh/sshd_config**，尋找：\
+  `PermitRootLogin yes`
+  2. 修改為：\
+  `PermitRootLogin no`
+  3. 最後輸入以下指令重新啟動 sshd：\
+  `systemctl restart sshd.service`
+
+- 安裝**桌面GUI**
+  - `yum groupinstall GNOME "X Window System" fonts`
+  - GNOME 一些好用管理工具 `yum install gnome-tweaks`
+
+- 列出目前已安裝套件 `rpm -qa`
+
+- 安裝**xrdp** (方便可以使用windows rdp)
+  - `yum install epel-release xrdp -y`
+  - 需先安裝此套件再行安裝NVDIA驅動程式
+  - 修改主要配置檔 **/etc/xrdp/xrdp.ini**
+  - 新增防火牆允許範圍
+    `firewall-cmd --permanent --add-port=3389/tcp`
+    `firewall-cmd --reload`
+  - 若需要限制使用者則需要依據群組限制那些使用者可以登入那些不能 **/etc/xrdp/sesman.ini**
+    ```ini
+    [Security]
+    AllowRootLogin=false
+    TerminalServerUsers=tsusers
+    AlwaysGroupCheck=true
+    ```
+
+  - **X11桌面配置**
+    - 桌面有哪些 session 放在 **/usr/share/xsessions**
+    - 若要配置不同的預設GUI介面
+      - `echo "cinnamon-session" > ~/.xsession && chmod a+x ~/.xsession`
+      - `echo "cinnamon-session" > ~/.Xclients && chmod a+x ~/.Xclients`
+    - 啟動xrdp的bash **/usr/libexec/xrdp/startwm.sh**
+    - 新版linux(centos 8)要可以用 xorg 連線需要新增 **/etc/X11/Xwrapper.config**
+      - 新增參數如下
+        ```ini
+        allowed_users =anybody
+        ```
+    - 避免RDP連線很多跳窗需要到 **/etc/polkit-1/localauthority/50-local.d**
+      - 新增 **color.pkla** 內容如下
+        ```ini
+        [Allow Colord all Users]
+        Identity=unix-user:*
+        Action=org.freedesktop.color-manager.create-device;org.freedesktop.color-manager.create-profile;org.freedesktop.color-manager.delete-device;org.freedesktop.color-manager.delete-profile;org.freedesktop.color-manager.modify-device;org.freedesktop.color-manager.modify-profile;org.debian.pcsc-lite.access_pcsc;org.freedesktop.packagekit.system-sources-refresh
+        ResultAny=no
+        ResultInactive=no
+        ResultActive=yes
+        ```
+      - 重啟該服務 `systemctl restart polkit`
+
+- 安裝**NV顯示卡驅動**
+  - 首先要具備一些依賴包 `yum install libglvnd* dkms gcc kernel-devel kernel-headers`
+  - 開啟dkms `dkms autoinstall`
+  - 新增檔案 /etc/modprobe.d/blacklist.conf 這檔案預設應該不存在
+    - 內容為
+
+        blacklist nouveau
+        options nouveau modeset=0
+
+  - 修改 /etc/default/grub 檔案，GRUB_CMDLINE_LINUX 設定裡面加上 rd.driver.blacklist=nouveau nouveau.modeset=0
+  - `grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg && reboot`
+  - `lsmod | grep nouveau` 最後要沒有出現任何模組才是對的！
+  - `init 3` 退出X window 界面進入文字界面，使用root權限安裝驅動
+    - 如果沒有辦法在現場下`init 3`指令，可以先重開機指定沒有X windows開機`systemctl set-default multi-user.target`
+    - 安裝完成後復原 `systemctl set-default graphical.target`
+  - `export CC=/usr/local/gcc-9.1.0/bin/gcc` 使用**自編編譯器**的時候需要加上這個
+
+- 安裝下載的RPM包\
+    `yum localinstall *.rpm`
+
+- 安裝epel
+    - epel 提供許多實用套件，安裝僅需下指令\
+    `yum install epel-release`
+
+- 安裝 [GCC](https://gcc.gnu.org/mirrors.html) (編譯原始碼的工具)
+  - 選擇其中一個站點，進入releases/ 之下 選擇一個版本下載，檔案為.tar.gz檔案\
+    直接用 `yum install gcc*` 比較快
+
+- 安裝 **chromium** `yum install chromium`
+
+- 通用解 **fcitx 輸入法殼層** 配套新酷音
+    `sudo dnf install fcitx fcitx-configtool fcitx-chewing`
+    - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
+
+- 安裝可以遠端rdp的client端 `sudo dnf install remmina`
+- 要解h264問題直接安裝vlc撥放器
+
+- **home底下資料夾語言**
+  - 執行 `LANG=en_US.UTF-8 xdg-user-dirs-update --force`
+
+- **rclone**
+  - 先到官網下載[rclone](https://rclone.org/downloads/)\
+  - 使用 `rclone config` 開始新建需要掛載的雲端
+  - 修改 /etc/fuse.conf 增加 `user_allow_other`
+  - **服務安裝** 在/etc/systemd/system目錄下新增rclone.service檔案，內容如下
+    ```ini
+    [Unit]
+    Description=rclone
+    After=network.target
+
+    [Service]
+    User=jason
+    Group=jason
+    Type=forking
+    ExecStart=/usr/local/bin/rclone mount Google_Drive:/ /home/jason/Google_Drive --vfs-cache-mode full --default-permissions --allow-non-empty --daemon --allow-other --config /home/jason/.config/rclone/rclone.conf
+    ExecStop=/usr/bin/fusermount -uz /home/jason/Google_Drive
+    Restart=1
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+  - 重新載入service檔案 `sudo systemctl daemon-reload `
+  - 啟動服務 `sudo systemctl start rclone.service`
+
+- 支援**exfat**隨身碟
+  - `sudo dnf install exfat-utils fuse-exfat`
+  -
+- 支援**NTFS**隨身碟
+  - `sudo dnf install ntfs-3g`
+
+### SSL 憑證自動更新透過 haproxy ###
+- 安裝haproxy, nginx 在需要提供 SSL 憑證的伺服器上
+- `sudo yum install nginx haproxy certbot`
+- 自動產生SSL憑證
+  - 注意，centos 的selinux 原則會管制 http 只能走哪些port `semanage port -l | grep http_port_t`
+  - 若要加上特殊port 需要用 `semanage port -a -t http_port_t  -p tcp 58588`
+  - 記得先修改haproxy內的conf設定，並將DNS指向該伺服器，才可以順利驗證憑證
+  - **產憑證指令** `certbot certonly --webroot -w /usr/share/nginx/html/ -v --email canceraway@gmail.com --agree-tos -d test.canceraway.org.tw`
+
+### 編譯 下載的原始碼包(tarball) ###
+- 安裝目錄若不在 /usr/local/ 之下，需要額外設定 **$PATH**，才可以讓程式抓到，設定方法如下
+  1. 需要先把修改的path參數放置到 /etc/bashrc 的底部
+      `echo "export PATH=/usr/local/git/bin:$PATH" >> /etc/bashrc`
+  2. 將修改好的 bashrc 馬上套用
+      `source /etc/bashrc`
+  3. 比較正確的做法是在 etc/profile.d 下新增PATH的執行檔案
+      `echo 'pathmunge /usr/local/git/bin' > /etc/profile.d/git.sh`
+      `chmod +x /etc/profile.d/git.sh`
+
+- **tarball 安裝方式**
+  - 通常會先解壓縮之後cd到該解壓縮的目錄
+  - 然後下`./configure --prefix=[安裝路徑] --[其他參數]`
+  - `make clean` 清掉編譯的檔案
+  - `make install` 使用編譯檔案安裝
+    1. 安裝**apache**
+       - 必須先把**APR**和**APR-Util**解壓縮放到apache原始檔的srclib資料夾裡面，並將資料夾分別命名為**apr**和**apr-util**
+       - 若要支援 fastCGI 必須下載 Apache mod_fcgid FastCGI module 並且放到httpd之下(散的檔案直接合併至apache的source裡面) `./buildconf`
+       - `./configure --prefix=/srv/apache --with-included-apr --with-pcre --enable-module=so --enable-expires=shared --enable-rewrite=shared --enable-fcgid`
+       - `make && make install`
+       - 若有缺少的套件都用yum裝一裝 `yum install libxml2-devel pcre-devel`
+       - 到prefix目錄切換ROOT權限啟動服務 `/srv/apache/bin/apachectl start`
+       - **服務安裝** 在/etc/systemd/system目錄下新增httpd.service檔案，內容如下
+            ```ini
+            [Unit]
+            Description=The Apache HTTP Server
+            After=network.target
+
+            [Service]
+            Type=forking
+            PIDFile=/srv/apache/logs/httpd.pid
+            ExecStart=/srv/apache/bin/apachectl -k start
+            ExecReload=/srv/apache/bin/apachectl -k graceful
+            ExecStop=/srv/apache/bin/apachectl -k graceful-stop
+            PrivateTmp=true
+
+            [Install]
+            WantedBy=multi-user.target
+            ```
+            1. 這邊說明一下，**PIDFile**會記錄服務啟動之pid編號
+
+        - 預設啟動服務 `systemctl enable httpd.service`
+        - 重啟指令 `systemctl restart httpd.service`
+        - **使用 FAST-CGI**
+          - **注意** LoadModule fcgid_module modules/mod_fcgid.so 這行要放在 LoadModule unixd_module modules/mod_unixd.so 後面
+          - httpd.conf 設定
+            ```conf
+            LoadModule fcgid_module modules/mod_fcgid.so
+            <IfModule fcgid_module>
+                FcgidMaxRequestsPerProcess 10000
+
+                <FilesMatch \.php$>
+                    SetHandler "proxy:unix:/usr/local/php/var/run/php-fpm/php-fpm.sock|fcgi://localhost/"
+                </FilesMatch>
+            </IfModule>
+            ```
+          - 開啟 LoadModule mod_proxy.so, mod_proxy_fcgi.so
+          - 新增檔案 /srv/apache/cgi-bin/php.fastcgi
+            ```sh
+            #!/bin/sh
+            # Set desired PHP_FCGI_* environment variables.
+            # Example:
+            # PHP FastCGI processes exit after 500 requests by default.
+            PHP_FCGI_MAX_REQUESTS=10000
+            export PHP_FCGI_MAX_REQUESTS
+
+            # Replace with the path to your FastCGI-enabled PHP executable
+            exec /usr/local/php/bin/php-cgi
+            ```
+          - virtualhost 設定
+            ```conf
+            <VirtualHost *:80>
+                ServerAdmin nameyearbirthday@gmail.com
+                DocumentRoot "/var/local/web"
+                ServerName myweb
+                <Directory "/var/local/web">
+                    AddHandler fcgid-script .php
+                    Options +ExecCGI
+                    FcgidWrapper /srv/apache/cgi-bin/php.fastcgi .php
+                    AllowOverride None
+                    Require all granted
+                </Directory>
+                ErrorLog "logs/apps-error_log"
+                CustomLog "logs/apps-access_log" common
+            </VirtualHost>
+            ```
+
+    2. 安裝**PHP**
+       - makefile 與 編譯問題:
+         - 編譯libiconv `./configure --prefix=/usr/local/libiconv && make && make install`
+         - configure: error: jpeglib.h not found. -> `yum install -y libjpeg-devel bzip2-devel`
+         - configure: error: freetype-config not found. -> `yum install freetype-devel`
+         - Unable to detect ICU prefix or no failed. Please verify ICU install prefix and make sure icu-config works. -> `yum install -y libicu-devel`
+         - configure: error: Cannot find ldap.h -> `yum install -y openldap openldap-devel`
+         - configure: error: xslt-config not found. Please reinstall the libxslt >= 1.1.0 distribution -> `yum install libxslt-devel`
+         - error: utf8_mime2text() has new signature, but U8T_CANONICAL is missing. -> `yum install -y libc-client-devel`
+         - configure: error: system libzip must be upgraded to version >= 0.11 -> 自己編譯最新版本
+           - 最新的 libzip 需使用 cmake 安裝，所以先安裝 cmake：`./configure --system-libs --no-system-jsoncpp --prefix=/usr/local/cmake && make && make install`
+           - 安裝 cmake 需要的套件 `yum install rhash-devel libcurl-devel expat-devel libarchive-devel libuv-devel -y`
+           - **centos7 請用cmake3.14版本避免找自己麻煩**
+           - 修改 /etc/bashrc (請參考下面修改PATH的方法)
+           - `mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/libzip .. && make install`
+           - 修改 /etc/ld.so.conf.d `echo "/usr/local/libzip/lib64" >> /etc/ld.so.conf && ldconfig`
+           - 讓PHP可以**抓套件版本**資訊 `export PKG_CONFIG_PATH=/usr/local/libzip/lib64/pkgconfig:$PKG_CONFIG_PATH`
+         - configure: error: LDAP build check failed. Please check config.log for more information. -> gcc-c++ 要安裝 yum 套件
+         - 缺少一些套件(在最小安裝可能會遇到)`yum install -y openssl-devel libc-client-devel`
+         - (7.3) `./configure --prefix=/usr/local/php --with-apxs2=/srv/apache/bin/apxs --with-libdir=lib64 --with-config-file-path=/usr/local/php/etc --with-bz2 --with-curl --with-gettext --with-iconv-dir=/usr/local/libiconv --with-openssl --with-imap --with-imap-ssl --with-kerberos --with-gd --with-freetype-dir --with-jpeg-dir --with-ldap --with-libzip --with-mhash --with-mysqli --with-png-dir --with-pdo-mysql --with-pcre-regex --with-xmlrpc --with-xsl --with-zlib --enable-bcmath --enable-calendar --enable-exif --enable-ftp --enable-intl --enable-libxml --enable-mbstring --enable-pcntl --enable-soap --enable-sockets --enable-xml --enable-zip --enable-fpm`
+         - 讓PHP編譯的時候可以抓到 /usr/local/libzip/include `make CPPFLAGS="-I/usr/local/libzip/include"`
+
+       - **php.ini** 檔案放在原始碼的檔案包裡面
+       - **使用 FAST-CGI** prefix:/usr/local/php/
+         - 編譯時要多加上 `--enable-fpm`
+         - 將 sbin/php-fpm 註冊為服務，在/etc/systemd/system目錄下新增php-fpm.service檔案
+            ```ini
+            [Unit]
+            Description=The PHP FastCGI Process Manager
+            After=syslog.target network.target
+
+            [Service]
+            Type=forking
+            PIDFile=/usr/local/php/var/run/php-fpm.pid
+            ExecStart=/usr/local/php/sbin/php-fpm --fpm-config /usr/local/php/etc/php-fpm.conf
+            ExecReload=/bin/kill -HUP $MAINPID
+            PrivateTmp=true
+
+            [Install]
+            WantedBy=multi-user.target
+            ```
+         - 在 etc/php-fpm.conf.default 和 etc/php-fpm.d/www.conf.default 需要將檔案去掉.default 編輯設定
+           - 記得在/usr/local/php/var/run/ 下創 php-fpm 資料夾
+         - 設定/usr/local/php/etc/php-fpm.d/www.conf 透過 unix-socket 接收FastCGI request
+            ``` ini
+            listen = var/run/php-fpm/php-fpm.sock
+            listen.owner = daemon
+            listen.group = daemon
+            listen.mode = 0660
+            ```
+         - 預設啟動服務 `systemctl enable php-fpm.service`
+         - 重啟指令 `systemctl restart php-fpm.service`
+
+    3. 安裝**mariaDB**
+       - 官方 repositories yum 套件
+          - [至官網](https://downloads.mariadb.org/mariadb/repositories/)
+          - Copy and paste it into a file under /etc/yum.repos.d/ (we suggest naming the file MariaDB.repo or something similar).
+               ```ini
+               # MariaDB 10.3 CentOS repository list - created 2019-05-15 18:59 UTC
+               # http://downloads.mariadb.org/mariadb/repositories/
+               [mariadb]
+               name = MariaDB
+               baseurl = http://yum.mariadb.org/10.3/centos7-amd64
+               gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+               gpgcheck=1
+               ```
+          - After the file is in place, install MariaDB with:`sudo yum install MariaDB-server MariaDB-client`
+          - 預設啟動服務 `systemctl enable mariadb`
+          - 啟動服務 `systemctl start mariadb`
+          - 初始化設定(必須用管理者權限執行) `mysql_secure_installation`
+          - 記得開啟防火牆 3306(mysql)
+          - 新增一個可以遠端的使用者 `mysql -u root -p` -> `create user 'jason'@'192.168.%' identified by 'password';`
+          - `grant all on *.* to 'jason'@'192.168.%' identified by 'password';`
+          - `FLUSH PRIVILEGES;`
+          - 修改**my.cfg**
+            - 設定檔路徑放在 /etc/my.cnf
+            - default data directory for the MariaDB database server is /var/lib/mysql
+            - [可參考](../環境建置/Apache+PHP+MariaDB/mysql&#32;設定心得.md)
+
+       - 編譯指令(嘗試過但不穩定)
+         - `mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX=/usr/local/mariaDB -DMYSQL_DATADIR=/usr/local/mariaDB/data -DPLUGIN_TOKUDB=NO`
+         - `-DPLUGIN_TOKUDB=NO 是因為有BUG [參考](https://jira.mariadb.org/browse/MDEV-18273)`
+
+    4. 安裝**git** `./configure --prefix=/usr/local/git`
+       - 安裝gitea，自己的程式碼庫，只需要下載執行檔直接執行即可(必須先安裝好git)
+
+    5. 安裝**GCC**庫 (不推薦，會影響預設GCC)
+       - `./contrib/download_prerequisites` 下載相依套件
+       - `mkdir gcc-build && cd gcc-build && ../configure --enable-checking=release --enable-languages=c,c++ --disable-multilib --prefix=/usr/local/gcc-9.1.0`
+            ```
+            –enable-checking=release 增加一些检查，也可以–disable-checking生成的编译器在编译过程中不做额外检查
+            –enable-languages=c,c++ 你要让你的gcc支持的编程语言
+            –disable-multilib 取消多目标库编译(取消32位库编译)
+            ```
+       - `echo "/usr/local/gcc-9.1.0/lib64" >> /etc/ld.so.conf && ldconfig`
+       - 編譯問題:
+         - ldconfig: /usr/local/gcc-9.1.0/lib64/libstdc++.so.6.0.26-gdb.py 不是一個 ELF 檔 - 其開頭的魔術位元組是錯的。-> 直接將這個檔案刪除，然後再重新ldconfig即可
+            dkmsmake
+            gcc-gfortran
+            libquadmath-deve
+            libtool
+            systemtap
+            systemtap-devel
+
+### KVM ###
+- linux 內建虛擬機器
+  - 安裝 qmeu `yum install qemu qemu-kvm qemu-img virt-manager libvirt libvirt-client virt-install virt-viewer bridge-utils`
+- WINDOWS 啟用 virtio
+
+### WINE ###
+- ※注意：這邊安裝的時候都不要直接使用root帳號，否則整個wine會被安裝到 root(/) 之下，這邊使用 sudo 取得權限，安裝仍然會安裝在/home/user之下
+- **(ubuntu)**
+    1. 新增 repository key\
+        `wget -nc https://dl.winehq.org/wine-builds/winehq.key`\
+    2. 可以在 home 之下看到winehq.key這個檔案\
+        `sudo apt-key add winehq.key`
+    3. 新增 repository (移除則要加上 --remove)\
+        `sudo apt-add-repository (--remove) 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main'`
+    4. 使用 apt 套件管理工具安裝 WINE\
+        `sudo apt update`
+    5. Stable branch:\
+        `sudo apt install --install-recommends winehq-stable`
+
+- **(fedora)**
+    1. 新增 repository (移除則要加上 --remove)\
+        `dnf config-manager --add-repo https://dl.winehq.org/wine-builds/fedora/30/winehq.repo`
+    2. 使用 dnf/yum 套件管理工具安裝 WINE\
+        `dnf install winehq-stable`
+
+- 接下來依照步驟指示安裝即可，移除則反過來也使用套件管理工具進行
+
+- **字型問題** 因為在wine 環境下沒有對應中文字型\
+  所以需要利用regedit(wine的windows註冊表)
+  1. 先新增一個文件如下 (例如存為chinese.reg 字型需要打檔案名稱)
+  ```reg
+  REGEDIT4
+
+  [HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink]
+  "Lucida Sans Unicode"="NotoSansCJKtc-Regular.otf"
+  "Microsoft Sans Serif"="NotoSansCJKtc-Regular.otf"
+  "MS Sans Serif"="NotoSansCJKtc-Regular.otf"
+  "Tahoma"="NotoSansCJKtc-Regular.otf"
+  "Tahoma Bold"="NotoSansCJKtc-Regular.otf"
+  "SimSun"="NotoSansCJKtc-Regular.otf"
+  "Arial"="NotoSansCJKtc-Regular.otf"
+  "Arial Black"="NotoSansCJKtc-Regular.otf"
+  ```
+  2. 下載中文字型放到 /home/[user]/.wine/drive_c/windows/Fonts
+  3. 使用regedit chinese.reg 就可以成功看到正常文字了
+
+- **Between 應用程式**
+  1. winecfg 調整成 windows7 模式
+  2. 安裝 winetricks
+    `cd ~/`
+    `wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks`
+    `chmod +x winetricks`
+    `sudo cp winetricks /usr/local/bin/winetricks`
+  3. 依據 wine app database 指示執行 (meiryo 包含在 pptfonts 裡面)
+  	`sudo yum install cabextract`
+    `winetricks corefonts meiryo`
+  4. 正常安裝即可運作
+
+### FILE SYSTEM ###
+- 列出目前硬碟掛載與結構
+    `lsblk -f`
+
+- 將硬碟先切出partition
+  - `gdisk /dev/sdb` 選擇n新增分割(以下為常用)
+    - **8300** Linux filesystem
+    - **fd00** Linux RAID
+    - **8e00** Linux LVM
+  - `mkfs.xfs -f -b size=4096 /dev/sdb1`將分割區格式化成xfs系統
+- 組raid陣列
+  - `mdadm --create /dev/md1 --auto=yes --level=1 --raid-devices=2 /dev/sda1 /dev/sdb1`
+- 依序組 PV VG LV
+  - PV `pvcreate /dev/md1`
+  - VG `vgcreate backup /dev/md1`
+  - LV `lvcreate -l 100%FREE -n lvbackup backup`
+- 將組好的LV 切成 xfs 分割區
+  - `mkfs.xfs /dev/backup/lvbackup`
+- mount 到 指定路徑
+  - `mkdir /backup && mount /dev/backup/lvbackup /backup`
+  - 需要修改 `/etc/fstab` 開機掛載硬碟
+  - `/dev/mapper/backup-lvbackup   /backup           xfs     defaults        0 0`
+
+
+# UBUNTU (18.04 LTS) #
+
+### 安裝注意 ###
+- /boot 不可以使用 XFS 模式，因為grub2 無法辨識 XFS 硬碟格式
+
+### 基本設定 ###
+- H.264 libary 安裝\
+`$ sudo apt-get install gstreamer1.0-libav`
+
+- 更改預設編輯器
+`sudo update-alternatives --config editor`
+
+- 直接指定編輯器
+`sudo update-alternatives --set editor [程式路徑]`
+
+### 輸入法 ###
+  - HIME **KDE 不適用**
+    `sudo apt-get install hime`
+    `/usr/bin/gnome-language-selector`
+    修改鍵盤輸入法系統為「HIME」(預設開啟方法為 ctrl+space)
+    在系統選單裡找到並開啟「HIME 輸入法設定」
+    修改以下選項
+
+    1. 取消勾選「按下 Capslock 時輸出小寫英數字」:意思是若有按「Caps Lock 鍵」會變大寫英文
+    2. 選擇「輸入空白」:否則按空白會變成選字功能
+    3. 取消「詞音輸入預選詞視窗」:否則會像舊注音
+    4. 勾選「輸入注音聲調符號」
+    5. 取消勾選「按下 ↑ 鍵查詢近似音」:新注音沒這功能，若你需要可以留著
+    6. 緩衝區大小調至最大 (90)
+    7. 勾選「使用巨大 UTF-8 字集:勾選這個選項，就可以打出很多原本不能打出來的字
+
+  - 通用解 fcitx 配套新酷音
+    `sudo apt install fcitx fcitx-chewing`
+    - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
+
+
+- 移除已安裝的windows程式
+`wine uninstaller`
+
+### git ###
+- For the latest stable version for your release of Debian/Ubuntu
+`apt-get install git`
+
+- For Ubuntu, this PPA provides the latest stable upstream Git version
+`add-apt-repository ppa:git-core/ppa # apt update; apt install git`
+
+### apache ###
+
+### Mysql(MariaDB) ###
+
+### PHP ###
