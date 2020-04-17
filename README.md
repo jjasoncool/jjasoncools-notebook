@@ -1,7 +1,10 @@
+歡迎引用
 Welcome fork.
 
+請標明出處
 Please indicate the source.
 
-skjan / nameyearbirthday@gmail.com
-
+謝謝
 Thank you.
+
+skjan / nameyearbirthday@gmail.com
