@@ -22,6 +22,16 @@ span {
 }
 ```
 
+- 表格內文字太長，強迫換行
+```css
+table {
+    table-layout:fixed;
+}
+table td {
+    word-wrap: break-word;
+}
+```
+
 - 可以指定某 div 內的頁籤顯現或消失
 ```css
 #wrapper > div {

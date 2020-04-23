@@ -223,6 +223,25 @@
         }
     });
 
+    function progress(data) {
+        var val = progressbar.progressbar("value") || 0,
+        phpthrowValue = $(data).filter("input.progressValue").toArray();
+
+        phpthrowValue.forEach(function(arrEle) {
+            // array
+            if (val < arrEle.value) {
+                val = parseInt(arrEle.value);
+            };
+        });
+
+        progressbar.progressbar("value", val);
+
+        if (val <= 99) {
+            // 超過5分鐘死掉
+            progressTimer = setTimeout(outTime, 300000);
+        }
+    }
+
     // 傳送資料
     function submitByAjax(fntype,fnrefno,fndataString = "") {
         $.ajax({

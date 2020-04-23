@@ -1,3 +1,13 @@
+----------------------------------------
+## basic ##
+----------------------------------------
+- UNION
+  - UNION 會將重複資料剔除，UNION ALL 則全部顯示重複資料
+
+```sql
+SELECT 'foo' AS bar UNION SELECT 'foo' AS bar;
+SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
+```
 
 ----------------------------------------
 ## function ##
