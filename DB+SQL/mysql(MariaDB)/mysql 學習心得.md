@@ -143,7 +143,10 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
     COLLATE='utf8mb4_general_ci'
     ENGINE=InnoDB;
     -- 複製別的 table 資料格式
-
+    CREATE TABLE trace.keelung_work_log AS SELECT *,'' AS `kind`, '' AS `user`, NOW() AS `updatetime` FROM trace.keelung_work;
+    ALTER TABLE trace.keelung_work_log
+        MODIFY COLUMN `kind` VARCHAR(20) COLLATE 'utf8mb4_general_ci',
+        MODIFY COLUMN `user` VARCHAR(20) COLLATE 'utf8mb4_general_ci';
 
 -- 修改 table
     -- 新增欄位

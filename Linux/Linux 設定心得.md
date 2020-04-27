@@ -78,6 +78,8 @@
 - 安裝epel
     - epel 提供許多實用套件，安裝僅需下指令\
     `yum install epel-release`
+    - CENTOS 8 官方建議開啟 powertools
+    `dnf config-manager --set-enabled PowerTools`
 
 - 安裝 [GCC](https://gcc.gnu.org/mirrors.html) (編譯原始碼的工具)
   - 選擇其中一個站點，進入releases/ 之下 選擇一個版本下載，檔案為.tar.gz檔案\
