@@ -327,6 +327,8 @@
             systemtap
             systemtap-devel
 
+### 排程、資料同步 ###
+
 ### KVM ###
 - linux 內建虛擬機器
   - 安裝 qmeu `yum install qemu qemu-kvm qemu-img virt-manager libvirt libvirt-client virt-install virt-viewer bridge-utils`
@@ -408,6 +410,12 @@
   - 需要修改 `/etc/fstab` 開機掛載硬碟
   - `/dev/mapper/backup-lvbackup   /backup           xfs     defaults        0 0`
 
+### 除錯 ###
+- YUM 安裝到一半重開機
+  - `yum complete-transaction`
+  - `package-cleanup --problems` 列出有問題的套件
+  - `package-cleanup --dupes` 列出重複套件 (通常有問題)
+  - `package-cleanup --cleandupes` 清除重複套件
 
 # UBUNTU (18.04 LTS) #
 
