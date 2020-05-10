@@ -720,6 +720,12 @@ function init() {
 
 window.onload = init;
 
+// decodeEntities
+function decodeEntities(encodedString) {
+    let textArea = document.createElement('textarea');
+    textArea.innerHTML = encodedString;
+    return textArea.value;
+}
 
 // 輸入Code 找尋清單
 $(".typeahead").typeahead({

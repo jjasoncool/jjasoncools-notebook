@@ -957,6 +957,10 @@ class 類名 extends 父類名 implements 介面名稱
         PHP 相關套件語法使用
 ----------------------------------------
 ### TCPDF ###
+```php
+//Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M')
+
+```
 
 ### PHP WORD ###
 
