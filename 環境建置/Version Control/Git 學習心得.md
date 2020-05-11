@@ -149,6 +149,16 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 將檔案復原(新增的檔案)，放棄儲存至最初commit的樣子
 >   `git clean -f <path>`
 
+## 暫存目前工作進度 ##
+暫存目前的工作，建立暫時的commit
+>   `git stash`
+查看目前的暫存清單
+>   `git stash list`
+將之前暫存的工作復原，但不會刪除在暫存清單內的stash
+>   `git stash apply`
+將之前暫存的工作復原，會刪除在暫存清單內的stash
+>   `git stash pop`
+
 ## branch 分支 ##
 主分支追蹤
 >   `git branch --set-upstream-to=<remote>/master master`
