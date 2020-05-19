@@ -35,9 +35,10 @@
     >   //TRANSLIT會自動將不能直接轉換的字符變成一個或多個近似的字符，
     >   //IGNORE會忽略掉不能轉化的字符，而默認效果是從第一個非法字符截斷。
 
-    mb_convert_encoding ( $string, "UTF-8", "BIG5" )
+    mb_convert_encoding ( $string || $array, "UTF-8", "BIG5" )
     >   mb_convert_encoding( 字串 , 輸出編碼 , 來源編碼 )
     >   這個編碼模式將會將各種無論是否非法字符強制轉換，但效能較差
+    >   PHP 7.2 之後可以支援 array 傳入
 
     string urlencode ( string $str )
     >   將文字編碼轉換為URL編碼

@@ -35,6 +35,11 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
         LPAD(str, len, padstr)
         -- 將字串補滿到指定長度，padstr為使用何種字串補滿
 
+    -- 刪除空白
+        TRIM(str)
+        -- 將字串頭尾空白去掉，可拿來對付BIG5 許功蓋結尾會補一個 slash\避免跳脫query字串
+        TRIM('\ ') -- 就可以成功塞入反斜線
+
 -- 時間日期
     -- 變換時區
         CONVERT_TZ("欲變換時間", "目前時區", "欲轉換時區")
@@ -347,6 +352,15 @@ DELETE `job` FROM `deadline` LEFT JOIN `job` ....
 
 -- 正規表示法撈取資料 (此例為撈取只有數字的資料)
 select * from `tables` where colValue REGEXP '^[0-9]+$';
+
+```
+
+----------------------------------------
+## mysql tunning ##
+----------------------------------------
+```sql
+
+EXPLAIN
 
 ```
 
