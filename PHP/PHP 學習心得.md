@@ -325,20 +325,23 @@
         (string) implode ( string $接合字串 , array $陣列 )
         >   回傳將陣列元素使用特定接合字串接合起來的長字串
 
-        (array) array_filter ( array $傳入陣列 [, callable $被呼叫函數 [, int $flag = 0 ]] )
+     - array_filter ( array $傳入陣列 [, callable $被呼叫函數 [, int $flag = 0 ]] ) : `array`
         >   將陣列的每一個value值傳遞到可以被呼叫的函數內，若函數回傳值為true，則該值將會被保留在回傳陣列之內，且該回傳陣列key值與原先傳入陣列相同
         >   若沒有被呼叫的函數，則將會過濾掉等效為false值之陣列，若想保留0值時，可利用strlen保留值為0的元素 `array_filter($array, 'strlen')`
 
-        (array) array_diff ( array $主要陣列 , array $參考陣列 [, array $... ] )
+     - array_diff ( array $主要陣列 , array $參考陣列 [, array $... ] ) : `array`
         >   將主要陣列對照其他參考陣列，此函數回傳主要陣列中存在但不存在於其他參考陣列中的值
         >   也就是只有主要陣列中特殊值會被保留下來
         >   即使參考陣列中有其他主要陣列沒有的值，也不會被回傳
 
-        (array) array_combine ( array $keys , array $values )
+     - array_diff_key ( array $主要陣列 , array $參考陣列 [, array $... ] ) : `array`
+        >   同上，只是將比較的物件換成 key
+
+     - array_combine ( array $keys , array $values ) : `array`
         >   合成兩個陣列，成為一個索引與值互相對應的陣列
         >   其中一個陣列當 key 值，另外的陣列當作陣列值
 
-        (array) array_unique ( array $array [, int $sort_flags = SORT_STRING ] )
+     - array_unique ( array $array [, int $sort_flags = SORT_STRING ] ) : `array`
         >   將陣列中重複值去除，若陣列兩者比較為重複相同，前者會被保留
         >   sort_flags，第二個變數用來設定陣列值判斷比較條件
          - SORT_REGULAR - compare items normally (don't change types)
@@ -346,16 +349,16 @@
          - SORT_STRING - compare items as strings
          - SORT_LOCALE_STRING - compare items as strings, based on the current locale.
 
-       - array_merge ([ array $... ] ) : `array`
+     - array_merge ([ array $... ] ) : `array`
         >   將陣列合併起來，非陣列元素也可以被合併
         >   要注意的是若是以數值作為基底的，將會持續附加到後面，並重新賦予新的連續索引值 key
         >   若是文字的索引，則最後相同索引值的 value 將覆蓋先前相同索引的 value
         >   注意: 如果要讓相同數字索引以後來的陣列去覆蓋合併的話，直接用 **+** 運算子即可
 
-        (array) array_flip  ( array $array )
+     - array_flip  ( array $array ) : `array`
         >   陣列索引與值做交換
 
-        (array) array_intersect_key ( array $array1 , array $array2 [, array $... ] )
+     - array_intersect_key ( array $array1 , array $array2 [, array $... ] ) : `array`
         >   以第1個陣列為基礎，將陣列2以後存在的key當作回傳的陣列key，並以這些key來取得陣列1的值
         >   陣列2以後的值不使用
         >   用來取得某固定範圍的key值做使用

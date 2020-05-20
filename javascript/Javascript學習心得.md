@@ -255,6 +255,9 @@
             setTimeout(function(){location.reload()}, 2000);
         });
     }
+
+    如果要 ajax 先執行，必須要加上 option
+    async: false，否則會在 callback 才執行
     ```
 
 ## JQuery物件操作 ##
