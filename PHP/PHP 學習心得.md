@@ -995,3 +995,7 @@ class 類名 extends 父類名 implements 介面名稱
     >   `explode()` 不使用正規表示法，使用某特定字符作為切開字串
     >   `preg_split()` 比較像原本的功能，使用正規表示法切開字串
     >   `str_split()`
+
+- preg_replace ()
+    >   The /e modifier is deprecated, use preg_replace_callback instead
+    >   主要為使用 /正規表示式/e 被棄用，被選取項目應該用 preg_replace_callback 來對被選取的字串做進階處理

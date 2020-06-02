@@ -333,6 +333,7 @@
 - linux 內建虛擬機器
   - 安裝 qmeu `yum install qemu qemu-kvm qemu-img virt-manager libvirt libvirt-client virt-install virt-viewer bridge-utils`
 - WINDOWS 啟用 virtio
+- CENTOS 8 最小安裝後，安裝 GNOME，後面需要安裝xorg 驅動才可以縮放螢幕(檢視->縮放顯示->將VM自動縮放...大小) `dnf install xorg*drv* spice-vdagent`
 
 ### WINE ###
 - ※注意：這邊安裝的時候都不要直接使用root帳號，否則整個wine會被安裝到 root(/) 之下，這邊使用 sudo 取得權限，安裝仍然會安裝在/home/user之下

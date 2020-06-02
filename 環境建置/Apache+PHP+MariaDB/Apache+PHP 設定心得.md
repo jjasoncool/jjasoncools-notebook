@@ -409,16 +409,17 @@ ApacheMonitor:
         FcgidMaxRequestsPerProcess 0
         FcgidMaxProcesses 50
         FcgidMaxRequestLen 81310720
-        # 這邊以下也可以放到 virtualhost 依據不同網址用不同版本php開啟
-        # Location php.ini:
-        FcgidInitialEnv PHPRC "D:/xampp/php-5.3.29"
-        FcgidInitialEnv PHP_FCGI_MAX_REQUESTS 1000
-        <Files ~ "\.php$>"
-        AddHandler fcgid-script .php
-        Options +ExecCGI
-        FcgidWrapper "D:/xampp/php-5.3.29/php-cgi.exe" .php
-        </Files>
     </IfModule>
+
+    # 這邊以下放到 virtualhost 依據不同網址用不同版本php開啟
+    # Location php.ini:
+    FcgidInitialEnv PHPRC "D:/xampp/php-5.3.29"
+    FcgidInitialEnv PHP_FCGI_MAX_REQUESTS 1000
+    <Files ~ "\.php$>"
+    AddHandler fcgid-script .php
+    Options +ExecCGI
+    FcgidWrapper "D:/xampp/php-5.3.29/php-cgi.exe" .php
+    </Files>
 
     ```
   - CURL 加密驗證

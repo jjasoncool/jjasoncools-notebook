@@ -145,6 +145,8 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
 將檔案復原(已被修改的)，放棄儲存至最初commit的樣子
 >   `git checkout -- <file or path>`
+將檔案復原(已被修改的)，還原到特定的 commit
+>   `git checkout <commit hash> -- <file or path>`
 
 將檔案復原(新增的檔案)，放棄儲存至最初commit的樣子
 >   `git clean -f <path>`
