@@ -108,6 +108,8 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
             DATE_SUB(DATE(NOW()), INTERVAL -10 DAY)
             FROM dual;
 
+-- 加密
+    SELECT SHA2('abc', 224);
 
 -- function 進階使用
     -- 日期比較(未滿一年不算)

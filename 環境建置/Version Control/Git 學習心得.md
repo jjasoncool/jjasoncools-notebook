@@ -33,9 +33,9 @@ input 只轉換 push 的時候的 CRLF 為 LF
             git ssh 連線方式
 ----------------------------------------
 ## 產生公私鑰 ##
-`ssh-keygen -t rsa -b 4096 -C "canceraway@gmail.com"`
+`ssh-keygen -t rsa -b 4096 -C "webserver_replica(註解)"`
 - 預設將會把產生的金鑰存到 **/home/.ssh** 之下
--
+- 將xxx.pub內容複製到 gitlab 上
 
 ----------------------------------------
             git bash 語法參考
@@ -191,8 +191,6 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 - rebase
 
 >   `git rebase -i `
-
-
 
 ## 移除版控 ##
 使用 .gitignore 檔案管理，若將規則加入後仍有追蹤檔案，代表該檔案已被追蹤，需要先將其從git移除
