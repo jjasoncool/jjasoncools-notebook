@@ -28,12 +28,21 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
         LOCATE("被搜尋字串","完整字串或被搜尋欄位")
         -- 若此值大於0，代表有被搜尋到
 
+    -- 搜尋特定用 , 分隔的字串位置
+        FIND_IN_SET()
+        -- FIND_IN_SET('找尋字串', REPLACE(REPLACE(m.ecoStatus, ', ', ','), ' ,', ','))>0
+
     -- 搜尋字串回傳boolean，可利用此在 where 條件 同上取代like
-    POSITION( "被搜尋字串" IN "完整字串或被搜尋欄位" )
+        POSITION( "被搜尋字串" IN "完整字串或被搜尋欄位" )
 
     -- 補滿字串
         LPAD(str, len, padstr)
         -- 將字串補滿到指定長度，padstr為使用何種字串補滿
+
+    -- 刪除空白
+        TRIM(str)
+        -- 將字串頭尾空白去掉，可拿來對付BIG5 許功蓋結尾會補一個 slash\避免跳脫query字串
+        TRIM('\ ') -- 就可以成功塞入反斜線
 
 -- 時間日期
     -- 變換時區
@@ -103,12 +112,16 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
             DATE_SUB(DATE(NOW()), INTERVAL -10 DAY)
             FROM dual;
 
+-- 加密
+    SELECT SHA2('abc', 224);
 
 -- function 進階使用
     -- 日期比較(未滿一年不算)
         YEAR(NOW())-YEAR(STR_TO_DATE(SUBSTRING(a.COMPLETED,-5,5), '%c/%y'))-(MONTH(NOW())<MONTH(STR_TO_DATE(SUBSTRING(a.COMPLETED,-5,5), '%c/%y'))) AS year
 
     -- 時間比較
+        -- 幾歲
+        SELECT TIMESTAMPDIFF(YEAR, STR_TO_DATE('1992/05/11', '%Y/%m/%d'), DATE(NOW())) FROM DUAL;
         SELECT TIMESTAMPDIFF(MINUTE, '2038-01-19 03:14:07', '2038-01-19 03:15:07') FROM DUAL;
         SELECT (TIMEDIFF('2038-01-19 03:15:07','2038-01-19 03:14:07')/60) FROM DUAL;
 
@@ -345,6 +358,15 @@ DELETE `job` FROM `deadline` LEFT JOIN `job` ....
 
 -- 正規表示法撈取資料 (此例為撈取只有數字的資料)
 select * from `tables` where colValue REGEXP '^[0-9]+$';
+
+```
+
+----------------------------------------
+## mysql tunning ##
+----------------------------------------
+```sql
+
+EXPLAIN
 
 ```
 

@@ -101,6 +101,7 @@
   - 先到官網下載[rclone](https://rclone.org/downloads/)\
   - 使用 `rclone config` 開始新建需要掛載的雲端
   - 修改 /etc/fuse.conf 增加 `user_allow_other`
+  - 記得先建立掛載目錄資料夾，如`/home/jason/Google_Drive`
   - **服務安裝** 在/etc/systemd/system目錄下新增rclone.service檔案，內容如下
     ```ini
     [Unit]
@@ -136,6 +137,11 @@
   - 記得先修改haproxy內的conf設定，並將DNS指向該伺服器，才可以順利驗證憑證
   - **產憑證指令** `certbot certonly --webroot -w /usr/share/nginx/html/ -v --email canceraway@gmail.com --agree-tos -d test.canceraway.org.tw`
 
+### 使用者隔離(用分開的使用者執行不同的service) ###
+- 創建系統服務使用者
+`useradd -M -d /usr/local/apache -r -s /sbin/nologin apache`
+`useradd -M -d /usr/local/php -r -s /sbin/nologin php-fpm`
+
 ### 編譯 下載的原始碼包(tarball) ###
 - 安裝目錄若不在 /usr/local/ 之下，需要額外設定 **$PATH**，才可以讓程式抓到，設定方法如下
   1. 需要先把修改的path參數放置到 /etc/bashrc 的底部
@@ -154,11 +160,13 @@
     1. 安裝**apache**
        - 必須先把**APR**和**APR-Util**解壓縮放到apache原始檔的srclib資料夾裡面，並將資料夾分別命名為**apr**和**apr-util**
        - 若要支援 fastCGI 必須下載 Apache mod_fcgid FastCGI module 並且放到httpd之下(散的檔案直接合併至apache的source裡面) `./buildconf`
-       - `./configure --prefix=/srv/apache --with-included-apr --with-pcre --enable-module=so --enable-expires=shared --enable-rewrite=shared --enable-fcgid`
+       - 若跳錯 /usr/bin/env: ‘python’: No such file or directory -> `dnf install -y python3 && ln -s /usr/bin/python3 /usr/bin/python`
+       - `./configure --prefix=/usr/local/apache --with-included-apr --with-pcre --enable-module=so --enable-expires=shared --enable-rewrite=shared --enable-fcgid`
        - `make && make install`
        - 若有缺少的套件都用yum裝一裝 `yum install libxml2-devel pcre-devel`
-       - 到prefix目錄切換ROOT權限啟動服務 `/srv/apache/bin/apachectl start`
+       - 到prefix目錄切換ROOT權限啟動服務 `/usr/local/apache/bin/apachectl start`
        - **服務安裝** 在/etc/systemd/system目錄下新增httpd.service檔案，內容如下
+         - (在**CentOS8** 內，服務沒有安裝在 /usr/local 之下，selinux 就會擋你，**selinux** 我還不會開例外，所以先遵循規定)
             ```ini
             [Unit]
             Description=The Apache HTTP Server
@@ -166,10 +174,10 @@
 
             [Service]
             Type=forking
-            PIDFile=/srv/apache/logs/httpd.pid
-            ExecStart=/srv/apache/bin/apachectl -k start
-            ExecReload=/srv/apache/bin/apachectl -k graceful
-            ExecStop=/srv/apache/bin/apachectl -k graceful-stop
+            PIDFile=/usr/local/apache/logs/httpd.pid
+            ExecStart=/usr/local/apache/bin/apachectl -k start
+            ExecReload=/usr/local/apache/bin/apachectl -k graceful
+            ExecStop=/usr/local/apache/bin/apachectl -k graceful-stop
             PrivateTmp=true
 
             [Install]
@@ -193,7 +201,7 @@
             </IfModule>
             ```
           - 開啟 LoadModule mod_proxy.so, mod_proxy_fcgi.so
-          - 新增檔案 /srv/apache/cgi-bin/php.fastcgi
+          - 新增檔案 `/usr/local/apache/cgi-bin/php.fastcgi`
             ```sh
             #!/bin/sh
             # Set desired PHP_FCGI_* environment variables.
@@ -214,7 +222,7 @@
                 <Directory "/var/local/web">
                     AddHandler fcgid-script .php
                     Options +ExecCGI
-                    FcgidWrapper /srv/apache/cgi-bin/php.fastcgi .php
+                    FcgidWrapper /usr/local/apache/cgi-bin/php.fastcgi .php
                     AllowOverride None
                     Require all granted
                 </Directory>
@@ -236,13 +244,14 @@
            - 最新的 libzip 需使用 cmake 安裝，所以先安裝 cmake：`./configure --system-libs --no-system-jsoncpp --prefix=/usr/local/cmake && make && make install`
            - 安裝 cmake 需要的套件 `yum install rhash-devel libcurl-devel expat-devel libarchive-devel libuv-devel -y`
            - **centos7 請用cmake3.14版本避免找自己麻煩**
+           - **centos8** `dnf install libzip-devel`
            - 修改 /etc/bashrc (請參考下面修改PATH的方法)
            - `mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/libzip .. && make install`
            - 修改 /etc/ld.so.conf.d `echo "/usr/local/libzip/lib64" >> /etc/ld.so.conf && ldconfig`
            - 讓PHP可以**抓套件版本**資訊 `export PKG_CONFIG_PATH=/usr/local/libzip/lib64/pkgconfig:$PKG_CONFIG_PATH`
          - configure: error: LDAP build check failed. Please check config.log for more information. -> gcc-c++ 要安裝 yum 套件
-         - 缺少一些套件(在最小安裝可能會遇到)`yum install -y openssl-devel libc-client-devel`
-         - (7.3) `./configure --prefix=/usr/local/php --with-apxs2=/srv/apache/bin/apxs --with-libdir=lib64 --with-config-file-path=/usr/local/php/etc --with-bz2 --with-curl --with-gettext --with-iconv-dir=/usr/local/libiconv --with-openssl --with-imap --with-imap-ssl --with-kerberos --with-gd --with-freetype-dir --with-jpeg-dir --with-ldap --with-libzip --with-mhash --with-mysqli --with-png-dir --with-pdo-mysql --with-pcre-regex --with-xmlrpc --with-xsl --with-zlib --enable-bcmath --enable-calendar --enable-exif --enable-ftp --enable-intl --enable-libxml --enable-mbstring --enable-pcntl --enable-soap --enable-sockets --enable-xml --enable-zip --enable-fpm`
+         - 缺少一些套件(在最小安裝可能會遇到)`yum install -y openssl-devel libc-client-devel curl-devel gcc-c++`
+         - (7.3) `./configure --prefix=/usr/local/php --with-apxs2=/usr/local/apache/bin/apxs --with-libdir=lib64 --with-config-file-path=/usr/local/php/etc --with-bz2 --with-curl --with-gettext --with-iconv-dir=/usr/local/libiconv --with-openssl --with-imap --with-imap-ssl --with-kerberos --with-gd --with-freetype-dir --with-jpeg-dir --with-ldap --with-libzip --with-mhash --with-mysqli --with-png-dir --with-pdo-mysql --with-pcre-regex --with-xmlrpc --with-xsl --with-zlib --enable-bcmath --enable-calendar --enable-exif --enable-ftp --enable-intl --enable-libxml --enable-mbstring --enable-pcntl --enable-soap --enable-sockets --enable-xml --enable-zip --enable-fpm`
          - 讓PHP編譯的時候可以抓到 /usr/local/libzip/include `make CPPFLAGS="-I/usr/local/libzip/include"`
 
        - **php.ini** 檔案放在原始碼的檔案包裡面
@@ -265,12 +274,14 @@
             WantedBy=multi-user.target
             ```
          - 在 etc/php-fpm.conf.default 和 etc/php-fpm.d/www.conf.default 需要將檔案去掉.default 編輯設定
-           - 記得在/usr/local/php/var/run/ 下創 php-fpm 資料夾
-         - 設定/usr/local/php/etc/php-fpm.d/www.conf 透過 unix-socket 接收FastCGI request
+           - 打開 pid 與 error_log 註解
+           - 記得在`/usr/local/php/var/run/` 下創 php-fpm 資料夾
+         - 設定`/usr/local/php/etc/php-fpm.d/www.conf`透過 unix-socket 接收FastCGI request
             ``` ini
+            # 這邊是設定誰可以來存取這個 socket
             listen = var/run/php-fpm/php-fpm.sock
-            listen.owner = daemon
-            listen.group = daemon
+            listen.owner = apache
+            listen.group = apache
             listen.mode = 0660
             ```
          - 預設啟動服務 `systemctl enable php-fpm.service`
@@ -328,11 +339,15 @@
             systemtap-devel
 
 ### 排程、資料同步 ###
+- 例行性排程
+  - 例如每天執行php語法
+    - `crontab -e`
 
 ### KVM ###
 - linux 內建虛擬機器
   - 安裝 qmeu `yum install qemu qemu-kvm qemu-img virt-manager libvirt libvirt-client virt-install virt-viewer bridge-utils`
 - WINDOWS 啟用 virtio
+- CENTOS 8 最小安裝後，安裝 GNOME，後面需要安裝xorg 驅動才可以縮放螢幕(檢視->縮放顯示->將VM自動縮放...大小) `dnf install xorg*drv* spice-vdagent`
 
 ### WINE ###
 - ※注意：這邊安裝的時候都不要直接使用root帳號，否則整個wine會被安裝到 root(/) 之下，這邊使用 sudo 取得權限，安裝仍然會安裝在/home/user之下

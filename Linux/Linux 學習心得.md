@@ -20,6 +20,8 @@
 - 帳號管理
   - 密碼加密機制
     `authconfig --test | grep hashing`
+  - 登出使用者 (請勿用來登出 root)
+    `pkill`
 
 - **vi(vim)** 程式編輯器
   - 指令模式

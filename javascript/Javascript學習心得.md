@@ -255,6 +255,9 @@
             setTimeout(function(){location.reload()}, 2000);
         });
     }
+
+    如果要 ajax 先執行，必須要加上 option
+    async: false，否則會在 callback 才執行
     ```
 
 ## JQuery物件操作 ##
@@ -391,6 +394,10 @@ $("textarea").resizable({
 array.forEach((value,index) => {
     console.log(index +" " + value);
 });
+// key value
+Object.keys(obj).forEach(function(k){
+    console.log(k + ' - ' + obj[k]);
+});
 
 //函式簡寫(箭頭函式)
 var materials = [
@@ -428,6 +435,7 @@ function valid(e) {
     var validation = Array.prototype.filter.call(forms, function (form) {
         // console.log (form);
         if (form.checkValidity() === false) {
+            form.focus();
             e.preventDefault();
             e.stopPropagation();
         } else {
