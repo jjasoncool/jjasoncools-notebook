@@ -10,9 +10,10 @@
     - `D:\xampp\php-7.3.14\php -c "D:\xampp\php-7.3.14\php.ini" D:\xampp\php-7.3.14\composer.phar`
 
 - 實用常數
-  - PHP_EOL 依照平台不同使用不同的 End Of Line symbol
-  - PHP_OS 回傳作業系統類型，可以拿來判斷 linux 或是 windows
-  - $_SERVER['HTTPS'] 可以拿來判斷伺服器是否有開啟 https
+  - **PHP_EOL** 依照平台不同使用不同的 End Of Line symbol
+  - **PHP_OS** 回傳作業系統類型，可以拿來判斷 linux 或是 windows
+  - **DIRECTORY_SEPARATOR** 依據作業系統使用不同分隔符
+  - **$_SERVER['HTTPS']** 可以拿來判斷伺服器是否有開啟 https
 
 - 整齊的寫法
     >   運算子前後一定要有空白

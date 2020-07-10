@@ -109,6 +109,16 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
 >   `git commit -m "字串"`:新增commit message
 >   `git commit --amend`:將暫存變更推送到最後一個commit的node (不新增新的node)
 
+- git commit message guide:
+
+    feat: a new feature
+    fix: a bug fix
+    docs: changes to documentation
+    style: formatting, missing semi colons, etc; no code change
+    refactor: refactoring production code
+    test: adding tests, refactoring test; no production code change
+    chore: updating build tasks, package manager configs, etc; no production code change
+
 
 ## log ##
 >   `git log --pretty=oneline --graph`
