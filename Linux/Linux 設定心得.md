@@ -342,6 +342,7 @@
 - 例行性排程
   - 例如每天執行php語法
     - `crontab -e`
+    - `0 0 * * * /usr/local/php/bin/php /var/local/web/getCA.php` 代表在每天的 00:00 執行php程式
 
 ### KVM ###
 - linux 內建虛擬機器

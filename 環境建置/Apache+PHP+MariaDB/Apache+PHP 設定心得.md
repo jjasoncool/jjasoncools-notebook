@@ -87,13 +87,17 @@ ApacheMonitor:
     [Apache2.4] Options None 則是頁面或目錄不存在時，不允許存取，回送403 Forbidde
 
     [Apache2.4] 將403轉成404
-    ErrorDocument 403 /404
+    `ErrorDocument 403 /404`
 
     隱藏伺服器版本資訊，避免有心他人攻擊
-    ServerTokens Prod
+    `ServerTokens Prod`
 
     在httpd-ssl.conf httpd.conf httpd-vhosts.conf之內的設定
     DocumentRoot 都需要設定一樣的
+
+    X-Frame-Options HTTP 回應標頭 (header) 用來指示文件是否能夠載入 <frame>, <iframe> 以及 <object>
+    網站可以利用 X-Frame-Options 來確保本身內容不會遭惡意嵌入道其他網站、避免 clickjacking 攻擊
+    `Header always append X-Frame-Options SAMEORIGIN`
 
     SSL module:
     ```conf
@@ -450,7 +454,7 @@ ApacheMonitor:
 
     // echo $returned_content;
 
-    file_put_contents('cacert.pem', $returned_content);
+    file_put_contents(__DIR__ . '/cacert.pem', $returned_content);
     ```
 
 ## LINUX 適用 ##
