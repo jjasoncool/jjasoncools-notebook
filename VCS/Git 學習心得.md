@@ -173,6 +173,7 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 ## 暫存目前工作進度 ##
 暫存目前的工作，建立暫時的commit
 >   `git stash`
+>   `git stash push -- ./pa/info/doc_company/`
 查看目前的暫存清單
 >   `git stash list`
 將之前暫存的工作復原，但不會刪除在暫存清單內的stash
@@ -189,7 +190,10 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
 創建分支
 >   `git branch <branch_name>`
->   `git checkout -b <branch_name>`
+  - 與上述語句相同
+    >   `git checkout -b <branch_name>`
+  - 大寫B會將已存在同樣名稱的分支merge目前遷出分支的狀態，這樣就不需要再delete重新checkout
+    >   `git checkout -B <branch_name>`
 
 將分支上傳至線上
 >   `git push <remote-name> <branch-name>`

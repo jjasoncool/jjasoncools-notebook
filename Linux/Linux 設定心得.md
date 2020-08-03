@@ -24,6 +24,12 @@
   - 新增防火牆允許範圍
     `firewall-cmd --permanent --add-port=3389/tcp`
     `firewall-cmd --reload`
+  - 移除防火牆特定port
+    `firewall-cmd --zone=public --remove-port=3389/tcp`
+    `firewall-cmd --runtime-to-permanent`
+    `firewall-cmd --reload`
+  - 更多限制(如IP)
+    `firewall-cmd --permanent --zone=public --add-rich-rule='rule family="ipv4" source address="1.2.3.4/32" port protocol="tcp" port="4567" accept'`
   - 若需要限制使用者則需要依據群組限制那些使用者可以登入那些不能 **/etc/xrdp/sesman.ini**
     ```ini
     [Security]
@@ -158,6 +164,7 @@
   - `make clean` 清掉編譯的檔案
   - `make install` 使用編譯檔案安裝
     1. 安裝**apache**
+       - 首先也必須先安裝好 openssl
        - 必須先把**APR**和**APR-Util**解壓縮放到apache原始檔的srclib資料夾裡面，並將資料夾分別命名為**apr**和**apr-util**
        - 若要支援 fastCGI 必須下載 Apache mod_fcgid FastCGI module 並且放到httpd之下(散的檔案直接合併至apache的source裡面) `./buildconf`
        - 若跳錯 /usr/bin/env: ‘python’: No such file or directory -> `dnf install -y python3 && ln -s /usr/bin/python3 /usr/bin/python`
@@ -342,6 +349,7 @@
 - 例行性排程
   - 例如每天執行php語法
     - `crontab -e`
+    - `0 0 * * * /usr/local/php/bin/php /var/local/web/getCA.php` 代表在每天的 00:00 執行php程式
 
 ### KVM ###
 - linux 內建虛擬機器

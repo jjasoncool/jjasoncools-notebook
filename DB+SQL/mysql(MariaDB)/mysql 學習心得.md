@@ -334,6 +334,11 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
     INNER JOIN table_B B ON A.shop_id = B.shop_id
     SET A.category_id = B.cat_id
     WHERE A.category_id != B.cat_id;
+    -- 實際範例
+    UPDATE FCF_pinkwalk.registlist r
+    LEFT JOIN FCF_pinkwalk.attendlist a ON r.idno=a.reg_id
+    SET r.ct_gift=0, a.att_gift=0
+    WHERE r.check_pay IS NULL AND (TIMESTAMPDIFF(DAY, r.key_date, NOW())>=5 OR r.pay_method=0 OR r.pay_mount=0) AND r.ct_gift!=0;
 
 
 -- 更新某部分字串

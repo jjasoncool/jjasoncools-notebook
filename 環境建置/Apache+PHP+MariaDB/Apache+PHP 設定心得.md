@@ -87,13 +87,17 @@ ApacheMonitor:
     [Apache2.4] Options None 則是頁面或目錄不存在時，不允許存取，回送403 Forbidde
 
     [Apache2.4] 將403轉成404
-    ErrorDocument 403 /404
+    `ErrorDocument 403 /404`
 
     隱藏伺服器版本資訊，避免有心他人攻擊
-    ServerTokens Prod
+    `ServerTokens Prod`
 
     在httpd-ssl.conf httpd.conf httpd-vhosts.conf之內的設定
     DocumentRoot 都需要設定一樣的
+
+    X-Frame-Options HTTP 回應標頭 (header) 用來指示文件是否能夠載入 <frame>, <iframe> 以及 <object>
+    網站可以利用 X-Frame-Options 來確保本身內容不會遭惡意嵌入道其他網站、避免 clickjacking 攻擊
+    `Header always append X-Frame-Options SAMEORIGIN`
 
     SSL module:
     ```conf
@@ -118,7 +122,7 @@ ApacheMonitor:
 
 
 9.  Apache virtual hosts
-   1. 先至httpd.conf 取消Include conf/extra/httpd-vhosts.conf的註解
+    1.  先至httpd.conf 取消Include conf/extra/httpd-vhosts.conf的註解
         ```conf
         # Virtual hosts
         Include conf/extra/httpd-vhosts.conf
@@ -127,7 +131,7 @@ ApacheMonitor:
         HttpProtocolOptions Unsafe
         ```
 
-   2. 編輯 httpd-vhosts.conf 檔案，新增以下虛擬HOST，此為共用IP模式(參照:https://httpd.apache.org/docs/trunk/vhosts/examples.html)
+    2.  編輯 httpd-vhosts.conf 檔案，新增以下虛擬HOST，此為共用IP模式(參照:https://httpd.apache.org/docs/trunk/vhosts/examples.html)
         ```conf
         # 在 <VirtualHost *:80> 標籤內，*號代表的是主機名稱或是IP。 例:<VirtualHost *:80 html_10:443>
         <VirtualHost *:80>
@@ -144,7 +148,60 @@ ApacheMonitor:
             CustomLog "logs/html_2-access.log" common
         </VirtualHost>
 
+        # 將主機的某 port 轉 80 port
+        <VirtualHost *:80>
+            ServerAdmin nameyearbirthday@gmail.com
+            ServerName git.sk-tp.nctu.me
+            ProxyPreserveHost On
+            ProxyRequests off
+            AllowEncodedSlashes NoDecode
+            ProxyPass / http://localhost:3000/ nocanon
+            ProxyPassReverse / http://localhost:3000/
+            ErrorLog "logs/git-error_log"
+            CustomLog "logs/git-access_log" common
+        </VirtualHost>
+        ```
+    3.  若是有 SSL 相關的 port，應放在 httpd-ssl.conf
+    ```ini
         # 若是SSL開啟的 443 port，則必須多出以下SSL開頭選項
+        <VirtualHost *:443>
+            ServerAdmin canceraway@gmail.com
+            DocumentRoot "/var/local/web/test"
+            ServerName test.canceraway.org.tw
+            <Directory "/var/local/web/test">
+                AddHandler fcgid-script .php
+                Options +ExecCGI
+                FcgidWrapper /srv/apache/cgi-bin/php.fastcgi .php
+                AllowOverride None
+                Require all granted
+            </Directory>
+
+            ErrorDocument 403 /pages/404.php
+            ErrorDocument 404 /pages/404.php
+
+            ErrorLog "logs/test-error_log"
+            CustomLog "logs/test-access_log" common
+
+            SSLEngine on
+            SSLCertificateFile "conf/cert/test/certificate.crt"
+            SSLCertificateKeyFile "conf/cert/test/private.key"
+            SSLCertificateChainFile "conf/cert/test/ca_bundle.crt"
+
+            <FilesMatch "\.(cgi|shtml|phtml|php)$">
+                SSLOptions +StdEnvVars
+            </FilesMatch>
+            <Directory "/srv/apache/cgi-bin">
+                SSLOptions +StdEnvVars
+            </Directory>
+
+            BrowserMatch "MSIE [2-5]" \
+                nokeepalive ssl-unclean-shutdown \
+                downgrade-1.0 force-response-1.0
+
+            CustomLog "/srv/apache/logs/ssl_request_log" \
+                    "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+        </VirtualHost>
+
         <VirtualHost *:443>
             DocumentRoot "E:/website-PHP/html_12"
             ServerName html_12
@@ -156,11 +213,10 @@ ApacheMonitor:
             SSLCertificateFile "D:/xampp/Apache2.2_win32/conf/server.crt"
             SSLCertificateKeyFile "D:/xampp/Apache2.2_win32/conf/server.pem"
         </VirtualHost>
-        ```
+    ```
+    6.  **(WINDOWS)** 使用管理者權限編輯 C:\Windows\System32\drivers\etc\hosts檔案，新增host如下 `127.0.0.1 html_2`
 
-   3. **(WINDOWS)** 使用管理者權限編輯 C:\Windows\System32\drivers\etc\hosts檔案，新增host如下 `127.0.0.1 html_2`
-
-   4. 即可至網頁直接輸入網址 http://html_2 開啟頁面
+    7.  即可至網頁直接輸入網址 http://html_2 開啟頁面
 
 # Apache 連結 tomcat #
 
@@ -450,7 +506,7 @@ ApacheMonitor:
 
     // echo $returned_content;
 
-    file_put_contents('cacert.pem', $returned_content);
+    file_put_contents(__DIR__ . '/cacert.pem', $returned_content);
     ```
 
 ## LINUX 適用 ##

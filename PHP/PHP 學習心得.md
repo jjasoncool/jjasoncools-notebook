@@ -100,7 +100,9 @@
 
     (int) preg_match ( "正規表示式尋找字串" , "被尋找字串" [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
     >   回傳匹配字串位置，使用正規表示式
-    >
+    ```php
+    preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$checkdate)
+    ```
 
     ucfirst ( string $str ) : string
     >   將英文字母第一個字換成大寫，可以配合lowercase
@@ -145,11 +147,17 @@
     >   limit 為正數，則回傳limit 數量的陣列；若為負數，則回傳總數量扣除limit數量的陣列，若為0則視為1
     >   注意:若被分割字串為空字串，explode 後會產生1個key為0的陣列元素，為避免此狀況，可利用 **array_filter()**
 
-    (string/array) str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] )
+  - str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] ) : `string/array`
     >   可使用陣列方式取代字串值， $search 將會鏡像對應 $replace 值，若 $replace 數量少於 $search ，其餘被取代字串將會被替代為空字符串
     >   使用陣列串值時，將會由第一個開始依序取代字元，例如 a 改成 apple，p 改成 pear，字串輸入 a p ，期望結果是 apple pear，但實際結果會是 apearpearle pear，可參考 **strtr()**
     >   $replace 若只有一個，則所有的 $search 陣列內元素將會被取代為 $replace 字串
-    >   count若有傳入參數，將會被設值，該值為取代了多少結果
+    >   count若有傳入參數，該參數將會被設值，該值為取代了多少結果，可於後續取出查看
+
+  - preg_replace ( mixed $pattern , mixed $replacement , mixed $subject [, int $limit = -1 [, int &$count ]] ) : `string/array`
+    >   基本使用上同上 str_replace，但由正規表示法來做搜尋
+    >   此法可限制取代之數量為何，預設 $limit -1 沒有限制數量
+    >   count若有傳入參數，該參數將會被設值，該值為取代了多少結果，可於後續取出查看
+    >   `preg_replace("/[^0-9]/", "", "Every 6 Months" );`
 
   - strtr ( string $str , string $from , string $to ) `string`
   - strtr ( string $str , array $replace_pairs ) `string`
@@ -204,6 +212,7 @@
 
     strrchr ( string $被擷取字串 , mixed $needle ) : string
     >   返回最後 needle 的字串作為開始處，直到字串末尾
+    >   可以用來做最後的檔名搜尋或是資料夾名稱確認
 
 - 特殊字串處理
     (array) imap_rfc822_parse_adrlist ( string $address , string $default_host )
@@ -224,10 +233,6 @@
         }
         unset($document);
     ```
-
-    pathinfo ( string $path [, int $options = PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME ] ) : mixed
-    >   處理檔名使用的
-    >   pathinfo() 是地區編碼性的，若是混了了非支援的編碼，需要先做 `setlocale(LC_ALL, 'zh_TW.UTF-8');`
 
 
 - 數值
@@ -369,6 +374,7 @@
     1. 判斷類
         (boolean) boolval(混合型別 $要轉換的變數)
         >   將輸入參數轉為 boolean 值，最常見為0和1轉為false和true
+        >   **注意: 負數在 boolean 裡面被判斷為 true**
 
         (boolean) empty()
         >   判斷陣列或值是否為空值或者是0，其他值則回傳FALSE
@@ -473,6 +479,7 @@
     >   回傳路徑相關資料
     >   若沒有指定 option 回傳陣列
     >   filename 是5.2以後有的選項不須擔心，為避免健忘 **basename($filename, '.html');** 可以達到類似效果
+    >   pathinfo() 是地區編碼性的，若是混了了非支援的編碼，需要先做 `setlocale(LC_ALL, 'zh_TW.UTF-8');`
 
     ```php
     // 一般 root_depth = 1，除非架構在子目錄之下
@@ -931,6 +938,9 @@ class 類名 extends 父類名 implements 介面名稱
 ----------------------------------------
 - 使用超全域變數時 ($GLOBALS, $_POST, $_GET 等等)，必須使用htmlentities()，避免特殊字元，令駭客找出漏洞
 
+- 過濾參數
+  - filter_var
+
 - 使用 include php 網頁時相關技巧；
     >   可以將需要被include的網頁放置在document root之外的資料夾內
     >   再使用
@@ -974,6 +984,12 @@ class 類名 extends 父類名 implements 介面名稱
 
 ### PHP WORD ###
 
+### PHP SPREADSHEET ###
+```php
+// 自動調整欄位的寬度(但是是以英文字母寬度為主，$column 是數字)
+$spreadsheet->getActiveSheet()->getColumnDimension(Cell\Coordinate::stringFromColumnIndex($column))->setAutoSize(true);
+```
+
 ----------------------------------------
         PHP 棄用函式以及取代方案
 ----------------------------------------
@@ -1005,3 +1021,15 @@ class 類名 extends 父類名 implements 介面名稱
 - preg_replace ()
     >   The /e modifier is deprecated, use preg_replace_callback instead
     >   主要為使用 /正規表示式/e 被棄用，被選取項目應該用 preg_replace_callback 來對被選取的字串做進階處理
+
+----------------------------------------
+        PHP 新方法與新用法
+----------------------------------------
+**PHP 7.4後支援**
+```php
+$array['key'] ??= computeDefault();
+// is roughly equivalent to
+if (!isset($array['key'])) {
+    $array['key'] = computeDefault();
+}
+```
