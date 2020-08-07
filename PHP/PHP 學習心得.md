@@ -35,6 +35,7 @@
     >   iconv( 來源編碼 , 輸出編碼[//參數:可加可不加] , 字串 )
     >   //TRANSLIT會自動將不能直接轉換的字符變成一個或多個近似的字符，
     >   //IGNORE會忽略掉不能轉化的字符，而默認效果是從第一個非法字符截斷。
+    >   預設不加的話，只要有非法字元，整句字串都不會輸出
 
     mb_convert_encoding ( $string || $array, "UTF-8", "BIG5" )
     >   mb_convert_encoding( 字串 , 輸出編碼 , 來源編碼 )
@@ -95,11 +96,6 @@
     >   如果字串1比字串2長，回傳值大於0
     >   通常可以用於字串長度排序
 
-    (int) strcmp ($字串1, $字串2)
-    >   回傳值如果為0則字串相等
-    >   如果字串1比字串2短，回傳值小於0
-    >   如果字串1比字串2長，回傳值大於0
-    >   通常可以用於字串長度排序
 
     (int) strlen ($字串)
     >   回傳字串長度
@@ -196,6 +192,7 @@
     >   `$encoding 5.6版本以後預設為php.ini中的default_charset, 5.5~5.4預設為UTF8, 5.3以前預設為latin1*`
     >   $double_encode 如果為off將不轉換已存在的html entities，預設為轉換所有字元
     >   運用此函數在輸出入可以提高安全性以及確保輸出避免與程式碼混淆
+
 
     (string) strip_tags ( string $str [, string $allowable_tags ] )
     >   過濾掉html的TAG字串，僅保留其內容
@@ -315,7 +312,7 @@
         (array) array_values ($陣列);
         >   回傳一個陣列的所有value值
 
-        array_column ( array $input , mixed $column_key [, mixed $index_key = NULL ] ) : array
+     - array_column ( array $input , mixed $column_key [, mixed $index_key = NULL ] ) : `array`
         >   回傳二度陣列所有指定的相同 key 為新陣列
         >   $index_key 則是將，輸入陣列中的另外一個欄位作為新陣列的 key
         ```php
@@ -336,7 +333,7 @@
         array(2135 => 'Doe' , 3245 => 'Smith')
         ```
 
-        (string) implode ( string $接合字串 , array $陣列 )
+     - implode ( string $接合字串 , array $陣列 ) : `string`
         >   回傳將陣列元素使用特定接合字串接合起來的長字串
 
      - array_filter ( array $傳入陣列 [, callable $被呼叫函數 [, int $flag = 0 ]] ) : `array`
@@ -945,7 +942,13 @@ class 類名 extends 父類名 implements 介面名稱
 - 使用超全域變數時 ($GLOBALS, $_POST, $_GET 等等)，必須使用htmlentities()，避免特殊字元，令駭客找出漏洞
 
 - 過濾參數
-  - filter_var
+  - filter_var ( mixed $variable [, int $filter = FILTER_DEFAULT [, mixed $options ]] ) : `mixed`
+    >   可以拿來過濾一些使用者輸入資料
+    >   $variable 基本上放字串，
+    1. FILTER_SANITIZE_STRING -
+    2. FILTER_SANITIZE_FULL_SPECIAL_CHARS - 與 call **htmlspecialchars()** 相同
+    3.
+
 
 - 使用 include php 網頁時相關技巧；
     >   可以將需要被include的網頁放置在document root之外的資料夾內

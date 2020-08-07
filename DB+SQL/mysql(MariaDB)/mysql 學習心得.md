@@ -346,6 +346,8 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
     SET connectionurl = REPLACE(connectionurl,'192.168.0.5','localhost'),username='jason', PASSWORD='123456'
     WHERE connectionurl LIKE 'jdbc:mysql://192.168.0.5%';
 
+-- 刪除整張表內資料
+    TRUNCATE TABLE MyTestTable;
 
 -- 刪除特定資料
 -- Delete only the deadline rows:

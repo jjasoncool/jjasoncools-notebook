@@ -37,3 +37,8 @@
     `chmod`
 
 ### shell ###
+- 製作可開機 usb
+  - 先列出可用來做usb之裝置
+    `lsblk`
+  - if 是來源檔案位置，of 是目標位置(通常是整個)usb磁碟
+    `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress`

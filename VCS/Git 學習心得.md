@@ -173,6 +173,7 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 ## 暫存目前工作進度 ##
 暫存目前的工作，建立暫時的commit
 >   `git stash`
+>   `git stash --include-untracked`
 >   `git stash push -- ./pa/info/doc_company/`
 查看目前的暫存清單
 >   `git stash list`

@@ -11,16 +11,25 @@
   3. 最後輸入以下指令重新啟動 sshd：\
   `systemctl restart sshd.service`
 
+- **最小型安裝**設定螢幕省電
+  - `setterm --blank 3 --powerdown 5 --powersave powerdown`
+  - 可以將此行命令放至服務中讓開機可被執行
+
 - 安裝**桌面GUI**
   - `yum groupinstall GNOME "X Window System" fonts`
   - GNOME 一些好用管理工具 `yum install gnome-tweaks`
 
-- 列出目前已安裝套件 `rpm -qa`
+- 列出目前已安裝套件
+    `rpm -qa`
+    `dnf list --installed gnome*`
 
 - 安裝**xrdp** (方便可以使用windows rdp)
-  - `yum install epel-release xrdp -y`
+  - `yum install epel-release xrdp xorgxrdp -y`
   - 需先安裝此套件再行安裝NVDIA驅動程式
   - 修改主要配置檔 **/etc/xrdp/xrdp.ini**
+    ```ini
+
+    ```
   - 新增防火牆允許範圍
     `firewall-cmd --permanent --add-port=3389/tcp`
     `firewall-cmd --reload`
@@ -44,7 +53,7 @@
       - `echo "cinnamon-session" > ~/.xsession && chmod a+x ~/.xsession`
       - `echo "cinnamon-session" > ~/.Xclients && chmod a+x ~/.Xclients`
     - 啟動xrdp的bash **/usr/libexec/xrdp/startwm.sh**
-    - 新版linux(centos 8)要可以用 xorg 連線需要新增 **/etc/X11/Xwrapper.config**
+    - 新版linux(centos 8)要可以用 xorg 連線需要新增 `vi /etc/X11/Xwrapper.config`
       - 新增參數如下
         ```ini
         allowed_users =anybody
@@ -96,6 +105,8 @@
 - 通用解 **fcitx 輸入法殼層** 配套新酷音
     `sudo dnf install fcitx fcitx-configtool fcitx-chewing`
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
+    - centos 使用 gnome 介面的話，可使用 `dnf install im-choose`
+    - 使用 `imsettings-switch fcitx`
 
 - 安裝可以遠端rdp的client端 `sudo dnf install remmina`
 - 要解h264問題直接安裝vlc撥放器
@@ -168,6 +179,7 @@
        - 必須先把**APR**和**APR-Util**解壓縮放到apache原始檔的srclib資料夾裡面，並將資料夾分別命名為**apr**和**apr-util**
        - 若要支援 fastCGI 必須下載 Apache mod_fcgid FastCGI module 並且放到httpd之下(散的檔案直接合併至apache的source裡面) `./buildconf`
        - 若跳錯 /usr/bin/env: ‘python’: No such file or directory -> `dnf install -y python3 && ln -s /usr/bin/python3 /usr/bin/python`
+       - **centos8** 可使用 `alternatives --set python /usr/bin/python3` 取代 link 方式
        - `./configure --prefix=/usr/local/apache --with-included-apr --with-pcre --enable-module=so --enable-expires=shared --enable-rewrite=shared --enable-fcgid`
        - `make && make install`
        - 若有缺少的套件都用yum裝一裝 `yum install libxml2-devel pcre-devel`
