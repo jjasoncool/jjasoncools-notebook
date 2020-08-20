@@ -178,8 +178,8 @@
        - 首先也必須先安裝好 openssl
        - 必須先把**APR**和**APR-Util**解壓縮放到apache原始檔的srclib資料夾裡面，並將資料夾分別命名為**apr**和**apr-util**
        - 若要支援 fastCGI 必須下載 Apache mod_fcgid FastCGI module 並且放到httpd之下(散的檔案直接合併至apache的source裡面) `./buildconf`
-       - 若跳錯 /usr/bin/env: ‘python’: No such file or directory -> `dnf install -y python3 && ln -s /usr/bin/python3 /usr/bin/python`
-       - **centos8** 可使用 `alternatives --set python /usr/bin/python3` 取代 link 方式
+       - 若跳錯 /usr/bin/env: ‘python’: No such file or directory -> `dnf install -y python3 && alternatives --set python /usr/bin/python3`
+       - **centos8** 可使用 `alternatives --set python /usr/bin/python3`
        - `./configure --prefix=/usr/local/apache --with-included-apr --with-pcre --enable-module=so --enable-expires=shared --enable-rewrite=shared --enable-fcgid`
        - `make && make install`
        - 若有缺少的套件都用yum裝一裝 `yum install libxml2-devel pcre-devel`
@@ -371,6 +371,11 @@
 
 ### WINE ###
 - ※注意：這邊安裝的時候都不要直接使用root帳號，否則整個wine會被安裝到 root(/) 之下，這邊使用 sudo 取得權限，安裝仍然會安裝在/home/user之下
+- **(centos)**
+    1. 相關依賴套件
+        `dnf install glibc-devel.i686 dbus-devel.i686 freetype-devel.i686 pulseaudio-libs-devel.i686 libX11-devel.i686 mesa-libGLU-devel.i686 libICE-devel.i686 libXext-devel.i686 libXcursor-devel.i686 libXi-devel.i686 libXxf86vm-devel.i686 libXrender-devel.i686 libXinerama-devel.i686 libXcomposite-devel.i686 libXrandr-devel.i686 mesa-libGL-devel.i686 mesa-libOSMesa-devel.i686 libxml2-devel.i686 zlib-devel.i686 gnutls-devel.i686 ncurses-devel.i686 sane-backends-devel.i686 libv4l-devel.i686 libgphoto2-devel.i686 libexif-devel.i686 lcms2-devel.i686 gettext-devel.i686 cups-devel.i686 fontconfig-devel.i686 gsm-devel.i686 libjpeg-turbo-devel.i686 libtiff-devel.i686 unixODBC.i686 openldap-devel.i686 alsa-lib-devel.i686 freeglut-devel.i686 giflib-devel.i686 gstreamer1-devel.i686 gstreamer1-plugins-base-devel.i686 libXmu-devel.i686 libXxf86dga-devel.i686 libieee1284-devel.i686 libpng-devel.i686 librsvg2-devel.i686 libstdc++-devel.i686 libusb-devel.i686 unixODBC-devel.i686 libpcap-devel.i686 libXfixes-devel.{x86_64,i686} gstreamer1-plugins-base-devel.{x86_64,i686} gstreamer1-devel.{x86_64,i686} systemd-devel.{x86_64,i686} glibc-devel.{i686,x86_64} libgcc.{i686,x86_64} libX11-devel.{i686,x86_64} freetype-devel.{i686,x86_64} gnutls-devel.{i686,x86_64} libxml2-devel.{i686,x86_64} libjpeg-turbo-devel.{i686,x86_64} libpng-devel.{i686,x86_64} libXrender-devel.{i686,x86_64} alsa-lib-devel.{i686,x86_64} glib2-devel.{i686,x86_64} libSM-devel.{i686,x86_64} libjpeg-turbo-devel libtiff-devel freetype-devel glibc-devel libstdc++-devel icoutils openal-soft-devel prelink gstreamer1-plugins-base-devel gstreamer1-devel ImageMagick-devel fontpackages-devel libv4l-devel gsm-devel giflib-devel libXxf86dga-devel mesa-libOSMesa-devel isdn4k-utils-devel libgphoto2-devel fontforge libusb-devel lcms2-devel audiofile-devel -y`
+    2.
+
 - **(ubuntu)**
     1. 新增 repository key\
         `wget -nc https://dl.winehq.org/wine-builds/winehq.key`\

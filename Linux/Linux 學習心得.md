@@ -1,4 +1,11 @@
 ### 基本指令 ###
+- 系統關機/重新啟動
+    >shutdown [OPTION] TIME [MESSAGE]
+  - 系統關機
+    `shutdown -h 0`
+  - 系統重新啟動
+    `shutdown -r 0`
+
 - 複製檔案
     `cp -fr /home/skjan/180418crweb/* /var/www/html`
 - 修改檔名
@@ -29,12 +36,13 @@
   - 命令模式(打關鍵前導符號 `: ? /`)
 
 ### 權限 ###
-- 設定排程
+- 設定權限
+    `chmod [權限模式] [檔案]`
 
 
 ### 排程 ###
-- 設定排程
-    `chmod`
+- 設定排程 (for user)
+    `crontab -e`
 
 ### shell ###
 - 製作可開機 usb

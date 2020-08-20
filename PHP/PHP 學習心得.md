@@ -15,6 +15,8 @@
   - **DIRECTORY_SEPARATOR** 依據作業系統使用不同分隔符
   - **$_SERVER['HTTPS']** 可以拿來判斷伺服器是否有開啟 https
 
+- super globals(超域變數)
+
 - 整齊的寫法
     >   運算子前後一定要有空白
     >   PHP tag 一定單獨佔據一行，並且在Code的最左方
@@ -218,7 +220,7 @@
     >   可以用來做最後的檔名搜尋或是資料夾名稱確認
 
 - 特殊字串處理
-    (array) imap_rfc822_parse_adrlist ( string $address , string $default_host )
+    imap_rfc822_parse_adrlist ( string $address , string $default_host ) : `array`
     >   將一串電子郵件地址轉換為 **ArrayObject** (PHP5 之後才有ArrayObject)
     >   可參考**class.phpmailer**內使用來檢驗email位址是否正確
 
@@ -237,6 +239,10 @@
         unset($document);
     ```
 
+    parse_str ( string $encoded_string [, array &$result ] ) : void
+    >   極度不建議在沒有 result 參數的情況下使用此函數，並且在 PHP 7.2 中將廢棄不設定參數的行為
+    >   主要用來轉換 querystring 變成陣列輸出
+    >   若字串變數含有點或空格，將被轉為底線_
 
 - 數值
     (int) intval (mixed $var)
@@ -450,6 +456,16 @@
         (string) file_get_contents  ( string $filename [, bool $use_include_path = FALSE [, resource $context [, int $offset = 0 [, int $maxlen ]]]] )
         >   抓取網址或者文本的方法
         >   若是要做為執行某PHP的方式，盡量還是用CURL，速度差10倍
+        >   若是要 include 別的網頁，且對方有開啟 https，會需要驗證時，可以參考以下方法
+        ```php
+        $arrContextOptions = [
+            "ssl" => [
+                "verify_peer" => false,
+                "verify_peer_name" => false,
+            ],
+        ];
+        file_get_contents($網址, false, $arrContextOptions);
+        ```
 
     3. 動態陣列
         陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
@@ -499,6 +515,9 @@
     }
     ```
     -  realpath ( string $path ) : `string`
+    -  sys_get_temp_dir ( void ) : `string`
+    >   回傳 temp 的資料夾路徑，回傳的字串最後沒有包含資料夾分隔符號
+    >   例：`/home/user/tmp`
 
 - 日期與時間處理
   - ※注意:2038 timestamp 會溢出32位元極限，因此要使用 timestamp 相關函數需要注意。
@@ -944,10 +963,14 @@ class 類名 extends 父類名 implements 介面名稱
 - 過濾參數
   - filter_var ( mixed $variable [, int $filter = FILTER_DEFAULT [, mixed $options ]] ) : `mixed`
     >   可以拿來過濾一些使用者輸入資料
-    >   $variable 基本上放字串，
-    1. FILTER_SANITIZE_STRING -
-    2. FILTER_SANITIZE_FULL_SPECIAL_CHARS - 與 call **htmlspecialchars()** 相同
-    3.
+    >   $variable 基本上放字串， $filter 放以下的過濾ID， $options 可以額外增加選項，若是在用 flags
+    1. FILTER_SANITIZE_STRING - 可額外濾除特殊符號
+    2. FILTER_SANITIZE_FULL_SPECIAL_CHARS - 與 call **htmlspecialchars($字串 , ENT_QUOTES)** 相同
+    3. FILTER_SANITIZE_EMAIL - 移除數字與英文還有以下特殊符號 !#$%&'*+-=?^_`{|}~@.[] 以外之文字
+
+  - filter_var_array ( array $data [, mixed $definition [, bool $add_empty = TRUE ]] ) : mixed
+    >   可以針對陣列內不同的資料做不同的過濾， $definition 可以對應輸入資料位置
+    >   $add_empty 會將 null 塞入不存在的陣列直
 
 
 - 使用 include php 網頁時相關技巧；

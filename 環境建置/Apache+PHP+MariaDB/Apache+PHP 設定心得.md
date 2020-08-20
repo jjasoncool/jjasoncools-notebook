@@ -472,9 +472,9 @@ ApacheMonitor:
     FcgidInitialEnv PHPRC "D:/xampp/php-5.3.29"
     FcgidInitialEnv PHP_FCGI_MAX_REQUESTS 1000
     <Files ~ "\.php$>"
-    AddHandler fcgid-script .php
-    Options +ExecCGI
-    FcgidWrapper "D:/xampp/php-5.3.29/php-cgi.exe" .php
+        AddHandler fcgid-script .php
+        Options +ExecCGI
+        FcgidWrapper "D:/xampp/php-5.3.29/php-cgi.exe" .php
     </Files>
 
     ```
@@ -656,4 +656,3 @@ setting 如下：
     },
 ```
 設定完成後即可下中斷點，利用code runner或是直接使用瀏覽器開啟該頁面執行時，即可針對斷點debug
-
