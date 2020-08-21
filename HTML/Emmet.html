@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <style>
+        code {
+            font-family: Consolas, "courier new";
+            color: crimson;
+            background-color: #f1f1f1;
+            padding: 2px;
+            font-size: 105%;
+        }
+    </style>
+    <script>
+        function init() {
+            const codeList = document.getElementsByTagName("code");
+            console.log(codeList);
+
+            [].forEach.call(codeList, function(el) {
+                console.log(el.innerHTML.replace(/(^\s*(?!.+)\n+)|(\n+\s+(?!.+)$)/g, ""));
+                el.innerText = el.innerHTML.replace(/(^\s*(?!.+)\n+)|(\n+\s+(?!.+)$)/g, "")
+            });
+        }
+
+        window.onload = init;
+    </script>
+</head>
+
+<body>
+    <h1>Emmet Example</h1>
+
+    <h3>ul>ui*10</h3>
+    <code>
+        <ul>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+            <ui></ui>
+        </ul>
+    </code>
+
+    <h3>div#add+div.class</h3>
+    <code>
+        <div id="add"></div>
+        <div class="class"></div>
+    </code>
+
+</body>
+
+</html>
