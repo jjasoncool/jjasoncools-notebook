@@ -16,7 +16,7 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
 -- 字串
     -- 連接字串
         CONCAT("string1","string2","string3")
-    -- 使用某個"膠水"字串，連接其他字串
+    -- 使用某個"膠水"字串，連接其他字串。可以配合 CHAR(10) 達到換行的效果
         CONCAT_WS(separator, str1, str2,...)
     -- 查詢字串長度
         LENGTH("column")
@@ -425,15 +425,28 @@ WHERE c.TABLE_SCHEMA = 'trace'
 GROUP BY c.TABLE_NAME;
 
 -- 比較兩個table有哪些欄位不同
-SELECT `TABLE_NAME`,`COLUMN_NAME`,DATA_TYPE,COLUMN_TYPE FROM
+SELECT `TABLE_NAME`,`COLUMN_NAME`,DATA_TYPE,COLUMN_TYPE,COLUMN_DEFAULT FROM
 (
     SELECT
-        `TABLE_NAME`,`COLUMN_NAME`,DATA_TYPE,COLUMN_TYPE,COUNT(1) AS rowcount
+        `TABLE_NAME`,`COLUMN_NAME`,DATA_TYPE,COLUMN_TYPE,COLUMN_DEFAULT,COUNT(1) AS rowcount
     FROM information_schema.`COLUMNS`
-    WHERE TABLE_SCHEMA='pa'
-    AND TABLE_NAME IN ('ACCOUNT','ACCOUNT_LOG')
+    WHERE TABLE_SCHEMA='trace'
+    AND TABLE_NAME IN ('tpsb','tpsb_log')
     GROUP BY
         COLUMN_NAME,DATA_TYPE,COLUMN_TYPE
+    HAVING rowcount=1
+    ORDER BY `COLUMN_NAME`, `TABLE_NAME`
+) `table`;
+-- 排序也看
+SELECT ORDINAL_POSITION,`TABLE_NAME`,`COLUMN_NAME`,DATA_TYPE,COLUMN_TYPE,COLUMN_DEFAULT FROM
+(
+    SELECT
+        ORDINAL_POSITION,`TABLE_NAME`,`COLUMN_NAME`,DATA_TYPE,COLUMN_TYPE,COLUMN_DEFAULT,COUNT(1) AS rowcount
+    FROM information_schema.`COLUMNS`
+    WHERE TABLE_SCHEMA='trace'
+    AND TABLE_NAME IN ('tpta','tpta_log')
+    GROUP BY
+        ORDINAL_POSITION,COLUMN_NAME,DATA_TYPE,COLUMN_TYPE
     HAVING rowcount=1
     ORDER BY `COLUMN_NAME`, `TABLE_NAME`
 ) `table`;

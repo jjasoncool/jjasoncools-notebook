@@ -33,31 +33,35 @@
     >   parameter parameterName
 
 - 編碼轉換
-    iconv ("BIG5","UTF-8",$string)
+  - iconv ( string $in_charset , string $out_charset , string $str ) : string
+    >   iconv ("BIG5","UTF-8",$string)
     >   iconv( 來源編碼 , 輸出編碼[//參數:可加可不加] , 字串 )
     >   //TRANSLIT會自動將不能直接轉換的字符變成一個或多個近似的字符，
     >   //IGNORE會忽略掉不能轉化的字符，而默認效果是從第一個非法字符截斷。
     >   預設不加的話，只要有非法字元，整句字串都不會輸出
 
-    mb_convert_encoding ( $string || $array, "UTF-8", "BIG5" )
+  - mb_convert_encoding ( $string || $array , string $to_encoding [, mixed $from_encoding = mb_internal_encoding() ] ) : mixed
+    >   mb_convert_encoding ($string || $array , "UTF-8", "BIG5" )
     >   mb_convert_encoding( 字串 , 輸出編碼 , 來源編碼 )
     >   這個編碼模式將會將各種無論是否非法字符強制轉換，但效能較差
     >   PHP 7.2 之後可以支援 array 傳入
 
-    string urlencode ( string $str )
+  - urlencode ( string $str ) : string
+    >   **~** 此符號在 php5.3後不再轉換為編碼
     >   將文字編碼轉換為URL編碼
     >   範例:%E9%9B%BB%E8%85%A6%E7%9B%B8%E9%97%9C%E8%A8%AD%E5%82%99%E7%94%B3%E8%AB%8B%E8%A1%A8(電腦相關設備申請表)
-    >   **有問題在於空格會被轉換成 + 號，若需要完整的轉換請改用 rawurlencode()
+    >   問題在於空格會被轉換成 **+** 號，若需要完整的轉換請改用 `rawurlencode()`
 
-    string rawurlencode (string $str)
+  - rawurlencode ( string $str ) : string
     >   功能同上述，但不會有符號混淆問題，與javascript 交換JSON 資料時可以避免特殊符號導致錯誤的情形
+    >   遵守 RFC 3986 編碼規則
 
-    string urldecode ( string $str )
+  - urldecode ( string $str ) : string
     >   將所有網址列內%開頭的文字解碼為可讀文字
+    >   **+** 號將被解碼為空格
     >   $_GET 與 $_REQUEST 已有解碼，若使用此函數在此兩個全域變數上，可能會發生無法預期的結果
 
-
-    rawurldecode ( string $str ) : string
+  - rawurldecode ( string $str ) : string
     >   將所有網址列內%開頭的文字解碼為可讀文字
     >   特殊符號部分如 + 號或者 ~ 將可以正常轉換
     >   對應 javascript `encodeURIComponent()`
@@ -99,8 +103,10 @@
     >   通常可以用於字串長度排序
 
 
-    (int) strlen ($字串)
+  - strlen ( string $string ) : `int`
+  - mb_strlen ( string $str [, string $encoding = mb_internal_encoding() ] ) : `int`
     >   回傳字串長度
+    >   mb_strlen 為可指定編碼
 
     (int) preg_match ( "正規表示式尋找字串" , "被尋找字串" [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
     >   回傳匹配字串位置，使用正規表示式
@@ -114,8 +120,10 @@
     lcfirst ( string $str ) : string
     >   將英文字母第一個字換成小寫，可以配合uppercase
 
-    (mixed) eval ( $string )
-    >   回傳將字串作為PHP運算後得到之結果 例如：
+  - eval ( string $code ) : mixed
+    >   字串中不要包含 <?php ?> 標籤
+    >   版本 PHP7 後，若有語法錯誤，將會觸發 ParseError exception
+    >   回傳值為 null ,若字串中包含 return，將會回傳字串作為PHP運算後得到之結果 例如：
     ```php
     $strCode = "1+1";
     // $Value 值會為2
@@ -239,19 +247,22 @@
         unset($document);
     ```
 
-    parse_str ( string $encoded_string [, array &$result ] ) : void
+    parse_str ( string $encoded_string [, array &$result ] ) : `void`
     >   極度不建議在沒有 result 參數的情況下使用此函數，並且在 PHP 7.2 中將廢棄不設定參數的行為
     >   主要用來轉換 querystring 變成陣列輸出
     >   若字串變數含有點或空格，將被轉為底線_
 
 - 數值
-    (int) intval (mixed $var)
-    >   轉換參數為數值
+  - intval ( mixed $var [, int $base = 10 ] ) : `int`
+    >   轉換參數為數值，不可轉換物件，否則將跳出 notice，並返回數值 1
+    >   預設為十進制
 
-    (bool) is_numeric ( mixed $var )
+  - is_numeric ( mixed $var ) : `bool`
     >   判斷為純數字時，輸出true
 
-    (string) number_format ( float $number , int $decimals = 0 , string $dec_point = "." , string $thousands_sep = "," )
+  - number_format ( float $number [, int $decimals = 0 ] ) : `string`
+  - number_format ( float $number , int $decimals = 0 , string $dec_point = "." , string $thousands_sep = "," ) : `string`
+    >   如果只給予1~2個參數，小數點為. 千分位為,
     >   決定數字顯示格式，第一個參數為數字變數、第二個參數為小數點數量、第三個參數為小數點顯示符號(依據國情不同)、第四個參數為千分位符號(依據國情不同) 預設四捨五入
 
 - 迴圈與跳出
@@ -279,43 +290,56 @@
 ```
 
 - 陣列
-    1. 陣列處理
-        list( $要塞入的變數 ) = $array
-        >   將陣列中的值塞入變數之中
-        >   list 只對數字key型態的陣列生效，key從0開始
-        >
+  1. 陣列處理
+     - $變數 = array();
+        >   要做push之前一定要先做宣告
+        >   若要避免notice 可使用 array_fill()函數
 
-        unset()
+     - list( $要塞入的變數 ) = $array
+        >   將陣列中的值塞入變數之中
+        >   list 只對 key 為數字型態的陣列生效，key從0開始
+        >   php7 後，填入陣列內的排序由最左邊參數開始賦值，php5 之前則相反，不要使用此方法來做為排序的依賴
+
+     - unset ( mixed $var [, mixed $... ] ) : void
         >   重置、刪除變數
         >   但如果在區域function 內 unset 公用變數，則不影響公用變數值，僅在function內unset而已
         >   若要在function 內 unset 公用變數值，則需使用 unset($GLOBALS["blah"])
 
-        sizeof()
-        >   陣列大小、陣列長度
-        >   同時為 count() 的別名
+     - count ( mixed $array_or_countable [, int $mode = COUNT_NORMAL ] ) : `int`
+     - sizeof()
+        >   計算陣列/物件大小、陣列/物件長度
+        >   sizeof() 為 count() 的別名
 
-        $變數 = array();
-        >   要做push之前一定要先做宣告
-        >   若要避免notice 可使用 array_fill()函數
+     - asort ( array &$array [, int $sort_flags = SORT_REGULAR ] ) : `bool`
+        >   對陣列做排序，關聯 key 值也會依據排序順序改變順序
 
-        array_fill ($開始的陣列index, $填滿幾個, $填入值)
+     - array_fill ($開始的陣列index, $填滿幾個, $填入值) : `array`
         >   此函數會使用數字型態index 填滿指定範圍的陣列
-        >   可利用來避免陣列notice，例：$element = !empty( $_POST["dataString"] ) ? explode(",", $_POST["dataString"]) : array_fill(0,5,"");
+        >   可利用來避免陣列notice，例：
+        ```php
+        $element = !empty( $_POST["dataString"] ) ? explode(",", $_POST["dataString"]) : array_fill(0, 5, '');
+        ```
+        >   亦可用來產出 sql prepared statement 的參數
+        ```php
+        $insParaStr = implode(",", array_fill(0, count($recArray), "?"));
+        ```
 
-        (int) array_push ($要塞入的陣列, $值1, $值2, ...)
+     - array_push ( array &$array [, $值1, $值2, ...] ) : `int`
         >   將值塞入陣列內，但key 只會為數值，可與for迴圈合併使用，可一次塞入多項數值
         >   若並非要塞入多像數值，建議使用 $變數名稱[] = $值 ，效能較佳
         >   若要塞入的陣列沒有預先定義為array，則會跳出warning
         >   回傳值為成功新增的元素數量
 
-        array_unshift ( array &$array [, mixed $... ] ) : int
+     - array_unshift ( array &$array [, mixed $... ] ) : `int`
         >   新增項目到陣列清單的開頭
         >   將元素放至陣列前方，但順序會依照，傳入值的順序整體塞入前方
 
-        (array) array_keys ($陣列);
+     - array_keys ( array $array ) : `array`
+     - array_keys ( array $array , mixed $search_value [, bool $strict = FALSE ] ) : `array`
         >   回傳一個陣列的所有key值
+        >   若有定義 search_value，此函數將返回符合該值的陣列keys
 
-        (array) array_values ($陣列);
+     - array_values ( array $array ) : array
         >   回傳一個陣列的所有value值
 
      - array_column ( array $input , mixed $column_key [, mixed $index_key = NULL ] ) : `array`
@@ -380,28 +404,28 @@
         >   陣列2以後的值不使用
         >   用來取得某固定範圍的key值做使用
 
-    1. 判斷類
-        (boolean) boolval(混合型別 $要轉換的變數)
+  3. 判斷類
+     - boolval ( mixed $var ) : `bool`
         >   將輸入參數轉為 boolean 值，最常見為0和1轉為false和true
         >   **注意: 負數在 boolean 裡面被判斷為 true**
 
-        (boolean) empty()
+     - empty ( mixed $var ) : `bool`
         >   判斷陣列或值是否為空值或者是0，其他值則回傳FALSE
 
-        (boolean) isset()
+     - isset ( mixed $var [, mixed $... ] ) : `bool`
         >   判斷值是否存在，若為NULL或者不存在，則回傳FALSE，其他為TRUE
 
-        (boolean) in_array ( 混合型別 $要找尋的變數 , array $於哪個陣列搜尋 [, bool $strict = FALSE ] )
+     - in_array ( 混合型別 $要找尋的變數 , array $於哪個陣列搜尋 [, bool $strict = FALSE ] ) : `bool`
         >   第三個變數預設為FALSE，不比較型別，但有人指出不使用strict 方式，將會出現部分錯誤
         >   此函數為比對在array 內的物件是否存在，並返回 boolean 值
 
-        (boolean) array_key_exists ( mixed $key , array $被搜尋的陣列 )
+     - array_key_exists ( mixed $key , array $被搜尋的陣列 ): `bool`
         >   傳入值若沒有在陣列之中，則回傳false
 
-        (mixed) array_search ( $要找尋的變數值, array $被搜尋的array [, bool $strict = false ] )
+     - array_search ( $要找尋的變數值, array $被搜尋的array [, bool $strict = FALSE ] ) : `mixed`
         >   搜尋陣列內是否有值，若有則回傳該陣列的key值，可配合array_column()搜尋二維陣列，或是使用foreach 迴圈的$value 放入array_search尋找
 
-    2. 其他應用
+  4. 其他應用
         Variable functions
         >   字串可以直接當成function name 使用
         ```php
@@ -467,7 +491,7 @@
         file_get_contents($網址, false, $arrContextOptions);
         ```
 
-    3. 動態陣列
+  5. 動態陣列
         陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
         >   array1(&$test)
         >   array2(&$test)
@@ -479,7 +503,7 @@
         >   此函數將會將每一個 array 值，都透過 $callback 處理過一次，返還array
         >   若callback函數需要有兩個參數，則array1需對應callback的參數數量放置對應的array
 
-    4. 資料編碼
+  6. 資料編碼
         資料透過陣列轉換成json字串，或將json字串轉換成陣列
         json_encode( mixed $value [, int $options = 0 [, int $depth = 512 ]] );
         >   通常為將陣列轉為json字串，也可以使用物件
@@ -636,7 +660,6 @@
 - is_dir ( string $filename ) : *boolean*
     >   確認該路徑為目錄
     >   Returns TRUE if the filename exists and is a directory, FALSE otherwise.
-
 
 - scandir ( string $directory [, int $sorting_order = SCANDIR_SORT_ASCENDING [, resource $context ]] ) : `array`
     >   將目錄中的所有檔案列出，但會包含兩個目錄也被列出 ./ ../ ， 可利用array_diff或array_slice去除

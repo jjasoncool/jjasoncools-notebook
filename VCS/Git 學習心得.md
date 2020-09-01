@@ -207,6 +207,8 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 >   `git branch -d <branch_name>`
 刪除遠端分支
 >   `git push <remote-name> :<the-new-branch-name-you-want-delete>`
+刪除分支依據 regular exp
+>   `git branch --merged | grep -v \* | xargs git branch -d `
 刪除所有已經merge的分支 (注意，一定要在master上面)
 -v 代表反向搜尋，\* 代表找目前所在的 branch 以外的
 >   `git branch --merged | grep -v \* | xargs git branch -d `
