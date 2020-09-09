@@ -183,6 +183,8 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 >   `git stash apply`
 將之前暫存的工作復原，會刪除在暫存清單內的stash
 >   `git stash pop`
+將之前暫存的工作刪除
+>   `git stash drop`
 
 ## branch 分支 ##
 主分支追蹤

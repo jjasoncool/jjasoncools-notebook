@@ -557,6 +557,8 @@
   - DateTime Object
     (object)
     ```php
+    // 單行輸出
+    (new DateTime())->format('Y/m/d');
     // 新增 datetime 物件 (php 5.2 可以用的日期物件)
     $now = new DateTime();
     $temp_time = new DateTime($row['temp_time']);

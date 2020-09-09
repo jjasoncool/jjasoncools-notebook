@@ -10,10 +10,15 @@
   `PermitRootLogin no`
   3. 最後輸入以下指令重新啟動 sshd：\
   `systemctl restart sshd.service`
+  - 指令自動完成
+  `yum install bash-completion*`
 
 - **最小型安裝**設定螢幕省電
-  - `setterm --blank 3 --powerdown 5 --powersave powerdown`
-  - 可以將此行命令放至服務中讓開機可被執行
+  - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
+  - `setterm --term=linux --blank 3 --powerdown 5 --powersave powerdown >> /var/log/crontab/screenblank.log 2>&1`
+  - 可以將此行命令放至crontab中讓開機可被執行 (使用 root)
+  - `@reboot` 參數代表開機會執行的動作
+  - `@reboot /usr/local/sbin/screenblank.sh`
 
 - 安裝**桌面GUI**
   - `yum groupinstall GNOME "X Window System" fonts`
@@ -109,6 +114,18 @@
     - 使用 `imsettings-switch fcitx`
 
 - 安裝可以遠端rdp的client端 `sudo dnf install remmina`
+  - centos 8 要額外執行指令 `dnf copr enable castor/remmina`
+  - 關於 copr 額外套件說明:
+    - First, make sure you have installed dnf core plugins:\
+        `dnf install dnf-plugins-core`
+    - Enable your repository:\
+        `dnf copr enable your_name/test-project`
+    - And install the package:\
+        `dnf install package`
+    - To uninstall your package:\
+        `dnf remove package`
+    - And to disable your repository:\
+        `dnf copr disable your_name/test-project`
 - 要解h264問題直接安裝vlc撥放器
 
 - **home底下資料夾語言**
@@ -469,6 +486,11 @@
 - /boot 不可以使用 XFS 模式，因為grub2 無法辨識 XFS 硬碟格式
 
 ### 基本設定 ###
+- 升級套件(僅升級目前套件，不解決相關依賴)
+`sudo apt-get update && sudo apt-get upgrade`
+- 智能升級套件(通過新版本自動處理不斷變化的依賴關係)
+`sudo apt-get dist-upgrade`
+
 - H.264 libary 安裝\
 `$ sudo apt-get install gstreamer1.0-libav`
 
@@ -479,21 +501,6 @@
 `sudo update-alternatives --set editor [程式路徑]`
 
 ### 輸入法 ###
-  - HIME **KDE 不適用**
-    `sudo apt-get install hime`
-    `/usr/bin/gnome-language-selector`
-    修改鍵盤輸入法系統為「HIME」(預設開啟方法為 ctrl+space)
-    在系統選單裡找到並開啟「HIME 輸入法設定」
-    修改以下選項
-
-    1. 取消勾選「按下 Capslock 時輸出小寫英數字」:意思是若有按「Caps Lock 鍵」會變大寫英文
-    2. 選擇「輸入空白」:否則按空白會變成選字功能
-    3. 取消「詞音輸入預選詞視窗」:否則會像舊注音
-    4. 勾選「輸入注音聲調符號」
-    5. 取消勾選「按下 ↑ 鍵查詢近似音」:新注音沒這功能，若你需要可以留著
-    6. 緩衝區大小調至最大 (90)
-    7. 勾選「使用巨大 UTF-8 字集:勾選這個選項，就可以打出很多原本不能打出來的字
-
   - 通用解 fcitx 配套新酷音
     `sudo apt install fcitx fcitx-chewing`
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
