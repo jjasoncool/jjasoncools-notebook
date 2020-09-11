@@ -554,6 +554,12 @@
 
     date_default_timezone_set ( string $timezone_identifier )
     >   在其中一支程式內套用選定時區，不影響其他程式碼
+
+  - DateTimeImmutable 物件與 DateTime 有何不同?
+    - DateTime behaves the same as DateTimeImmutable except objects are modified itself when modification methods such as DateTime::modify() are called.
+    - 從字面上解釋，不難理解 DateTimeImmutable 為保留初始值的作法，常常發現 DateTime 物件往往經過方法修改過後，一開始定義的初始值也會被連同修改，在複雜的程式碼經過多次運算後，往往會造成問題
+
+
   - DateTime Object
     (object)
     ```php
@@ -565,7 +571,8 @@
     $temp_time->modify('+3 day');
     echo $temp_time->format('Y-m-d H:i:s');
     echo $now < $temp_time;
-    // datetime 常用的函數 (php 5.3以後)
+    // DateTime 常用的函數 (php 5.3以後)
+    // DateTimeImmutable 常用的函數 (php 5.5以後)
 
     ```
 

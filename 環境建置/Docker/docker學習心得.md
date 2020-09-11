@@ -6,13 +6,19 @@
 - 基本上安裝好docker後，僅會有root在docker的群組權限之內，因此若要讓一般或者其他帳號使用
   - 需要將使用者加入docker群組
     `usermod -aG docker $USER`
+    `gpasswd -a $USER docker`
+  - 瀏覽使用者群組
+    `groups [使用者名稱]`
+  - 需要將使用者移除docker群組
+    `gpasswd -d $USER docker`
 
 ## 基本指令 ##
 ### 映像(images) ###
   - 搜尋要安裝的映像名稱
     `docker search contos`
-  - 下載要安裝的映像名稱
+  - 下載要安裝的映像名稱 (加註 tag 可以指定版本)
     `docker pull contos`
+    `docker pull contos:6.10`
   - 查詢目前下載image
     `docker images`
   - 刪除目前下載image
@@ -22,19 +28,23 @@
   - 查詢目前安裝容器
     `docker ps -a`
   - 創建並執行容器
-    `docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin --name dockermariadb mariadb`
+    `docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin --name dockermariadb mariadb:latest`
+    `docker run -d -it --name dk_centos centos:latest`
   - 執行目前已存在之容器
     `docker start my_container`
   - 停止執行容器
     `docker stop my_container`
   - 進入容器指令介面
-    `docker exec -it 容器Id bash`
+    `docker exec -it [容器Id] bash`
 
 ### 網路(network) ###
   - 取得 container 在 host 內的 ip
     `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id`
+    `docker inspect [containerID] | grep "IPAddress"`
   - 容器可連外網
     - 一般來說 container 都是與 host 網路隔絕，除非有 **port mapping** 或者下 `--network host` 參數
+    - 防火牆問題
+      1. 將 docker 網卡加入信任清單 `firewall-cmd --permanent --zone=trusted --change-interface=docker0 && firewall-cmd --reload`
 
     - DNS問題
       1. 容器要想存取外部網路，需要本地系統的轉發支援。在Linux 系統中，檢查轉發是否打開。
@@ -51,3 +61,12 @@
 
 
 ## 指令參數說明 ##
+- **docker run**
+
+    `--restart` 當 docker 服務重啟或者重新啟動容器時，此設定可影響 container 的動作
+    | flag           | description                                   |
+    | -------------- | --------------------------------------------- |
+    | no             | 預設不重啟 container                          |
+    | on-failure     | 重啟 container 當錯誤碼 非0值時               |
+    | always         | 總是重啟 container 當守護進程重啟或是手動重啟 |
+    | unless-stopped | 只會在手動停止container 時重啟                |

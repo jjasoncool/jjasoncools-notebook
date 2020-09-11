@@ -1,3 +1,4 @@
+## CENTOS ##
 ### 基本指令 ###
 - 系統關機/重新啟動
     >shutdown [OPTION] TIME [MESSAGE]
@@ -39,6 +40,16 @@
 - 設定權限
     `chmod [權限模式] [檔案]`
 
+- 防火牆
+  - iptables
+  - firewall-cmd
+
+### 網路 ###
+- 檢查是否有通
+  - ping
+  - telnet
+- 查看網卡
+    `nmcli connection show`
 
 ### 排程 ###
 - 設定排程 (for user)
