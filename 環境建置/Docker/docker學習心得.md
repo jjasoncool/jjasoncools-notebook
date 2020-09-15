@@ -37,6 +37,12 @@
   - 進入容器指令介面
     `docker exec -it [容器Id] bash`
 
+### 容器(volume) ###
+  - 新增儲存倉庫
+    `docker volume create [volume_name]`
+  - 都會存放在 host 特定位置 **/var/lib/docker/volumes/**
+
+
 ### 網路(network) ###
   - 取得 container 在 host 內的 ip
     `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id`
@@ -57,16 +63,32 @@
 
 - LAMP
   - mariadb
-    `docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin --name dockermariadb mariadb`
+    ```
+    docker volume create mariadb_conf
+    docker volume create mariadb_data
+    docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin --name dockermariadb --restart always -v mariadb_conf:/etc/mysql -v mariadb_data:/var/lib/mysql mariadb:latest
+    ```
 
 
 ## 指令參數說明 ##
-- **docker run**
+- **docker volumn**
+  - `create` 創建volume
+    - `-o` 其他選項(但目前還沒用到)
+  - `inspect` 列出詳細資訊關於某個 volume
+  - `ls` 列出volume
+  - `prune` 刪除所有沒用到的volume
+  - `rm` 刪除一個或多個volume
 
-    `--restart` 當 docker 服務重啟或者重新啟動容器時，此設定可影響 container 的動作
-    | flag           | description                                   |
-    | -------------- | --------------------------------------------- |
-    | no             | 預設不重啟 container                          |
-    | on-failure     | 重啟 container 當錯誤碼 非0值時               |
-    | always         | 總是重啟 container 當守護進程重啟或是手動重啟 |
-    | unless-stopped | 只會在手動停止container 時重啟                |
+- **docker run**
+  - `--rm` 暫時執行，若退出容器container即刪除
+  - `-d` 在背景執行
+  - `-name` 別名
+  - `--restart` 當 docker 服務重啟或者重新啟動容器時，此設定可影響 container 的動作
+    | flag           | description                                                       |
+    | -------------- | ----------------------------------------------------------------- |
+    | no             | 預設不重啟 container                                              |
+    | on-failure     | 重啟 container 當錯誤碼 非0值時(也就是出錯才重啟，重開機不會重啟) |
+    | always         | 總是重啟 container 當守護進程重啟或是手動重啟                     |
+    | unless-stopped | 只會在手動停止container 時重啟                                    |
+  - `-v` volume 將 container 中的一個區域對照到本機中 [host 路徑或 volume 名稱]:[container 路徑]:[options]
+    - *options* {rw:正常讀寫, ro:唯讀 (Note that the folder is then read-only in the container and read-write on the host)}

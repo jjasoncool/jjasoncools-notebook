@@ -15,7 +15,7 @@
 
 - **最小型安裝**設定螢幕省電
   - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
-  - `setterm --term=linux --blank 3 --powerdown 5 --powersave powerdown >> /var/log/crontab/screenblank.log 2>&1`
+  - `setterm --term linux --blank 3 --powerdown 5 --powersave powerdown >> /var/log/crontab/screenblank.log 2>&1`
   - 可以將此行命令放至crontab中讓開機可被執行 (使用 root)
   - `@reboot` 參數代表開機會執行的動作
   - `@reboot /usr/local/sbin/screenblank.sh`
@@ -486,6 +486,12 @@
 - /boot 不可以使用 XFS 模式，因為grub2 無法辨識 XFS 硬碟格式
 
 ### 基本設定 ###
+- add repo
+``
+- remove repo
+remove the ppa file from **/etc/apt/sources.list.d**
+Or, edit the **/etc/apt/sources.list**
+
 - 升級套件(僅升級目前套件，不解決相關依賴)
 `sudo apt-get update && sudo apt-get upgrade`
 - 智能升級套件(通過新版本自動處理不斷變化的依賴關係)
@@ -505,7 +511,6 @@
     `sudo apt install fcitx fcitx-chewing`
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
 
-
 - 移除已安裝的windows程式
 `wine uninstaller`
 
@@ -515,9 +520,3 @@
 
 - For Ubuntu, this PPA provides the latest stable upstream Git version
 `add-apt-repository ppa:git-core/ppa # apt update; apt install git`
-
-### apache ###
-
-### Mysql(MariaDB) ###
-
-### PHP ###

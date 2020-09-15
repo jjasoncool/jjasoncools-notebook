@@ -222,6 +222,9 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
 >   `git rebase -i `
 
+## 衝突 ##
+-
+
 ## 移除版控 ##
 使用 .gitignore 檔案管理，若將規則加入後仍有追蹤檔案，代表該檔案已被追蹤，需要先將其從git移除
 .gitignore必須放在控管主目錄之下
