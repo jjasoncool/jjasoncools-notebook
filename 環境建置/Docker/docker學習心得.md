@@ -47,8 +47,9 @@
   - 取得 container 在 host 內的 ip
     `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id`
     `docker inspect [containerID] | grep "IPAddress"`
+
   - 容器可連外網
-    - 一般來說 container 都是與 host 網路隔絕，除非有 **port mapping** 或者下 `--network host` 參數
+    - 一般來說 container 不會直接使用 host 的網路，除非有 **port mapping** 或者下 `--network host` 參數，否則都是透過 host 內的 docker0網卡互相溝通
     - 防火牆問題
       1. 將 docker 網卡加入信任清單 `firewall-cmd --permanent --zone=trusted --change-interface=docker0 && firewall-cmd --reload`
 
@@ -60,6 +61,8 @@
           `sysctl -w net.ipv4.ip_forward=1`
       3. 如果在啟動 Docker 服務的時候設定 --ip-forward=true, Docker 就會自動設定系統的 ip_forward 參數為 1。
       4. 檢查 iptables 是否有開放 docker 可連線至外網
+
+  - 容器互相連接
 
 - LAMP
   - mariadb
@@ -92,3 +95,13 @@
     | unless-stopped | 只會在手動停止container 時重啟                                    |
   - `-v` volume 將 container 中的一個區域對照到本機中 [host 路徑或 volume 名稱]:[container 路徑]:[options]
     - *options* {rw:正常讀寫, ro:唯讀 (Note that the folder is then read-only in the container and read-write on the host)}
+
+
+## docker-compose ##
+- 安裝
+- x86_64
+  - `sudo curl -L "https://github.com/docker/compose/releases/download/1.27.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+  - `sudo chmod +x /usr/local/bin/docker-compose`
+- arm
+  - `sudo curl -L --fail https://github.com/docker/compose/releases/download/1.27.2/run.sh -o /usr/local/bin/docker-compose`
+  - `sudo chmod +x /usr/local/bin/docker-compose`

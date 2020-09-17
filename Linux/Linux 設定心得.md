@@ -112,6 +112,7 @@
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
     - centos 使用 gnome 介面的話，可使用 `dnf install im-choose`
     - 使用 `imsettings-switch fcitx`
+    - 很酷的功能 ctrl+： 可以有剪貼簿暫存功能
 
 - 安裝可以遠端rdp的client端 `sudo dnf install remmina`
   - centos 8 要額外執行指令 `dnf copr enable castor/remmina`

@@ -4,8 +4,8 @@
 ----------------------------------------
 ## 開始使用 ##
 在你安裝 Git 後首先應該做的事是設定使用者名稱及電子郵件。 這一點非常重要，因為每次 Git 的提交會使用這些資訊，而且提交後不能再被修改：
->   `git config --global user.name "John Doe"`\
->   `git config --global user.email johndoe@example.com`
+>   `git config --global user.name "jjasoncool"`\
+>   `git config --global user.email forwork.jan@gmail.com`
 
 再次提醒，若你有傳遞 --global 參數，只需要做這工作一次，因為在此系統，不論 Git 做任何事都會採用此資訊。
 若你想指定不同的名字或電子郵件給特定的專案，只需要在該專案目錄內執行此命令，並確定未加上 --global 參數。
@@ -46,6 +46,40 @@ input 只轉換 push 的時候的 CRLF 為 LF
 >   `git clone https://github.com/libgit2/libgit2 mylibgit`
 
 這個命令做的事與上一個命令大致相同，只不過在本地創建的倉庫名字變為 mylibgit
+
+## 連線到server repository(簡稱repo) ##
+>   `git remote -v` 可以查閱目前有遠端連接的repo\
+>   `git remote add <repo名稱> <repo連結>`
+>   `git remote rm <repo名稱>`
+
+這個命令會連到遠端專案，然後從遠端專案中將你還沒有的資料全部拉下來；
+執行完成後，你應該會有那個遠端版本庫中所有分支的參照（reference）
+（譯註：再次強調，遠端的分支在本地端的分身——遠端追蹤分支），可以隨時用來合併或檢視
+>   `git fetch <repo名稱>`
+
+刪除本地遠端分支 (config 可以設定)
+>   `git config --global fetch.prune true`
+>   `git fetch --prune <repo名稱>`
+
+從遠端拉資料
+>   `git checkout --track <remote>/<branch_name>`
+>   `git pull <remote> <branch_name>`
+
+更新至遠端
+-u : 若成功 push 之後，該 branch 將會被設定為預設 track 參照
+-f : 強制覆寫遠端 git 資料
+>   `git push -u <remote> <branch_name>`
+
+遠端名稱更動
+
+    你可以執行 git remote rename 來重新命名遠端的簡稱。
+    例如：如果你想要將 pb 重新命名為 paul，
+    你可以這樣使用 git remote rename：
+
+>   `git remote rename pb paul`
+
+移除遠端
+>   `git remote rm paul`
 
 ## gitignore ##
 
@@ -231,40 +265,6 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 使用 **git rm** 移除git版控檔案
 -r :遞迴刪除，資料夾下所有檔案都刪掉
 --cached :僅刪除git的版控追蹤，並不會刪除到實體檔案 (通常必加，不然檔案就會真的被刪掉了)
-
-## 連線到server repository(簡稱repo) ##
->   `git remote -v` 可以查閱目前有遠端連接的repo\
->   `git remote add <repo名稱> <repo連結>`
->   `git remote rm <repo名稱>`
-
-這個命令會連到遠端專案，然後從遠端專案中將你還沒有的資料全部拉下來；
-執行完成後，你應該會有那個遠端版本庫中所有分支的參照（reference）
-（譯註：再次強調，遠端的分支在本地端的分身——遠端追蹤分支），可以隨時用來合併或檢視
->   `git fetch <repo名稱>`
-
-刪除本地遠端分支 (config 可以設定)
->   `git config --global fetch.prune true`
->   `git fetch --prune <repo名稱>`
-
-從遠端拉資料
->   `git checkout --track <remote>/<branch_name>`
->   `git pull <remote> <branch_name>`
-
-更新至遠端
--u : 若成功 push 之後，該 branch 將會被設定為預設 track 參照
--f : 強制覆寫遠端 git 資料
->   `git push -u <remote> <branch_name>`
-
-遠端名稱更動
-
-    你可以執行 git remote rename 來重新命名遠端的簡稱。
-    例如：如果你想要將 pb 重新命名為 paul，
-    你可以這樣使用 git remote rename：
-
->   `git remote rename pb paul`
-
-移除遠端
->   `git remote rm paul`
 
 ## add將本地已有檔案 與線上commit歷程合併
 >   `git reset --hard <remote>/<branch_name>`

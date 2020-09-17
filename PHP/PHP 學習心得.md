@@ -571,7 +571,13 @@
     $temp_time->modify('+3 day');
     echo $temp_time->format('Y-m-d H:i:s');
     echo $now < $temp_time;
+
+    // 輸出日期差異總天數
+    $date_end->diff($date_start)->format('%a');
+
     // DateTime 常用的函數 (php 5.3以後)
+
+
     // DateTimeImmutable 常用的函數 (php 5.5以後)
 
     ```
