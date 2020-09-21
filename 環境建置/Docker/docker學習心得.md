@@ -1,7 +1,7 @@
 ## 新手上路 ##
 - 安裝 [document](https://docs.docker.com/engine/install/centos/)
     - CENTOS 8 需要依賴 **containerd.io**
-    - `dnf install -y https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.13-3.2.el7.x86_64.rpm`
+    - `dnf install -y https://download.docker.com/linux/centos/8/$(uname -m)/stable/Packages/containerd.io-1.3.7-3.1.el8.$(uname -m).rpm`
 
 - 基本上安裝好docker後，僅會有root在docker的群組權限之內，因此若要讓一般或者其他帳號使用
   - 需要將使用者加入docker群組
@@ -71,6 +71,15 @@
     docker volume create mariadb_data
     docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin --name dockermariadb --restart always -v mariadb_conf:/etc/mysql -v mariadb_data:/var/lib/mysql mariadb:latest
     ```
+
+  - Apache
+    ```
+    ```
+
+  - PHP
+    ```
+    ```
+
 
 
 ## 指令參數說明 ##

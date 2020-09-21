@@ -15,7 +15,8 @@
 
 - **最小型安裝**設定螢幕省電
   - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
-  - `setterm --term linux --blank 3 --powerdown 5 --powersave powerdown >> /var/log/crontab/screenblank.log 2>&1`
+  - `setterm --term linux --blank 3 --powerdown 5 >> /var/log/crontab/screenblank.log 2>&1 > /dev/tty0`
+  - `echo hello world! > /dev/tty0` 可以知道 `> /dev/tty0` 可以將指令輸出至螢幕內
   - 可以將此行命令放至crontab中讓開機可被執行 (使用 root)
   - `@reboot` 參數代表開機會執行的動作
   - `@reboot /usr/local/sbin/screenblank.sh`
