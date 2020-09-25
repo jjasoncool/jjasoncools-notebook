@@ -1092,6 +1092,11 @@ $spreadsheet->getActiveSheet()->getColumnDimension(Cell\Coordinate::stringFromCo
     >   The /e modifier is deprecated, use preg_replace_callback instead
     >   主要為使用 /正規表示式/e 被棄用，被選取項目應該用 preg_replace_callback 來對被選取的字串做進階處理
 
+- each ( array &$array ) : `array`
+    >   傳回陣列中目前的鍵／值對，並且將陣列指標向前移動一步
+    >   在執行 each() 之後，陣列指標將停留在陣列中的下一個單元或者當碰到陣列結尾時停留在最后一個單元。如果要再用 each 重新遍歷陣列，必須使用 reset()
+    >   **return** 鍵值對被傳回為四個單元的陣列，鍵名為0，1，key和 value。單元 0 和 key 包含有陣列單元的鍵名，1 和 value 包含有資料。
+    >   常配合 list() 用為取鍵值對的方法，
 ----------------------------------------
         PHP 新方法與新用法
 ----------------------------------------

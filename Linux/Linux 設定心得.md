@@ -486,6 +486,8 @@
 
 ### 安裝注意 ###
 - /boot 不可以使用 XFS 模式，因為grub2 無法辨識 XFS 硬碟格式
+- 移除 pub key `sudo apt-key del <id>`
+  - id 用 apt-key list 列出，取後兩段 為id
 
 ### 基本設定 ###
 - add repo
@@ -522,3 +524,5 @@ Or, edit the **/etc/apt/sources.list**
 
 - For Ubuntu, this PPA provides the latest stable upstream Git version
 `add-apt-repository ppa:git-core/ppa # apt update; apt install git`
+
+### raspberry pi 專屬 ###

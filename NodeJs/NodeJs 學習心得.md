@@ -9,6 +9,8 @@
 ## nodejs 套件管理 yarn ##
   - 安裝
     `sudo apt update && sudo apt install --no-install-recommends yarn`
+  - yarn 安裝套件
+    ``
 
 ## 開發環境 ##
 - nest
