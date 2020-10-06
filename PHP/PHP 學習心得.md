@@ -96,7 +96,7 @@
     >   ※缺點：UTF8或者中文字有可能會被截斷，因UTF8為3個位元組，BIG5為兩個位元組
     >   基本上此函數雷同於substr，但是確保了字元的完整性
 
-    (int) strcmp ($字串1, $字串2)
+  - strcmp ( string $str1 , string $str2 ) : `int`
     >   回傳值如果為0則字串相等
     >   如果字串1比字串2短，回傳值小於0
     >   如果字串1比字串2長，回傳值大於0
@@ -108,16 +108,16 @@
     >   回傳字串長度
     >   mb_strlen 為可指定編碼
 
-    (int) preg_match ( "正規表示式尋找字串" , "被尋找字串" [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
+  - (int) preg_match ( "正規表示式尋找字串" , "被尋找字串" [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
     >   回傳匹配字串位置，使用正規表示式
     ```php
     preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$checkdate)
     ```
 
-    ucfirst ( string $str ) : string
+  - ucfirst ( string $str ) : string
     >   將英文字母第一個字換成大寫，可以配合lowercase
 
-    lcfirst ( string $str ) : string
+  - lcfirst ( string $str ) : string
     >   將英文字母第一個字換成小寫，可以配合uppercase
 
   - eval ( string $code ) : mixed
@@ -177,8 +177,8 @@
     >   如果 **from 與 to 長度不相等**，那麼多餘的字符部分將被忽略。 str 的長度將會和返回的值一樣
     >   此方法不會重複更新，只會搜尋有對應的值做一次取代 (這是與 **str_replace()** 的不同點)
 
-    (string) htmlentities ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get("default_charset") [, bool $double_encode = TRUE ]]] )
-    (string) html_entity_decode ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get("default_charset") ]] )
+  - htmlentities ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get("default_charset") [, bool $double_encode = TRUE ]]] ) : `string`
+    html_entity_decode ( string $string [, int $flags = ENT_COMPAT | ENT_HTML401 [, string $encoding = ini_get("default_charset") ]] ) : `string`
     >   php 5.2 這邊有雷，會把utf8的東西全部轉成亂碼
     >   將html特殊字符轉換為對應的characters
     >   htmlentities 轉換所有含有對應“html實體”的特殊字元，比如貨幣表示符號歐元英鎊等、版權符號等
@@ -219,11 +219,11 @@
     >   將跳脫字元的字符還原成沒有跳脫的樣式
     >   與get_magic_quotes_gpc有關
 
-    (string) nl2br ( string $string [, bool $is_xhtml = TRUE ] )
+  - nl2br ( string $string [, bool $is_xhtml = TRUE ] ) : `string`
     >   幫助像是textarea的換行符 \n 轉換成為html <br>
     >   在5.3版本之後才有 $is_xhtml，若此值為true則返回<br />
 
-    strrchr ( string $被擷取字串 , mixed $needle ) : string
+  - strrchr ( string $被擷取字串 , mixed $needle ) : `string`
     >   返回最後 needle 的字串作為開始處，直到字串末尾
     >   可以用來做最後的檔名搜尋或是資料夾名稱確認
 
@@ -576,9 +576,14 @@
     $date_end->diff($date_start)->format('%a');
 
     // DateTime 常用的函數 (php 5.3以後)
-
+    // 轉換成DateTimeImmutable
+    $date = new DateTime("2014-06-20 11:45 Europe/London");
+    $immutable = DateTimeImmutable::createFromMutable($date);
 
     // DateTimeImmutable 常用的函數 (php 5.5以後)
+    // 轉換成DateTime
+    $date = new DateTimeImmutable("2014-06-20 11:45 Europe/London");
+    $mutable = DateTime::createFromImmutable( $date );
 
     ```
 
@@ -1010,6 +1015,10 @@ class 類名 extends 父類名 implements 介面名稱
     >   可以針對陣列內不同的資料做不同的過濾， $definition 可以對應輸入資料位置
     >   $add_empty 會將 null 塞入不存在的陣列直
 
+  - filter_input
+
+- 檔案驗證 MIME
+  - finfo_open
 
 - 使用 include php 網頁時相關技巧；
     >   可以將需要被include的網頁放置在document root之外的資料夾內
@@ -1092,6 +1101,7 @@ $spreadsheet->getActiveSheet()->getColumnDimension(Cell\Coordinate::stringFromCo
     >   The /e modifier is deprecated, use preg_replace_callback instead
     >   主要為使用 /正規表示式/e 被棄用，被選取項目應該用 preg_replace_callback 來對被選取的字串做進階處理
 
+**PHP 7.2棄用**
 - each ( array &$array ) : `array`
     >   傳回陣列中目前的鍵／值對，並且將陣列指標向前移動一步
     >   在執行 each() 之後，陣列指標將停留在陣列中的下一個單元或者當碰到陣列結尾時停留在最后一個單元。如果要再用 each 重新遍歷陣列，必須使用 reset()

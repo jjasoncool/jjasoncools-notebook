@@ -110,6 +110,7 @@
 
 - 通用解 **fcitx 輸入法殼層** 配套新酷音
     `sudo dnf install fcitx fcitx-configtool fcitx-chewing`
+    - fcitx-configtool 可能會找不到，可以到 fedora prject 下載 rpm 安裝
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
     - centos 使用 gnome 介面的話，可使用 `dnf install im-choose`
     - 使用 `imsettings-switch fcitx`
@@ -171,7 +172,7 @@
   - 注意，centos 的selinux 原則會管制 http 只能走哪些port `semanage port -l | grep http_port_t`
   - 若要加上特殊port 需要用 `semanage port -a -t http_port_t  -p tcp 58588`
   - 記得先修改haproxy內的conf設定，並將DNS指向該伺服器，才可以順利驗證憑證
-  - **產憑證指令** `certbot certonly --webroot -w /usr/share/nginx/html/ -v --email canceraway@gmail.com --agree-tos -d test.canceraway.org.tw`
+  - **產憑證指令** `certbot certonly --webroot -w /usr/share/nginx/html/ -v --email test@gmail.com --agree-tos -d test.domain.com`
 
 ### 使用者隔離(用分開的使用者執行不同的service) ###
 - 創建系統服務使用者

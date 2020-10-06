@@ -55,10 +55,10 @@
 
     - DNS問題
       1. 容器要想存取外部網路，需要本地系統的轉發支援。在Linux 系統中，檢查轉發是否打開。
-          `sysctl net.ipv4.ip_forward`
-          `net.ipv4.ip_forward = 1`
+        `sysctl net.ipv4.ip_forward`
+        `net.ipv4.ip_forward = 1`
       2. 如果為 0，說明沒有開啟轉發，則需要手動打開。
-          `sysctl -w net.ipv4.ip_forward=1`
+        `sysctl -w net.ipv4.ip_forward=1`
       3. 如果在啟動 Docker 服務的時候設定 --ip-forward=true, Docker 就會自動設定系統的 ip_forward 參數為 1。
       4. 檢查 iptables 是否有開放 docker 可連線至外網
 
@@ -80,6 +80,9 @@
     ```
     ```
 
+  - docker-compose
+    ```yml
+    ```
 
 
 ## 指令參數說明 ##
@@ -117,3 +120,6 @@
 
 - 設定檔 (.env) file
   - 此設定檔可以預先設定需要使用的程式以及版本
+    ```env
+
+    ```

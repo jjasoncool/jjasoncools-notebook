@@ -208,6 +208,8 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
 
     -- PRIMARY KEY (PK)
     ALTER TABLE `table` ADD PRIMARY KEY(id);
+    ALTER TABLE `table` ADD PRIMARY KEY(id, id2);
+        -- 以兩個欄位當作 primay key
     -- UNIQUE KEY (UK)
     ALTER TABLE `risk` ADD UNIQUE INDEX `IMO_NO` (`IMO_NO`);
 

@@ -1,4 +1,3 @@
-## CENTOS ##
 ### 基本指令 ###
 - 系統關機/重新啟動
     >shutdown [OPTION] TIME [MESSAGE]
@@ -19,7 +18,9 @@
     `cat filename`
 
 - 刪除檔案或資料夾
-    **r:遞迴**
+    | rm  | 說明 |
+    | --- | ---- |
+    | -r  | 遞迴 |
   - 自動回答yes
     `yes | rm -r folder`
   - 強制刪除(不會跳出警告)
@@ -36,13 +37,19 @@
   - 編輯模式
   - 命令模式(打關鍵前導符號 `: ? /`)
 
+
 ### 權限 ###
 - 設定權限
     `chmod [權限模式] [檔案]`
 
 - 防火牆
   - iptables
-  - firewall-cmd
+  - firewall-cmd *(centos)*
+  - ufw *(ubuntu)*
+
+### 套件管理 ###
+- dnf / yum *(centos)*
+- apt / apt-get *(ubuntu)*
 
 ### 網路 ###
 - 檢查是否有通

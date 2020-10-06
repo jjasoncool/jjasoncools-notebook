@@ -64,6 +64,8 @@ input 只轉換 push 的時候的 CRLF 為 LF
 從遠端拉資料
 >   `git checkout --track <remote>/<branch_name>`
 >   `git pull <remote> <branch_name>`
+拉錯分支可以這樣返回
+>   `git reset <remote> <branch_name>`
 
 更新至遠端
 -u : 若成功 push 之後，該 branch 將會被設定為預設 track 參照
@@ -251,10 +253,13 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
 ## 合併分支 ##
 - merge
+  - 在 merge 的時候，合併後變成一個 commit 紀錄
+    >   `git merge --squash <branch_name>`
 
 - rebase
-
->   `git rebase -i `
+  - 合併 commits
+    >   `git rebase -i <commit hash>`
+    可以依據內容選擇合併 commit 或是保留
 
 ## 衝突 ##
 -
