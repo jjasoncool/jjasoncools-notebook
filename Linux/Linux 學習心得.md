@@ -17,6 +17,10 @@
 - 讀檔內容show在command line裡面
     `cat filename`
 
+- 修改檔案內容
+  - **sed**
+  - `sed -i 's/open-vsx.org\/vscode\/gallery/marketplace.visualstudio.com\/_apis\/public\/gallery/g; s/open-vsx.org\/vscode\/item/marketplace.visualstudio.com\/items/g;' /usr/share/codium/resources/app/product.json`
+
 - 刪除檔案或資料夾
     | rm  | 說明 |
     | --- | ---- |

@@ -21,13 +21,17 @@
   - `@reboot` 參數代表開機會執行的動作
   - `@reboot /usr/local/sbin/screenblank.sh`
 
+- **repository**
+  - 列出目前已安裝套件
+    `rpm -qa`
+    `dnf list --installed gnome*`
+  - 列出自訂新增的 repository
+    - `yum repolist`
+    - 刪除或新增設定檔 `/etc/yum.repos.d/`
+
 - 安裝**桌面GUI**
   - `yum groupinstall GNOME "X Window System" fonts`
   - GNOME 一些好用管理工具 `yum install gnome-tweaks`
-
-- 列出目前已安裝套件
-    `rpm -qa`
-    `dnf list --installed gnome*`
 
 - 安裝**xrdp** (方便可以使用windows rdp)
   - `yum install epel-release xrdp xorgxrdp -y`

@@ -1,38 +1,79 @@
-----------------------------------------
+
             一般語法參考
-----------------------------------------
-- cli (command line 部分)
+
+## cli (command line 部分) ##
   - -v 查看目前版本
   - --ini 可以查看目前php 使用哪個設定檔
   - -c (ini路徑) 可以指定 php 使用哪個地方的設定檔
     - 多版本PHP暫時找到的替代執行方式，linux可以透過 configure 指定 php.ini 位置
     - 但主要的 path 設定還是需要找到共存方法
     - `D:\xampp\php-7.3.14\php -c "D:\xampp\php-7.3.14\php.ini" D:\xampp\php-7.3.14\composer.phar`
+  - -r 可以直接執行 php 語法，Run PHP code without using script tags <?..?>
+    - `php -r "print_r(openssl_get_cipher_methods());"`
 
-- 實用常數
+## 實用常數 ##
   - **PHP_EOL** 依照平台不同使用不同的 End Of Line symbol
   - **PHP_OS** 回傳作業系統類型，可以拿來判斷 linux 或是 windows
   - **DIRECTORY_SEPARATOR** 依據作業系統使用不同分隔符
   - **$_SERVER['HTTPS']** 可以拿來判斷伺服器是否有開啟 https
 
-- super globals(超域變數)
+## super globals(超域變數) ##
+- `$_SERVER` is an array containing information such as headers, paths, and script locations.
+  - 若 PHP 以 command line 執行，則部分參數將不存在，例如: SERVER_NAME, DOCUMENT_ROOT, HTTP_HOST 等等與瀏覽器相關變量
+- `$_GET` 當使用 URL 的變數(query string)請求時，可以取出的關聯變數陣列
+- `$_POST` 當表單使用 application/x-www-form-urlencoded 或 multipart/form-data 當作編碼並使用 HTTP POST 方法請求時，將會得到的關聯變數陣列
+- `$_FILE` 當物件使用 POST 方法被上傳至該php腳本時，此陣列將會產出該物件的狀態與相關資訊，包含以下:
+  - *name*: 原始檔名
+  - *type*: mime 類型
+  - *size*: 檔案大小(以byte計)
+  - *tmp_name*: 暫時存在伺服器上的暫存檔檔名
+  - *error*: 上傳中有無任何錯誤
+    ```php
+    $phpFileUploadErrors = array(
+        0 => 'There is no error, the file uploaded with success',
+        1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+        2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+        3 => 'The uploaded file was only partially uploaded',
+        4 => 'No file was uploaded',
+        6 => 'Missing a temporary folder',
+        7 => 'Failed to write file to disk.',
+        8 => 'A PHP extension stopped the file upload.',
+    );
+    ```
+  - `$_COOKIE` An associative array of variables passed to the current script via HTTP Cookies.
+  - `$_SESSION` An associative array containing session variables
+  - `$_ENV` 與環境變量之相關的關聯陣列，若是空值，則與 php.ini variables_order 設定有關
+    - getenv ( string $varname [, bool $local_only = FALSE ] ) : `string`
+      - 取得目前 server 設定的環境變數，亦可取得使用 putenv 設定之變數
+    - putenv ( string $setting ) : `bool`
+      - 設定暫時的環境變量，該 script 執行完成後，環境變量將變回初始值
+      - 設定方式像是
+        ```php
+        putenv("FOO=BAR");
+        // 空白也會被當作變數名，故此變量與上面的變量不同
+        putenv("FOO =BAR");
+        // set MYVAR to an empty value.  It is in the environment
+        putenv('MYVAR=');
+        // unset MYVAR.  It is removed from the environment
+        putenv('MYVAR');
+        ```
 
-- 整齊的寫法
-    >   運算子前後一定要有空白
-    >   PHP tag 一定單獨佔據一行，並且在Code的最左方
-    >   PHP tag 若在整個都是PHP的文件內，必須省略
+## 整齊的寫法 ##
+- 運算子前後一定要有空白
+- PHP tag 一定單獨佔據一行，並且在Code的最左方
+- PHP tag 若在整個都是PHP的文件內，必須省略最後的 ?>
 ```php
     <?php
         blah
     ?>
 ```
-- 命名規則
-    >   駝峰式寫法(camelCase CamelCase)
-    >   Class ClassName
-    >   function functionName
-    >   parameter parameterName
+## 命名規則 ##
+- 駝峰式寫法(camelCase CamelCase)
+- Class ClassName
+- function functionName
+- parameter parameterName
 
-- 編碼轉換
+## 編碼轉換 ##
   - iconv ( string $in_charset , string $out_charset , string $str ) : string
     >   iconv ("BIG5","UTF-8",$string)
     >   iconv( 來源編碼 , 輸出編碼[//參數:可加可不加] , 字串 )
@@ -66,7 +107,7 @@
     >   特殊符號部分如 + 號或者 ~ 將可以正常轉換
     >   對應 javascript `encodeURIComponent()`
 
-- 字串
+## 字串 ##
   - 字串基本常識
     >   單引號(Single quotes) 內不可以放變數，會將所有東西直接輸出的字串
     >   雙引號(Double quotes) 內可以直接放變數，會解析帶有$符號的變數
@@ -227,7 +268,10 @@
     >   返回最後 needle 的字串作為開始處，直到字串末尾
     >   可以用來做最後的檔名搜尋或是資料夾名稱確認
 
-- 特殊字串處理
+  - str_shuffle ( string $str ) : string
+    >   將字串視為陣列隨機排序
+
+## 特殊字串處理 ##
     imap_rfc822_parse_adrlist ( string $address , string $default_host ) : `array`
     >   將一串電子郵件地址轉換為 **ArrayObject** (PHP5 之後才有ArrayObject)
     >   可參考**class.phpmailer**內使用來檢驗email位址是否正確
@@ -252,20 +296,17 @@
     >   主要用來轉換 querystring 變成陣列輸出
     >   若字串變數含有點或空格，將被轉為底線_
 
-- 數值
+## 數值 ##
   - intval ( mixed $var [, int $base = 10 ] ) : `int`
     >   轉換參數為數值，不可轉換物件，否則將跳出 notice，並返回數值 1
     >   預設為十進制
-
-  - is_numeric ( mixed $var ) : `bool`
-    >   判斷為純數字時，輸出true
 
   - number_format ( float $number [, int $decimals = 0 ] ) : `string`
   - number_format ( float $number , int $decimals = 0 , string $dec_point = "." , string $thousands_sep = "," ) : `string`
     >   如果只給予1~2個參數，小數點為. 千分位為,
     >   決定數字顯示格式，第一個參數為數字變數、第二個參數為小數點數量、第三個參數為小數點顯示符號(依據國情不同)、第四個參數為千分位符號(依據國情不同) 預設四捨五入
 
-- 迴圈與跳出
+## 迴圈與跳出 ##
     break
     >   中斷當前的 for, foreach, while, do-while, switch 結構式
     >   並且可以指令需要中斷多少個巢狀結構，預設值為1，意指中斷當前執行之上述類型結構式
@@ -289,209 +330,216 @@
     ?>
 ```
 
-- 陣列
-  1. 陣列處理
-     - $變數 = array();
-        >   要做push之前一定要先做宣告
-        >   若要避免notice 可使用 array_fill()函數
+## 陣列 ##
+  - $變數 = array();
+    >   要做push之前一定要先做宣告
+    >   若要避免notice 可使用 array_fill()函數
 
-     - list( $要塞入的變數 ) = $array
-        >   將陣列中的值塞入變數之中
-        >   list 只對 key 為數字型態的陣列生效，key從0開始
-        >   php7 後，填入陣列內的排序由最左邊參數開始賦值，php5 之前則相反，不要使用此方法來做為排序的依賴
+  - current ( array $array ) : `mixed`
+    >   Every array has an internal pointer to its "current" element, which is initialized to the first element inserted into the array.
+    >   簡單而言，就是返回目前陣列指針指向之當前的值
 
-     - unset ( mixed $var [, mixed $... ] ) : void
-        >   重置、刪除變數
-        >   但如果在區域function 內 unset 公用變數，則不影響公用變數值，僅在function內unset而已
-        >   若要在function 內 unset 公用變數值，則需使用 unset($GLOBALS["blah"])
+  - list( $要塞入的變數 ) = $array
+    >   將陣列中的值塞入變數之中
+    >   list 只對 key 為數字型態的陣列生效，key從0開始
+    >   php7 後，填入陣列內的排序由最左邊參數開始賦值，php5 之前則相反，不要使用此方法來做為排序的依賴
 
-     - count ( mixed $array_or_countable [, int $mode = COUNT_NORMAL ] ) : `int`
-     - sizeof()
-        >   計算陣列/物件大小、陣列/物件長度
-        >   sizeof() 為 count() 的別名
+  - unset ( mixed $var [, mixed $... ] ) : void
+    >   重置、刪除變數
+    >   但如果在區域function 內 unset 公用變數，則不影響公用變數值，僅在function內unset而已
+    >   若要在function 內 unset 公用變數值，則需使用 unset($GLOBALS["blah"])
 
-     - asort ( array &$array [, int $sort_flags = SORT_REGULAR ] ) : `bool`
-        >   對陣列做排序，關聯 key 值也會依據排序順序改變順序
+  - count ( mixed $array_or_countable [, int $mode = COUNT_NORMAL ] ) : `int`
+  - sizeof()
+    >   計算陣列/物件大小、陣列/物件長度
+    >   sizeof() 為 count() 的別名
 
-     - array_fill ($開始的陣列index, $填滿幾個, $填入值) : `array`
-        >   此函數會使用數字型態index 填滿指定範圍的陣列
-        >   可利用來避免陣列notice，例：
-        ```php
-        $element = !empty( $_POST["dataString"] ) ? explode(",", $_POST["dataString"]) : array_fill(0, 5, '');
-        ```
-        >   亦可用來產出 sql prepared statement 的參數
-        ```php
-        $insParaStr = implode(",", array_fill(0, count($recArray), "?"));
-        ```
+  - asort ( array &$array [, int $sort_flags = SORT_REGULAR ] ) : `bool`
+    >   對陣列做排序，關聯 key 值也會依據排序順序改變順序
 
-     - array_push ( array &$array [, $值1, $值2, ...] ) : `int`
-        >   將值塞入陣列內，但key 只會為數值，可與for迴圈合併使用，可一次塞入多項數值
-        >   若並非要塞入多像數值，建議使用 $變數名稱[] = $值 ，效能較佳
-        >   若要塞入的陣列沒有預先定義為array，則會跳出warning
-        >   回傳值為成功新增的元素數量
+  - array_fill ($開始的陣列index, $填滿幾個, $填入值) : `array`
+    >   此函數會使用數字型態index 填滿指定範圍的陣列
+    >   可利用來避免陣列notice，例：
+    ```php
+    $element = !empty( $_POST["dataString"] ) ? explode(",", $_POST["dataString"]) : array_fill(0, 5, '');
+    ```
+    >   亦可用來產出 sql prepared statement 的參數
+    ```php
+    $insParaStr = implode(",", array_fill(0, count($recArray), "?"));
+    ```
 
-     - array_unshift ( array &$array [, mixed $... ] ) : `int`
-        >   新增項目到陣列清單的開頭
-        >   將元素放至陣列前方，但順序會依照，傳入值的順序整體塞入前方
+  - array_push ( array &$array [, $值1, $值2, ...] ) : `int`
+    >   將值塞入陣列內，但key 只會為數值，可與for迴圈合併使用，可一次塞入多項數值
+    >   若並非要塞入多像數值，建議使用 $變數名稱[] = $值 ，效能較佳
+    >   若要塞入的陣列沒有預先定義為array，則會跳出warning
+    >   回傳值為成功新增的元素數量
 
-     - array_keys ( array $array ) : `array`
-     - array_keys ( array $array , mixed $search_value [, bool $strict = FALSE ] ) : `array`
-        >   回傳一個陣列的所有key值
-        >   若有定義 search_value，此函數將返回符合該值的陣列keys
+  - array_unshift ( array &$array [, mixed $... ] ) : `int`
+    >   新增項目到陣列清單的開頭
+    >   將元素放至陣列前方，但順序會依照，傳入值的順序整體塞入前方
 
-     - array_values ( array $array ) : array
-        >   回傳一個陣列的所有value值
+  - array_keys ( array $array ) : `array`
+  - array_keys ( array $array , mixed $search_value [, bool $strict = FALSE ] ) : `array`
+    >   回傳一個陣列的所有key值
+    >   若有定義 search_value，此函數將返回符合該值的陣列keys
 
-     - array_column ( array $input , mixed $column_key [, mixed $index_key = NULL ] ) : `array`
-        >   回傳二度陣列所有指定的相同 key 為新陣列
-        >   $index_key 則是將，輸入陣列中的另外一個欄位作為新陣列的 key
-        ```php
-        $records = array(
-            array(
-                'id' => 2135,
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-            ),
-            array(
-                'id' => 3245,
-                'first_name' => 'Sally',
-                'last_name' => 'Smith',
-            ),
-        );
-        array_column($records, 'last_name', 'id');
-        // 得到以下結果
-        array(2135 => 'Doe' , 3245 => 'Smith')
-        ```
+  - array_values ( array $array ) : array
+    >   回傳一個陣列的所有value值
+    >   可用來當作重新對數字的 key 重新編號的函數
 
-     - implode ( string $接合字串 , array $陣列 ) : `string`
-        >   回傳將陣列元素使用特定接合字串接合起來的長字串
+  - array_column ( array $input , mixed $column_key [, mixed $index_key = NULL ] ) : `array`
+    >   回傳二度陣列所有指定的相同 key 為新陣列
+    >   $index_key 則是將，輸入陣列中的另外一個欄位作為新陣列的 key
+    ```php
+    $records = array(
+        array(
+            'id' => 2135,
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ),
+        array(
+            'id' => 3245,
+            'first_name' => 'Sally',
+            'last_name' => 'Smith',
+        ),
+    );
+    array_column($records, 'last_name', 'id');
+    // 得到以下結果
+    array(2135 => 'Doe' , 3245 => 'Smith')
+    ```
 
-     - array_filter ( array $傳入陣列 [, callable $被呼叫函數 [, int $flag = 0 ]] ) : `array`
-        >   將陣列的每一個value值傳遞到可以被呼叫的函數內，若函數回傳值為true，則該值將會被保留在回傳陣列之內，且該回傳陣列key值與原先傳入陣列相同
-        >   若沒有被呼叫的函數，則將會過濾掉等效為false值之陣列，若想保留0值時，可利用strlen保留值為0的元素 `array_filter($array, 'strlen')`
+  - implode ( string $接合字串 , array $陣列 ) : `string`
+    >   回傳將陣列元素使用特定接合字串接合起來的長字串
 
-     - array_diff ( array $主要陣列 , array $參考陣列 [, array $... ] ) : `array`
-        >   將主要陣列對照其他參考陣列，此函數回傳主要陣列中存在但不存在於其他參考陣列中的值
-        >   也就是只有主要陣列中特殊值會被保留下來
-        >   即使參考陣列中有其他主要陣列沒有的值，也不會被回傳
+  - array_filter ( array $傳入陣列 [, callable $被呼叫函數 [, int $flag = 0 ]] ) : `array`
+    >   將陣列的每一個value值傳遞到可以被呼叫的函數內，若函數回傳值為true，則該值將會被保留在回傳陣列之內，且該回傳陣列key值與原先傳入陣列相同
+    >   若沒有被呼叫的函數，則將會過濾掉等效為false值之陣列，若想保留0值時，可利用strlen保留值為0的元素 `array_filter($array, 'strlen')`
 
-     - array_diff_key ( array $主要陣列 , array $參考陣列 [, array $... ] ) : `array`
-        >   同上，只是將比較的物件換成 key
+  - array_diff ( array $主要陣列 , array $參考陣列 [, array $... ] ) : `array`
+    >   將主要陣列對照其他參考陣列，此函數回傳主要陣列中存在但不存在於其他參考陣列中的值
+    >   也就是只有主要陣列中特殊值會被保留下來
+    >   即使參考陣列中有其他主要陣列沒有的值，也不會被回傳
 
-     - array_combine ( array $keys , array $values ) : `array`
-        >   合成兩個陣列，成為一個索引與值互相對應的陣列
-        >   其中一個陣列當 key 值，另外的陣列當作陣列值
+  - array_diff_key ( array $主要陣列 , array $參考陣列 [, array $... ] ) : `array`
+    >   同上，只是將比較的物件換成 key
 
-     - array_unique ( array $array [, int $sort_flags = SORT_STRING ] ) : `array`
-        >   將陣列中重複值去除，若陣列兩者比較為重複相同，前者會被保留
-        >   sort_flags，第二個變數用來設定陣列值判斷比較條件
-         - SORT_REGULAR - compare items normally (don't change types)
-         - SORT_NUMERIC - compare items numerically
-         - SORT_STRING - compare items as strings
-         - SORT_LOCALE_STRING - compare items as strings, based on the current locale.
+  - array_combine ( array $keys , array $values ) : `array`
+    >   合成兩個陣列，成為一個索引與值互相對應的陣列
+    >   其中一個陣列當 key 值，另外的陣列當作陣列值
 
-     - array_merge ([ array $... ] ) : `array`
-        >   將陣列合併起來，非陣列元素也可以被合併
-        >   要注意的是若是以數值作為基底的，將會持續附加到後面，並重新賦予新的連續索引值 key
-        >   若是文字的索引，則最後相同索引值的 value 將覆蓋先前相同索引的 value
-        >   注意: 如果要讓相同數字索引以後來的陣列去覆蓋合併的話，直接用 **+** 運算子即可
+  - array_unique ( array $array [, int $sort_flags = SORT_STRING ] ) : `array`
+    >   將陣列中重複值去除，若陣列兩者比較為重複相同，前者會被保留
+    >   sort_flags，第二個變數用來設定陣列值判斷比較條件
+     - SORT_REGULAR - compare items normally (don't change types)
+     - SORT_NUMERIC - compare items numerically
+     - SORT_STRING - compare items as strings
+     - SORT_LOCALE_STRING - compare items as strings, based on the current locale.
 
-     - array_flip  ( array $array ) : `array`
-        >   陣列索引與值做交換
+  - array_merge ([ array $... ] ) : `array`
+    >   將陣列合併起來，非陣列元素也可以被合併
+    >   要注意的是若是以數值作為基底的，將會持續附加到後面，並重新賦予新的連續索引值 key
+    >   若是文字的索引，則最後相同索引值的 value 將覆蓋先前相同索引的 value
+    >   注意: 如果要讓相同數字索引以後來的陣列去覆蓋合併的話，直接用 **+** 運算子即可
 
-     - array_intersect_key ( array $array1 , array $array2 [, array $... ] ) : `array`
-        >   以第1個陣列為基礎，將陣列2以後存在的key當作回傳的陣列key，並以這些key來取得陣列1的值
-        >   陣列2以後的值不使用
-        >   用來取得某固定範圍的key值做使用
+  - array_flip  ( array $array ) : `array`
+    >   陣列索引與值做交換
 
-  3. 判斷類
-     - boolval ( mixed $var ) : `bool`
-        >   將輸入參數轉為 boolean 值，最常見為0和1轉為false和true
-        >   **注意: 負數在 boolean 裡面被判斷為 true**
+  - array_intersect_key ( array $array1 , array $array2 [, array $... ] ) : `array`
+    >   以第1個陣列為基礎，將陣列2以後存在的key當作回傳的陣列key，並以這些key來取得陣列1的值
+    >   陣列2以後的值不使用
+    >   用來取得某固定範圍的key值做使用
 
-     - empty ( mixed $var ) : `bool`
-        >   判斷陣列或值是否為空值或者是0，其他值則回傳FALSE
+## 判斷類 ##
+  - boolval ( mixed $var ) : `bool`
+    >   將輸入參數轉為 boolean 值，最常見為0和1轉為false和true
+    >   **注意: 負數在 boolean 裡面被判斷為 true**
 
-     - isset ( mixed $var [, mixed $... ] ) : `bool`
-        >   判斷值是否存在，若為NULL或者不存在，則回傳FALSE，其他為TRUE
+  - empty ( mixed $var ) : `bool`
+    >   判斷陣列或值是否為空值或者是0，其他值則回傳FALSE
 
-     - in_array ( 混合型別 $要找尋的變數 , array $於哪個陣列搜尋 [, bool $strict = FALSE ] ) : `bool`
-        >   第三個變數預設為FALSE，不比較型別，但有人指出不使用strict 方式，將會出現部分錯誤
-        >   此函數為比對在array 內的物件是否存在，並返回 boolean 值
+  - isset ( mixed $var [, mixed $... ] ) : `bool`
+    >   判斷值是否存在，若為NULL或者不存在，則回傳FALSE，其他為TRUE
 
-     - array_key_exists ( mixed $key , array $被搜尋的陣列 ): `bool`
-        >   傳入值若沒有在陣列之中，則回傳false
+  - in_array ( 混合型別 $要找尋的變數 , array $於哪個陣列搜尋 [, bool $strict = FALSE ] ) : `bool`
+    >   第三個變數預設為FALSE，不比較型別，但有人指出不使用strict 方式，將會出現部分錯誤
+    >   此函數為比對在array 內的物件是否存在，並返回 boolean 值
 
-     - array_search ( $要找尋的變數值, array $被搜尋的array [, bool $strict = FALSE ] ) : `mixed`
-        >   搜尋陣列內是否有值，若有則回傳該陣列的key值，可配合array_column()搜尋二維陣列，或是使用foreach 迴圈的$value 放入array_search尋找
+  - is_numeric ( mixed $var ) : `bool`
+    >   判斷為純數字時，輸出true
 
-  4. 其他應用
-        Variable functions
-        >   字串可以直接當成function name 使用
-        ```php
-            $func = 'foo';
-            $func();        // This calls foo()
+  - array_key_exists ( mixed $key , array $被搜尋的陣列 ): `bool`
+    >   傳入值若沒有在陣列之中，則回傳false
 
-            class Foo
+  - array_search ( $要找尋的變數值, array $被搜尋的array [, bool $strict = FALSE ] ) : `mixed`
+    >   搜尋陣列內是否有值，若有則回傳該陣列的key值，可配合array_column()搜尋二維陣列，或是使用foreach 迴圈的$value 放入array_search尋找
+
+## 其他應用 ##
+  1. Variable functions
+    >   字串可以直接當成function name 使用
+    ```php
+        $func = 'foo';
+        $func();        // This calls foo()
+
+        class Foo
+        {
+            static function bar()
             {
-                static function bar()
-                {
-                    echo "bar\n";
-                }
-                function baz()
-                {
-                    echo "baz\n";
-                }
+                echo "bar\n";
             }
-
-            $func = array("Foo", "bar");
-            $func(); // prints "bar"
-            $func = array(new Foo, "baz");
-            $func(); // prints "baz"
-            $func = "Foo::bar";
-            $func(); // prints "bar" as of PHP 7.0.0; prior, it raised a fatal error
-        ```
-
-        call_user_func ( callable $callback [, mixed $parameter [, mixed $... ]] )
-        call_user_func_array ( callable $callback , array $param_arr )
-        >   這些方式都可以動態調用函數，但尤以 Variable functions 效能最好
-        >   call_user_func_array 可用在動態產生變數傳入函數，在無法預期傳入變數的數量時可利用陣列傳入來進行運算
-        最常見的例子為 call_user_func_array(array($stmt, 'bind_param'), $stmt_param);
-        ※注意：PHP5.3版本以上，的參數需要passed by reference，否則將出現錯誤
-        ```php
-            foreach ($preStmtParam as $key => $value) {
-                $passByRef[$key] = &$preStmtParam[$key];
+            function baz()
+            {
+                echo "baz\n";
             }
-        ```
-        >   $callback 的部分若非動態函數，則是用字串代表該函數
+        }
 
-        (string) http_build_query ( mixed $query_data [, string $numeric_prefix [, string $arg_separator [, int $enc_type = PHP_QUERY_RFC1738 ]]] )
-        >   將陣列或參數轉換為網址的GET參數
-        >   $query_data 可以使用物件或陣列，物件僅有public參數會被轉換
-        >   $numeric_prefix 若有設定，且傳入陣列沒有指定key時，將會自動產生設定的字串開頭連接數字key，例如設定obj_，將會產生obj_1=...&ogj_2=...&......
-        >   $arg_separator 代表割開每個變數的字元，預設為"&"，定義此選項可更改分割字串
-        >   $enc_type 預設為PHP_QUERY_RFC1738標準，此標準會把空格編碼成+號，但有可能與真正的+號混淆，另一選項為PHP_QUERY_RFC3986標準，空格將會被編碼成%20，不影響其他字符
-        ```php
-        // 可自訂只需要抓那些參數
-        $findkey = array_flip(array('error', 'msg'));
-        $param = http_build_query(array_intersect_key($_GET, $findkey));
-        ```
+        $func = array("Foo", "bar");
+        $func(); // prints "bar"
+        $func = array(new Foo, "baz");
+        $func(); // prints "baz"
+        $func = "Foo::bar";
+        $func(); // prints "bar" as of PHP 7.0.0; prior, it raised a fatal error
+    ```
 
-        (string) file_get_contents  ( string $filename [, bool $use_include_path = FALSE [, resource $context [, int $offset = 0 [, int $maxlen ]]]] )
-        >   抓取網址或者文本的方法
-        >   若是要做為執行某PHP的方式，盡量還是用CURL，速度差10倍
-        >   若是要 include 別的網頁，且對方有開啟 https，會需要驗證時，可以參考以下方法
-        ```php
-        $arrContextOptions = [
-            "ssl" => [
-                "verify_peer" => false,
-                "verify_peer_name" => false,
-            ],
-        ];
-        file_get_contents($網址, false, $arrContextOptions);
-        ```
+  - call_user_func ( callable $callback [, mixed $parameter [, mixed $... ]] )
+  - call_user_func_array ( callable $callback , array $param_arr )
+    >   這些方式都可以動態調用函數，但尤以 Variable functions 效能最好
+    >   call_user_func_array 可用在動態產生變數傳入函數，在無法預期傳入變數的數量時可利用陣列傳入來進行運算
+    最常見的例子為 call_user_func_array(array($stmt, 'bind_param'), $stmt_param);
+    ※注意：PHP5.3版本以上，的參數需要passed by reference，否則將出現錯誤
+    ```php
+        foreach ($preStmtParam as $key => $value) {
+            $passByRef[$key] = &$preStmtParam[$key];
+        }
+    ```
+    >   $callback 的部分若非動態函數，則是用字串代表該函數
 
-  5. 動態陣列
+  - http_build_query ( mixed $query_data [, string $numeric_prefix [, string $arg_separator [, int $enc_type = PHP_QUERY_RFC1738 ]]] ) : `string`
+    >   將陣列或參數轉換為網址的GET參數
+    >   $query_data 可以使用物件或陣列，物件僅有public參數會被轉換
+    >   $numeric_prefix 若有設定，且傳入陣列沒有指定key時，將會自動產生設定的字串開頭連接數字key，例如設定obj_，將會產生obj_1=...&ogj_2=...&......
+    >   $arg_separator 代表割開每個變數的字元，預設為"&"，定義此選項可更改分割字串
+    >   $enc_type 預設為PHP_QUERY_RFC1738標準，此標準會把空格編碼成+號，但有可能與真正的+號混淆，另一選項為PHP_QUERY_RFC3986標準，空格將會被編碼成%20，不影響其他字符
+    ```php
+    // 可自訂只需要抓那些參數
+    $findkey = array_flip(array('error', 'msg'));
+    $param = http_build_query(array_intersect_key($_GET, $findkey));
+    ```
+
+  - file_get_contents ( string $filename [, bool $use_include_path = false [, resource $context [, int $offset = -1 [, int $maxlen ]]]] ) : `string`
+    >   抓取網址或者文本的方法
+    >   若是要做為執行某PHP的方式，盡量還是用CURL，速度差10倍
+    >   若是要 include 別的網頁，且對方有開啟 https，會需要驗證時，可以參考以下方法
+    ```php
+    $arrContextOptions = [
+        "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ],
+    ];
+    file_get_contents($網址, false, $arrContextOptions);
+    ```
+
+  2. 動態陣列
         陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
         >   array1(&$test)
         >   array2(&$test)
@@ -503,7 +551,7 @@
         >   此函數將會將每一個 array 值，都透過 $callback 處理過一次，返還array
         >   若callback函數需要有兩個參數，則array1需對應callback的參數數量放置對應的array
 
-  6. 資料編碼
+  3. 資料編碼
         資料透過陣列轉換成json字串，或將json字串轉換成陣列
         json_encode( mixed $value [, int $options = 0 [, int $depth = 512 ]] );
         >   通常為將陣列轉為json字串，也可以使用物件
@@ -512,12 +560,12 @@
         json_decode( string $json [, bool $assoc = FALSE [, int $depth = 512 [, int $options = 0 ]]] );
         >   $assoc 設為 true 時，轉換時的key將會是根據陣列的key值決定，否則為123
 
-- 變數
+## 變數 ##
     Using ${} is a way to create dynamic variables
     動態產生變數，可連結字串
 
 
-- 路徑處理
+## 路徑處理 ##
     - pathinfo ( string $path [, int $options = PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME ] ) : `array/string`
     >   回傳路徑相關資料
     >   若沒有指定 option 回傳陣列
@@ -543,7 +591,7 @@
     >   回傳 temp 的資料夾路徑，回傳的字串最後沒有包含資料夾分隔符號
     >   例：`/home/user/tmp`
 
-- 日期與時間處理
+## 日期與時間處理 ##
   - ※注意:2038 timestamp 會溢出32位元極限，因此要使用 timestamp 相關函數需要注意。
     (timestamp) strtotime()
     >   回傳時間戳
@@ -587,30 +635,34 @@
 
     ```
 
-- 加解密與壓縮處理
-
-    (string) base64_encode ( string $data )
-    (mix)    base64_decode ( string $data [, bool $strict = FALSE ] )
+## 加解密與壓縮處理 ##
+  - base64_encode ( string $data ) : `string`
+  - base64_decode ( string $data [, bool $strict = FALSE ] ) : `string`
     >   可將二進位資料壓縮成僅用英文以及符號傳遞的加密字串，Base64可以用來將binary的位元組序列資料編碼成ASCII字元序列構成的文字
     >   使用的字元包括大小寫拉丁字母各26個、數位10個、加號+和斜槓/，共64個字元，等號=用來作為字尾用途
 
-    (string) gzcompress ( string $data [, int $level = -1 [, int $encoding = ZLIB_ENCODING_DEFLATE ]] )
-    (string) gzuncompress ( string $data [, int $length = 0 ] )
+  - gzcompress ( string $data [, int $level = -1 [, int $encoding = ZLIB_ENCODING_DEFLATE ]] ) : `string`
+  - gzuncompress ( string $data [, int $length = 0 ] ) : `string`
     >   壓縮字串的函式
+    >   $level 壓縮等級，最高為9，最低為0
+
+  - openssl_encrypt ( string $data , string $method , string $key [, int $options = 0 [, string $iv = "" [, string &$tag = NULL [, string $aad = "" [, int $tag_length = 16 ]]]]] ) : `string`
+  - openssl_decrypt ( string $data , string $method , string $key [, int $options = 0 [, string $iv = "" [, string $tag = "" [, string $aad = "" ]]]] ) : `string`
+    >   openssl 加密方法
 
 - 緩衝區：主要用途為，當PHP仍然在執行，但有訊息想要先行輸出的時候，可以使用此緩衝區先傳送或處理訊息
-  - ob_flush()
+  - ob_flush() : `void`
     >   將目前的輸出內容送至緩衝區
     1. flush() 無論PHP 目前執行在任何情況，將目前buffer內的內容輸出至瀏覽器
 
-  - ob_implicit_flush( [ int $flag = 1 ] )
+  - ob_implicit_flush ([ int $flag = 1 ] ) : `void`
     >   開啟隱式 flush 模式。開啟模式後，不需要每次都呼叫 flush() 函數輸出內容
     >   1 to turn implicit flushing on, 0 otherwise.
 
-  - ob_get_level ()
+  - ob_get_level ( void ) : `int`
     >   For users confused about getting "1" as a return value from ob_get_level at the beginning of a script: this likely means the PHP ini directive "output_buffering" is not set to off / 0. PHP automatically starts output buffering for all your scripts if this directive is not off (which acts as if you called ob_start on the first line of your script).
 
-  - ob_start( [ callable $output_callback = NULL [, int $chunk_size = 0 [, int $flags = PHP_OUTPUT_HANDLER_STDFLAGS ]]] )
+  - ob_start ([ callable $output_callback = NULL [, int $chunk_size = 0 [, int $flags = PHP_OUTPUT_HANDLER_STDFLAGS ]]] ) : `bool`
     >   開啟緩衝區，期間輸出所有資料將不會被輸出
     >   callable 為放置可以呼叫的函數，當ob_start時， 會將內容經由callable函數處理一次，再放到緩衝區
     >   可以配合的函數為：
@@ -651,14 +703,11 @@
         $db->query('SET NAMES UTF8');
         echo iconv('BIG5', 'UTF-8', $topMenu);
         ```
-----------------------------------------
-            圖像處理
-----------------------------------------
+
+## 圖像處理 ##
 
 
-----------------------------------------
-            檔案操作
-----------------------------------------
+## 檔案操作 ##
 - ini_get('upload_max_filesize')
     >   抓取php.ini 的資料，此處為抓取可上傳的檔案容量
     >   post_max_size 如果檔案上傳透過form post，則需要設定此值大於或等於upload_max_filesize
@@ -731,9 +780,7 @@
         >   如果此方法return false，代表有可能先前操作有新增不存在檔案或者path路徑錯誤
         >   可以利用file_exists() 或 is_readable()
 
-----------------------------------------
-            進階應用
-----------------------------------------
+## 進階應用 ##
 - 傳輸層
 ```php
     // 宣告網頁header
@@ -788,9 +835,7 @@
     // text with <div>tags</div>
 ```
 
-----------------------------------------
-            變量引用
-----------------------------------------
+## 變量引用 ##
 - Function arguments
     - function (&$傳入參數)
     >   參數前面加上 &，即便沒有return 在function 對加上&的參數作變更，將直接影響到傳入的參數(被指向同一個地方)
@@ -839,9 +884,7 @@
 - require_once
     >   與include_once相同，差別為找不到檔案時，將會回傳錯誤，程式終止不運行
 
-----------------------------------------
-            寫法邏輯
-----------------------------------------
+## 寫法邏輯 ##
 - 可以先將計算結果存入字串，需要的時候再輸出
 - 多加利用陣列配合 foreach 可以減少重複性的程式碼
 - PHP Default Argument Value
@@ -863,9 +906,7 @@
 - 陣列耗費的資源比字串還大，若可以將陣列資料轉換為字串傳送，則盡量使用之
 
 
-----------------------------------------
-            OOP
-----------------------------------------
+## OOP ##
 - 物件引用
     兩個冒號（::)是對類中的方法的靜態引用
     與 (->) 比較來說
@@ -906,72 +947,71 @@
     }
     ```
 
-## 抽象類的特點：##
-- 抽象類無法實例化，只能被繼承。
-- 抽象類不一定有抽象方法，有抽象方法的類，一定是抽象類。
-- 抽象方法的可見性無法是private
-- 抽象方法在子類中，需要重寫。
+3. 抽象類的特點：
+   - 抽象類無法實例化，只能被繼承。
+   - 抽象類不一定有抽象方法，有抽象方法的類，一定是抽象類。
+   - 抽象方法的可見性無法是private
+   - 抽象方法在子類中，需要重寫。
 
-## 什麼時候需要用抽象類？##
-- 有個方法，方法體不知如何寫，子類中還必須有這個方法時，封裝成抽象方法，類為抽象類。
-- 控制子類中必須封裝某些方法時，可以用抽象方法。
-- 當需要控制類只能被繼承，無法被實例化時。
-
-**例子：**
-```php
-    // 聲明一個人類，有一個抽象方法，工作。
-    // 聲明一個php講師類，重寫方法工作。
-    abstract class People {
-        protected $age=22;
-        public $height=1.70;
-        abstract function work();
-    }
-    class PhpTeacher extends People{
-        function work(){
-            echo "真不是php";
+4. 什麼時候需要用抽象類？
+   - 有個方法，方法體不知如何寫，子類中還必須有這個方法時，封裝成抽象方法，類為抽象類。
+   - 控制子類中必須封裝某些方法時，可以用抽象方法。
+   - 當需要控制類只能被繼承，無法被實例化時。
+    **例子：**
+    ```php
+        // 聲明一個人類，有一個抽象方法，工作。
+        // 聲明一個php講師類，重寫方法工作。
+        abstract class People {
+            protected $age=22;
+            public $height=1.70;
+            abstract function work();
         }
+        class PhpTeacher extends People{
+            function work(){
+                echo "真不是php";
+            }
+        }
+    ```
+
+5. 介面
+
+    如果一個類中，所有的方法都是抽象方法，且沒有成員屬性，則這個類被稱為介面（interface）。
+    ```php
+    interface Common {
+        abstract function work();
+        abstract function test($args);
     }
-```
+    ```
 
-3. 介面
-如果一個類中，所有的方法都是抽象方法，且沒有成員屬性，則這個類被稱為介面（interface）。
-```php
-interface Common {
-    abstract function work();
-    abstract function test($args);
-}
-```
+    介面的作用：雖然PHP的類是單繼承，但**可以通過介面來實現多繼承**。
 
-介面的作用：雖然PHP的類是單繼承，但**可以通過介面來實現多繼承**。
+    介面的繼承（extends）：
+    介面繼承介面
+    ```php
+    interface 介面名稱 extends 父介面名稱
+    ```
+    注意：類的繼承是單繼承（只能有一個父類），但介面的繼承卻是多繼承，類對介面的實現也是多實現。
 
-介面的繼承（extends）：
-介面繼承介面
-```php
-interface 介面名稱 extends 父介面名稱
-```
-注意：類的繼承是單繼承（只能有一個父類），但介面的繼承卻是多繼承，類對介面的實現也是多實現。
+    介面的實現（implements）：
+    類實現介面
+    ```php
+    class 類名 implements 介面名稱1,介面名稱2, ...
+    ```
 
-介面的實現（implements）：
-類實現介面
-```php
-class 類名 implements 介面名稱1,介面名稱2, ...
-```
+    繼承類同時實現介面：
+    類繼承父類同時實現介面
+    ```php
+    class 類名 extends 父類名 implements 介面名稱
+    ```
 
-繼承類同時實現介面：
-類繼承父類同時實現介面
-```php
-class 類名 extends 父類名 implements 介面名稱
-```
+6. 抽象類和介面的區別
+   - 介面是一種特殊的抽象類，介面中只包含抽象方法，沒有成員屬性。
+   - 類實現（implements）介面時，必須完全實現介面中的所有方法；
+   - 類繼承（extends）抽象類時，只需對需要用到的抽象方法進行重寫。
+   - 抽象類只能單繼承，但介面卻是多繼承，類對介面的實現也是多實現。
 
-4. 抽象類和介面的區別
-- 介面是一種特殊的抽象類，介面中只包含抽象方法，沒有成員屬性。
-- 類實現（implements）介面時，必須完全實現介面中的所有方法；
-- 類繼承（extends）抽象類時，只需對需要用到的抽象方法進行重寫。
-- 抽象類只能單繼承，但介面卻是多繼承，類對介面的實現也是多實現。
 
-----------------------------------------
-            資料庫操作
-----------------------------------------
+## 資料庫操作 ##
 - mysqli
     - 僅針對mysql系列資料庫，若不更換資料庫類型可使用
     **object method**
@@ -998,9 +1038,8 @@ class 類名 extends 父類名 implements 介面名稱
 
 - query內若要新增query字串內容時，則需使用  $query = "XXXXX'{OOO["KEY"]}'XXXXX";
 
-----------------------------------------
-            安全性寫法
-----------------------------------------
+
+## 安全性寫法 ##
 - 使用超全域變數時 ($GLOBALS, $_POST, $_GET 等等)，必須使用htmlentities()，避免特殊字元，令駭客找出漏洞
 
 - 過濾參數
@@ -1035,9 +1074,8 @@ class 類名 extends 父類名 implements 介面名稱
     password_verify ( string $password , string $hash ) : *boolean*
     >   可以驗證經由 password_hash 產生出來的亂數
 
-----------------------------------------
-            系統紀錄參考
-----------------------------------------
+
+## 系統紀錄參考 ##
 ```php
 // 非正式寫法
 # ---------------------------------------------------------------------------------------------
@@ -1052,9 +1090,9 @@ class 類名 extends 父類名 implements 介面名稱
 # ---------------------------------------------------------------------------------------------
 ```
 
-----------------------------------------
+
         PHP 相關套件語法使用
-----------------------------------------
+
 ### TCPDF ###
 ```php
 //Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M')
@@ -1069,9 +1107,7 @@ class 類名 extends 父類名 implements 介面名稱
 $spreadsheet->getActiveSheet()->getColumnDimension(Cell\Coordinate::stringFromColumnIndex($column))->setAutoSize(true);
 ```
 
-----------------------------------------
-        PHP 棄用函式以及取代方案
-----------------------------------------
+## PHP 棄用函式以及取代方案 ##
 **PHP 5.3 後棄用，7.0後移除**
 - eregi ( string $pattern , string $string [, array &$regs ] ) : `int`
     >   用正規表示式尋找需要尋找的物件內是否有包含某字串
@@ -1107,9 +1143,8 @@ $spreadsheet->getActiveSheet()->getColumnDimension(Cell\Coordinate::stringFromCo
     >   在執行 each() 之後，陣列指標將停留在陣列中的下一個單元或者當碰到陣列結尾時停留在最后一個單元。如果要再用 each 重新遍歷陣列，必須使用 reset()
     >   **return** 鍵值對被傳回為四個單元的陣列，鍵名為0，1，key和 value。單元 0 和 key 包含有陣列單元的鍵名，1 和 value 包含有資料。
     >   常配合 list() 用為取鍵值對的方法，
-----------------------------------------
-        PHP 新方法與新用法
-----------------------------------------
+
+## PHP 新方法與新用法 ##
 **PHP 7.4後支援**
 ```php
 $array['key'] ??= computeDefault();
@@ -1118,3 +1153,7 @@ if (!isset($array['key'])) {
     $array['key'] = computeDefault();
 }
 ```
+
+## PHP 套件管理 composer ##
+- composer 新增套件
+  - `composer require [package_name]`

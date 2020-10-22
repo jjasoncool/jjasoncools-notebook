@@ -44,6 +44,9 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
         -- 將字串頭尾空白去掉，可拿來對付BIG5 許功蓋結尾會補一個 slash\避免跳脫query字串
         TRIM('\ ') -- 就可以成功塞入反斜線
 
+    -- 判斷
+        IF(condition, value_if_true, value_if_false)
+
 -- 時間日期
     -- 變換時區
         CONVERT_TZ("欲變換時間", "目前時區", "欲轉換時區")
@@ -452,6 +455,17 @@ SELECT ORDINAL_POSITION,`TABLE_NAME`,`COLUMN_NAME`,DATA_TYPE,COLUMN_TYPE,COLUMN_
     HAVING rowcount=1
     ORDER BY `COLUMN_NAME`, `TABLE_NAME`
 ) `table`;
+
+-- 抓取 database 的 encoding
+SELECT default_character_set_name
+FROM information_schema.SCHEMATA
+WHERE schema_name = "schemaname";
+
+-- 抓取 table 的 encoding
+SELECT CCSA.character_set_name
+FROM information_schema.`TABLES` T
+INNER JOIN information_schema.COLLATION_CHARACTER_SET_APPLICABILITY CCSA ON CCSA.collation_name = T.table_collation
+WHERE T.table_schema = "schema_name" AND T.table_name = "table_name";
 
 -- 統計同一張表某些條件數量
 SELECT

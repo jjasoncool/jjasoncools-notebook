@@ -38,6 +38,9 @@
   - .split( '拆解字串' )
     >   依據某連接符號切割字串
 
+  - .trim()
+    >   字串切頭尾
+
   - JSON.parse()
     >   json字串轉換為javascript物件
 
@@ -269,6 +272,7 @@
 - .attr(key, value)
     >   對某物件的某屬性指定值 (純文字html樣板需使用此方式給value值)
     >   沒有value時，取值
+    >   **注意** jquery 升級版本後，attr不可使用在 checked, selected, disabled 等屬性上，須改用.prop
 
 - .prop()
     >   針對checked以及selected還有disabled 可以做指定以及返還值的作用
@@ -415,7 +419,7 @@ function valid(e) {
     var forms = $(".needs-validation");
     // 避免只輸入空白問題
     forms.find("input").not("input[type='file']").each(function () {
-        $(this).val($.trim($(this).val()));
+        $(this).val($(this).val().trim());
     });
     //刪除不需要驗證的input條件
     forms.find(":input[type=hidden], :input[type=button], :input:not(:visible)").each(function () {
@@ -753,4 +757,11 @@ $(".typeahead").typeahead({
         return item;
     }
 });
+```
+
+# 引用、打包、整合 #
+
+```html
+如果 script 檔案與原本的 html 檔案編碼不同，可以在 script 內宣告編碼解決亂碼問題
+<script type="text/javascript" charset="UTF-8" src="xyz.js"></script>
 ```
