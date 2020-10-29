@@ -612,7 +612,7 @@
     (object)
     ```php
     // 單行輸出
-    (new DateTime())->format('Y/m/d');
+    (new DateTime())->format('Y-m-d H:i:s');
     // 新增 datetime 物件 (php 5.2 可以用的日期物件)
     $now = new DateTime();
     $temp_time = new DateTime($row['temp_time']);
@@ -798,6 +798,7 @@
 - 額外function
 ```php
 <?php
+    // 刪除 html 標記
     function strip_tags_content($text, $tags = '', $invert = false)
     {
         preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags);
@@ -883,6 +884,10 @@
 
 - require_once
     >   與include_once相同，差別為找不到檔案時，將會回傳錯誤，程式終止不運行
+
+## 匿名函數 ##
+- 此為 PHP 5.4 以後新增之重要功能
+-
 
 ## 寫法邏輯 ##
 - 可以先將計算結果存入字串，需要的時候再輸出

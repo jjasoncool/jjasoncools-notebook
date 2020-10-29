@@ -65,7 +65,7 @@ input 只轉換 push 的時候的 CRLF 為 LF
 >   `git checkout --track <remote>/<branch_name>`
 >   `git pull <remote> <branch_name>`
 拉錯分支可以這樣返回
->   `git reset <remote> <branch_name>`
+>   `git reset <remote>/<branch_name>`
 
 更新至遠端
 -u : 若成功 push 之後，該 branch 將會被設定為預設 track 參照
@@ -221,6 +221,8 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 >   `git stash pop`
 將之前暫存的工作刪除
 >   `git stash drop`
+將之前暫存的工作清單全部清空(包含已損毀 stash@{xx} is not a stash-like commit)
+>   `git stash clear`
 
 ## branch 分支 ##
 主分支追蹤
@@ -262,14 +264,33 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
     可以依據內容選擇合併 commit 或是保留
 
 ## 衝突 ##
--
+- conflict
 
 ## 移除版控 ##
-使用 .gitignore 檔案管理，若將規則加入後仍有追蹤檔案，代表該檔案已被追蹤，需要先將其從git移除
-.gitignore必須放在控管主目錄之下
-使用 **git rm** 移除git版控檔案
--r :遞迴刪除，資料夾下所有檔案都刪掉
---cached :僅刪除git的版控追蹤，並不會刪除到實體檔案 (通常必加，不然檔案就會真的被刪掉了)
+- 使用 .gitignore 檔案管理，若將規則加入後仍有追蹤檔案，代表該檔案已被追蹤，需要先將其從git移除
+- .gitignore必須放在控管主目錄之下
+- 使用 `git rm` 移除git版控檔案
+    | flag             | description                                                                    |
+    | ---------------- | ------------------------------------------------------------------------------ |
+    | -r               | 遞迴刪除，資料夾下所有檔案都刪掉                                               |
+    | --cached         | 僅刪除git的版控追蹤，並不會刪除到實體檔案 (通常必加，不然檔案就會真的被刪掉了) |
+    | --ignore-unmatch | 如果沒有符合的檔案，將會忽略錯誤訊息                                           |
+- 永久從版控中移除
+1. 可利用`git filter-branch`
+    >   `git filter-branch -f --index-filter 'git rm --cached --ignore-unmatch [檔案路徑]' --prune-empty --tag-name-filter cat -- --all`
+   - 清除紀錄，並且將 reflog 設為逾期，並將垃圾清掉
+    >   `git reflog expire --expire=now --all && git gc --prune=now`
+2. 使用 `git filter-repo` **第三方套件，比git filter-branch快**
+   - 安裝 `pip3 install git-filter-repo`
+    | flag           | description                                          |
+    | -------------- | ---------------------------------------------------- |
+    | --force (-f)   | 強制執行，請不要將此註記常駐，以避免造成不可逆之錯誤 |
+    | --path         | 過濾指定的確切路徑，多個相同選項將會取聯集結果       |
+    | --path-regex   | 使用正規表示式來規範路徑，多個相同選項將會取聯集結果 |
+    | --invert-paths | 反向選取，原本為選取保留路徑                         |
+
+   - 清除某資料夾之下檔案
+    >   `git filter-repo --path-regex '^file/[\.\w-]+\.exe$' --invert-paths`
 
 ## add將本地已有檔案 與線上commit歷程合併
 >   `git reset --hard <remote>/<branch_name>`

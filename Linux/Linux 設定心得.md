@@ -515,6 +515,9 @@ Or, edit the **/etc/apt/sources.list**
 - 直接指定編輯器
 `sudo update-alternatives --set editor [程式路徑]`
 
+- python 預設使用 python3
+`sudo update-alternatives`
+
 ### 輸入法 ###
   - 通用解 fcitx 配套新酷音
     `sudo apt install fcitx fcitx-chewing`

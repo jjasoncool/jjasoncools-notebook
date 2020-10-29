@@ -9,9 +9,16 @@
 ## nodejs 套件管理 yarn ##
   - 安裝
     `sudo apt update && sudo apt install --no-install-recommends yarn`
+    `npm install -g yarn`
+  - yarn 安裝套件位置 (windows 要加到 path 內才有作用)
+    `yarn global bin`
   - yarn 安裝套件
-    ``
+    `yarn add -D webpack webpack-cli`
+    - 安裝到指定的資料夾 (不使用預設的 node_modules)
+    `yarn install --modules-folder <path>`
 
 ## 開發環境 ##
 - nest
   -
+
+## webpack ##

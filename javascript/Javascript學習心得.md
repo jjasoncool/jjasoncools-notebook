@@ -375,6 +375,7 @@
 # Library 參考語法 #
 ## moment.js ##
 
+
 ## Jquery UI ##
 ```js
 // textarea 在IE 無法拉取大小
@@ -390,11 +391,12 @@ array.forEach((value,index) => {
     console.log(index +" " + value);
 });
 // key value
-Object.keys(obj).forEach(function(k){
-    console.log(k + ' - ' + obj[k]);
+Object.keys(obj).forEach((key, index) => {
+    console.log(`${key} - ${obj[key]}`);
 });
 
-//函式簡寫(箭頭函式)
+// 函式簡寫(箭頭函式)
+// 主要差異是沒有 this
 var materials = [
     'Hydrogen',
     'Helium',
@@ -534,6 +536,15 @@ var virtualForm = $("<form action=\"printSticker.php\" target=\"_blank\" method=
 virtualForm.append("<input name=\"selectItem\" value=\"" + JSON.stringify(selectItem) + "\" />");
 virtualForm.append("<input name=\"start\" value=\"" + $("#start").val() + "\" />");
 virtualForm.appendTo($('body')).submit();
+
+// 新增 options
+$('<option/>', { value : row.bank_sale }).text(`${row.curr_name} (${row.currency})`).appendTo('#currency');
+$.each(cancer, function (i, item) {
+    $('#diagnosis').append($('<option>', {
+        value: item,
+        text : item
+    }));
+});
 
 //button 綁定enter送出
 $("#inputjobno").on("keypress",  function(event) {
