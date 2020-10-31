@@ -423,7 +423,12 @@
     2. 使用 dnf/yum 套件管理工具安裝 WINE\
         `dnf install winehq-stable`
 
-- 接下來依照步驟指示安裝即可，移除則反過來也使用套件管理工具進行
+  - 接下來依照步驟指示安裝即可，移除則反過來也使用套件管理工具進行
+  - fedora 改版更新
+    1. `sudo dnf upgrade --refresh`
+    2. `sudo dnf install dnf-plugin-system-upgrade`
+    3. `sudo dnf system-upgrade download --releasever=33`
+    4. `sudo dnf system-upgrade reboot`
 
 - **字型問題** 因為在wine 環境下沒有對應中文字型\
   所以需要利用regedit(wine的windows註冊表)

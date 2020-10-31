@@ -117,9 +117,16 @@
     // Use double quotes to concat more than two strings instead of multiple '.' operators.
     // PHP is forced to re-concatenate with every '.' operator.
     "{$str1}{$str2}{$str3}"; // one concat = fast
-    $str1. $str2. $str3;   // two concats = slow
+    $str1 . $str2 . $str3;   // two concats = slow
     ?>
     ```
+  - strtolower ( string $string ) : string
+  - mb_strtolower ( string $str [, string $encoding = mb_internal_encoding() ] ) : string
+    >   將字串變為小寫
+    >   mb_strtolower 可針對一些特殊拉丁語系轉為正確小寫
+
+  - ucwords ( string $str [, string $delimiters = " \t\r\n\f\v" ] ) : string
+    >
 
   - strpos ( $被查詢字串, $欲查詢字串 [, $從第幾個字開始找，預設=0]) : `int`
   - mb_strpos ( $被查詢字串, $欲查詢字串 [, $從第幾個字開始找，預設=0 [, $字串編碼]] ) : `int`
@@ -307,7 +314,11 @@
     >   決定數字顯示格式，第一個參數為數字變數、第二個參數為小數點數量、第三個參數為小數點顯示符號(依據國情不同)、第四個參數為千分位符號(依據國情不同) 預設四捨五入
 
 ## 迴圈與跳出 ##
-    break
+  - return
+    >   回到原本呼叫的模組
+    >   若是在 include 或者被 require 的頁面，使用 return 將會返回該引用頁
+
+  - break
     >   中斷當前的 for, foreach, while, do-while, switch 結構式
     >   並且可以指令需要中斷多少個巢狀結構，預設值為1，意指中斷當前執行之上述類型結構式
 
