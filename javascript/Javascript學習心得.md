@@ -395,6 +395,12 @@ Object.keys(obj).forEach((key, index) => {
     console.log(`${key} - ${obj[key]}`);
 });
 
+var obj = { foo: 'bar'};
+
+obj.hasOwnProperty('foo'); // true
+obj.hasOwnProperty('toString'); // false
+'toString' in obj; // true
+
 // 函式簡寫(箭頭函式)
 // 主要差異是沒有 this
 var materials = [

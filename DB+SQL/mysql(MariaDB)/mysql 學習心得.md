@@ -48,6 +48,10 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
         IF(condition, value_if_true, value_if_false)
 
 -- 時間日期
+    -- 目前時間
+        NOW()
+        CURDATE()
+
     -- 變換時區
         CONVERT_TZ("欲變換時間", "目前時區", "欲轉換時區")
         -- select convert_tz("2018-07-28 13:26","+00:00","+02:00") from dual
@@ -377,8 +381,7 @@ select * from `tables` where colValue REGEXP '^[0-9]+$';
 ## mysql tunning ##
 ----------------------------------------
 ```sql
-
-EXPLAIN
+EXPLAIN [query]
 
 ```
 

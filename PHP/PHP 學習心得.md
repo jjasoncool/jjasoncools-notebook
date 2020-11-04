@@ -121,12 +121,19 @@
     ?>
     ```
   - strtolower ( string $string ) : string
-  - mb_strtolower ( string $str [, string $encoding = mb_internal_encoding() ] ) : string
+  - mb_strtolower ( string $str [, string $encoding = mb_internal_encoding() ] ) : `string`
     >   將字串變為小寫
     >   mb_strtolower 可針對一些特殊拉丁語系轉為正確小寫
 
-  - ucwords ( string $str [, string $delimiters = " \t\r\n\f\v" ] ) : string
+  - strtoupper ( string $string ) : string
+  - mb_strtoupper ( string $str [, string $encoding = mb_internal_encoding() ] ) : `string`
+    >   將字串變為大寫
+    >   mb_strtoupper 可針對一些特殊拉丁語系轉為正確大寫
+
+  - ucwords ( string $str [, string $delimiters = " \t\r\n\f\v" ] ) : `string`
     >
+
+  - mb_convert_case ( string $str , int $mode [, string $encoding = mb_internal_encoding() ] ) : `string`
 
   - strpos ( $被查詢字串, $欲查詢字串 [, $從第幾個字開始找，預設=0]) : `int`
   - mb_strpos ( $被查詢字串, $欲查詢字串 [, $從第幾個字開始找，預設=0 [, $字串編碼]] ) : `int`
