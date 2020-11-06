@@ -7,4 +7,4 @@ Please indicate the source.
 謝謝\
 Thank you.
 
-skjan / nameyearbirthday@gmail.com
+skjan / forwork.jan@gmail.com
