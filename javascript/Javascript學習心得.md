@@ -1,3 +1,43 @@
+# javascript 參考物件 #
+- 運算子
+  - (一元運算子)加號 (+) 一元運算子。嘗試將運算元轉換成數字，假如它還不是數字的話。
+    >   +"3" 回傳 3
+    >   +true 回傳 1
+
+- 宣告變數
+    **以下兩種變數宣告若在全域範圍內表現則雷同**
+  - var
+    >   用於一般宣告變數，需要在**區域**之外被讀取 **※區域指的是 function 或者迴圈包住的 {} 之中**
+    >   重複宣告時將會用新值覆蓋舊值
+
+  - let
+    >   用於單一性宣告變數，可在**區域**之內被讀取其值 **※區域指的是 function 或者迴圈包住的 {} 之中**
+    >   block-scoped
+    >   重複宣告時將會出錯
+
+  - const
+    >   宣告之後，不能再被改變 (在**區域**函數內)
+    >   block-scoped
+    >   須注意的是，若宣告陣列，陣列被視為 pass by reference 所以對陣列做push,pop不會有問題
+
+- JSON (JavaScript Object Notation.)
+    >   JSON.stringify
+
+
+- location
+    - hash:回傳#後面的值
+    - host:回傳主機名稱，含port號
+    - hostname:回傳主機名稱，不含port號
+    - href:回傳整個URL
+    - pathname:回傳主機名稱後面的路徑與querystring
+    - protocol:回傳通訊協定
+    - search:回傳querystring
+
+- 物件{} 與陣列[] 有著不同
+    >   陣列不可以用associative array的方式，只有物件可以
+    >   但若物件為 undefined 必須要事先宣告，否則該元素不可使用
+    >   物件與json是緊密相關的
+
 # javascript 參考function #
 - 取得物件
     getElementsByClassName()
@@ -109,46 +149,6 @@
     searchParams.delete("topic");
     searchParams.toString(); // "q=URLUtils.searchParams"
     ```
-
-# javascript 參考物件 #
-- 運算子
-  - (一元運算子)加號 (+) 一元運算子。嘗試將運算元轉換成數字，假如它還不是數字的話。
-    >   +"3" 回傳 3
-    >   +true 回傳 1
-
-- 宣告變數
-    **以下兩種變數宣告若在全域範圍內表現則雷同**
-  - var
-    >   用於一般宣告變數，需要在**區域**之外被讀取 **※區域指的是 function 或者迴圈包住的 {} 之中**
-    >   重複宣告時將會用新值覆蓋舊值
-
-  - let
-    >   用於單一性宣告變數，可在**區域**之內被讀取其值 **※區域指的是 function 或者迴圈包住的 {} 之中**
-    >   block-scoped
-    >   重複宣告時將會出錯
-
-  - const
-    >   宣告之後，不能再被改變 (在**區域**函數內)
-    >   block-scoped
-    >   須注意的是，若宣告陣列，陣列被視為 pass by reference 所以對陣列做push,pop不會有問題
-
-- JSON (JavaScript Object Notation.)
-    >   JSON.stringify
-
-
-- location
-    - hash:回傳#後面的值
-    - host:回傳主機名稱，含port號
-    - hostname:回傳主機名稱，不含port號
-    - href:回傳整個URL
-    - pathname:回傳主機名稱後面的路徑與querystring
-    - protocol:回傳通訊協定
-    - search:回傳querystring
-
-- 物件{} 與陣列[] 有著不同
-    >   陣列不可以用associative array的方式，只有物件可以
-    >   但若物件為 undefined 必須要事先宣告，否則該元素不可使用
-    >   物件與json是緊密相關的
 
 
 # JQuery 參考 function #
@@ -383,6 +383,7 @@ $("textarea").resizable({
     handles: "se"
 }).closest(".ui-wrapper").css("padding-bottom", "0px");
 ```
+
 # 片段語法節錄 #
 ```js
 // javascript 內建用法
@@ -541,7 +542,7 @@ function changeTitle(type){
 var virtualForm = $("<form action=\"printSticker.php\" target=\"_blank\" method=\"POST\"></form>");
 virtualForm.append("<input name=\"selectItem\" value=\"" + JSON.stringify(selectItem) + "\" />");
 virtualForm.append("<input name=\"start\" value=\"" + $("#start").val() + "\" />");
-virtualForm.appendTo($('body')).submit();
+virtualForm.appendTo($('body')).trigger('submit');
 
 // 新增 options
 $('<option/>', { value : row.bank_sale }).text(`${row.curr_name} (${row.currency})`).appendTo('#currency');
@@ -643,6 +644,7 @@ function submitData() {
         }
     });
 }
+
 // 這個函式是給上面更新頁面之後呼叫使用
 function reload(btnId) {
     // 顯示結果表格會使用到

@@ -467,6 +467,13 @@
     >   陣列2以後的值不使用
     >   用來取得某固定範圍的key值做使用
 
+  - array_search ( $要找尋的變數值, array $被搜尋的array [, bool $strict = FALSE ] ) : `mixed`
+    >   搜尋陣列內是否有值，若有則回傳該陣列的key值，若有重複符合值，回傳第一個符合值的 key。
+    >   若您想要回傳的結果包含所有 key 值的陣列，請使用 **array_keys()**
+    >   可配合 **array_column()** 搜尋二維陣列，或是使用 foreach 迴圈的 $value 放入array_search尋找
+    >   若該變數沒有在陣列中被被搜尋到，會返回 false 值
+
+
 ## 判斷類 ##
   - boolval ( mixed $var ) : `bool`
     >   將輸入參數轉為 boolean 值，最常見為0和1轉為false和true
@@ -487,9 +494,6 @@
 
   - array_key_exists ( mixed $key , array $被搜尋的陣列 ): `bool`
     >   傳入值若沒有在陣列之中，則回傳false
-
-  - array_search ( $要找尋的變數值, array $被搜尋的array [, bool $strict = FALSE ] ) : `mixed`
-    >   搜尋陣列內是否有值，若有則回傳該陣列的key值，可配合array_column()搜尋二維陣列，或是使用foreach 迴圈的$value 放入array_search尋找
 
 ## 其他應用 ##
   1. Variable functions
@@ -558,23 +562,36 @@
     ```
 
   2. 動態陣列
-        陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
+     - 陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
         >   array1(&$test)
         >   array2(&$test)
         >   function (array1 , array2) .... 修改 $test 值，兩個陣列的值會同步變更，至於 $test 是否需宣告，則看是否有將此參數傳進入function(&$test)
         >   若僅是針對 array[0] 對址修改，其實test要取甚麼名字都無所謂(也無須宣告)
 
-        (array) array_map ( callable $callback , array $array1 [, array $... ] )
+     - array_map ( callable $callback , array $array , array ...$arrays ) : `array`
         >   可以在第一個參數放callable function (也就是有回傳值的函數)
         >   此函數將會將每一個 array 值，都透過 $callback 處理過一次，返還array
         >   若callback函數需要有兩個參數，則array1需對應callback的參數數量放置對應的array
+        ```php
+        $rates = array_map(function($value) {
+            return $value === "-" ? NULL : $value;
+        }, $rates);
+        ```
 
-  3. 資料編碼
+     - array_walk ( array &$array , callable $callback [, mixed $userdata = NULL ] ) : `bool`
+        >
+       ```php
+
+       ```
+
+
+  1. 資料編碼
         資料透過陣列轉換成json字串，或將json字串轉換成陣列
         json_encode( mixed $value [, int $options = 0 [, int $depth = 512 ]] );
         >   通常為將陣列轉為json字串，也可以使用物件
         >   PHP5.4 支援 JSON_PRETTY_PRINT
         >   PHP5.4之後，UTF-8的字串會被escape，若不要被escape，可用選項 JSON_UNESCAPED_UNICODE
+        >   若要直接輸出至 javascript 內，可使用
         json_decode( string $json [, bool $assoc = FALSE [, int $depth = 512 [, int $options = 0 ]]] );
         >   $assoc 設為 true 時，轉換時的key將會是根據陣列的key值決定，否則為123
 
@@ -929,7 +946,7 @@
 - 陣列耗費的資源比字串還大，若可以將陣列資料轉換為字串傳送，則盡量使用之
 
 
-## OOP ##
+## OOP & 實用class ##
 - 物件引用
     兩個冒號（::)是對類中的方法的靜態引用
     與 (->) 比較來說
@@ -947,6 +964,9 @@
     // 得到 mysqli 類別的複製
     $mysqli = $mysqlic->newInstanceArgs($params);
     ```
+
+- Image Processing (ImageMagick) 圖像處理
+
 ## CLass ##
 定義 class 方法，使用 new Class() 實作出 object
 
@@ -1114,7 +1134,7 @@
 ```
 
 
-        PHP 相關套件語法使用
+## PHP 相關套件語法使用 ##
 
 ### TCPDF ###
 ```php
