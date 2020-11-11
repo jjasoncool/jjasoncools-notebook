@@ -601,10 +601,10 @@
 
 
 ## 路徑處理 ##
-    - pathinfo ( string $path [, int $options = PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME ] ) : `array/string`
-    >   回傳路徑相關資料
-    >   若沒有指定 option 回傳陣列
-    >   filename 是5.2以後有的選項不須擔心，為避免健忘 **basename($filename, '.html');** 可以達到類似效果
+  - pathinfo ( string $path [, int $options = PATHINFO_DIRNAME | PATHINFO_BASENAME | PATHINFO_EXTENSION | PATHINFO_FILENAME ] ) : `array/string`
+    >   回傳路徑相關資料\
+    >   若沒有指定 option 回傳陣列\
+    >   filename 是5.2以後有的選項不須擔心，為避免健忘 **basename($filename, '.html');** 可以達到類似效果\
     >   pathinfo() 是地區編碼性的，若是混了了非支援的編碼，需要先做 `setlocale(LC_ALL, 'zh_TW.UTF-8');`
 
     ```php
@@ -621,10 +621,36 @@
         return $path;
     }
     ```
-    -  realpath ( string $path ) : `string`
-    -  sys_get_temp_dir ( void ) : `string`
-    >   回傳 temp 的資料夾路徑，回傳的字串最後沒有包含資料夾分隔符號
+
+  - realpath ( string $path ) : `string`
+  - sys_get_temp_dir ( void ) : `string`
+    >   回傳 temp 的資料夾路徑，回傳的字串最後沒有包含資料夾分隔符號\
     >   例：`/home/user/tmp`
+
+### Class Directory ###
+- 檔案目錄操作
+- method:
+  - read: Same as closedir()
+  - close: Same as readdir()
+  - rewind: Same as rewinddir()
+
+- 相關 functions:
+  - chdir
+    >   修改目前工作目錄
+
+  - getcwd ( )
+    >   取得目前工作目錄
+
+  - is_dir ( string $filename ) : `boolean`
+    >   確認該路徑為目錄\
+    >   Returns TRUE if the filename exists and is a directory, FALSE otherwise.
+
+  - scandir ( string $directory [, int $sorting_order = SCANDIR_SORT_ASCENDING [, resource $context ]] ) : `array`
+    >   將目錄中的所有檔案列出，但會包含兩個目錄也被列出 ./ ../ ， 可利用array_diff或array_slice去除\
+    >   $sorting_order 可影響檔案讀出來的排列方式，基本上不會動 (以利套用array_slice)
+
+  - readdir ([ resource $dir_handle ] ) : `string`
+    >   需使用經由 opendir() 方法的 resource
 
 ## 日期與時間處理 ##
   - ※注意:2038 timestamp 會溢出32位元極限，因此要使用 timestamp 相關函數需要注意。
@@ -761,17 +787,6 @@
 - rename ( string $oldname , string $newname [, resource $context ] ) : *boolean*
     >   重新命名檔案，成功與否回傳boolean
 
-- is_dir ( string $filename ) : *boolean*
-    >   確認該路徑為目錄
-    >   Returns TRUE if the filename exists and is a directory, FALSE otherwise.
-
-- scandir ( string $directory [, int $sorting_order = SCANDIR_SORT_ASCENDING [, resource $context ]] ) : `array`
-    >   將目錄中的所有檔案列出，但會包含兩個目錄也被列出 ./ ../ ， 可利用array_diff或array_slice去除
-    >   $sorting_order 可影響檔案讀出來的排列方式，基本上不會動 (以利套用array_slice)
-
-- readdir ([ resource $dir_handle ] ) : `string`
-    >   需使用經由 opendir() 方法的 resource
-
 - move_uploaded_file ( string $filename , string $path ) : *boolean*
     >   將經由合法上傳的文件移動至指定路徑，成功時回傳TRUE
     >   合法定義:經由 HTTP POST 上傳
@@ -789,31 +804,31 @@
     }
     ```
 
-- Class ZipArchive
-    >   PHP 5.2 之後才會支援的 Class，主要用來做zip壓縮相關的操作
-    - method:
-        (ture/error) ZipArchive::open ( string $filename [, int $flags ] )
-        >   開啟新的ZIP檔案或者取代原有檔案
-        >   $flags 存在以下四種，可以使用 || && 合併使用
-            ZipArchive::CREATE (integer) 如果ZIP檔案不存在則創建一個
-            ZipArchive::OVERWRITE (integer) ZIP檔案存在，直接覆蓋掉
-            ZipArchive::EXCL (integer) 如果存在檔案則回傳錯誤
-            ZipArchive::CHECKCONS (integer) 對存檔執行其他一致性檢查，如果失敗則會出錯
-        >   可以利用 $zip->open( $zipFileName, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE );
-            進行對ZIP檔案無論存在與否，都進行蓋檔案動作
+### Class ZipArchive ###
+- PHP 5.2 之後才會支援的 Class，主要用來做zip壓縮相關的操作
+- method:
+    (ture/error) ZipArchive::open ( string $filename [, int $flags ] )
+    >   開啟新的ZIP檔案或者取代原有檔案
+    >   $flags 存在以下四種，可以使用 || && 合併使用
+        ZipArchive::CREATE (integer) 如果ZIP檔案不存在則創建一個
+        ZipArchive::OVERWRITE (integer) ZIP檔案存在，直接覆蓋掉
+        ZipArchive::EXCL (integer) 如果存在檔案則回傳錯誤
+        ZipArchive::CHECKCONS (integer) 對存檔執行其他一致性檢查，如果失敗則會出錯
+    >   可以利用 $zip->open( $zipFileName, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE );
+        進行對ZIP檔案無論存在與否，都進行蓋檔案動作
 
-        (boolean) ZipArchive::addFile ( string $filename [, string $localname = NULL] )
-        >   將指定path 檔案加到ZIP內
-        >   $filename 為抓取path目錄檔案，將其加入到ZIP檔案內
-        >   $localname 為取代path的檔案名稱作為放入ZIP檔案內的檔案名稱
+    (boolean) ZipArchive::addFile ( string $filename [, string $localname = NULL] )
+    >   將指定path 檔案加到ZIP內
+    >   $filename 為抓取path目錄檔案，將其加入到ZIP檔案內
+    >   $localname 為取代path的檔案名稱作為放入ZIP檔案內的檔案名稱
 
-        (boolean) ZipArchive::addFromString ( string $localname , string $contents )
-        >   將指定字串壓縮成ZIP內的單一檔案
+    (boolean) ZipArchive::addFromString ( string $localname , string $contents )
+    >   將指定字串壓縮成ZIP內的單一檔案
 
-        (boolean) ZipArchive::close ( void )
-        >   將ZIP檔案關閉，這是結尾一定要做的
-        >   如果此方法return false，代表有可能先前操作有新增不存在檔案或者path路徑錯誤
-        >   可以利用file_exists() 或 is_readable()
+    (boolean) ZipArchive::close ( void )
+    >   將ZIP檔案關閉，這是結尾一定要做的
+    >   如果此方法return false，代表有可能先前操作有新增不存在檔案或者path路徑錯誤
+    >   可以利用file_exists() 或 is_readable()
 
 ## 進階應用 ##
 - 傳輸層
@@ -952,10 +967,75 @@
     與 (->) 比較來說
     也就是不需要實例化對象(不需要new)，直接通過類名對類中的方法進行引用
 
+- $this 與 self
+  - $this 是針對有實例化的物件，self:: 是對於靜態未實例化的物件
+  - Use $this to refer to the current object. Use self to refer to the current class.
+  - In other words, use $this->member for non-static members, use self::$member for static members.
+
 - instanceof 判斷某驗數是否為某個 class 的實體
   - `$db->connection instanceof mysqli`
 
+- Singleton Pattern 單例模式
+    >   舉例來說，最常用到的 db 連線，為避免一值 new 出新的實體，而能發揮重用
+    >   延續之前的 instance e.g. mysqli::insert_id，若 new 新的實體，便無法抓到先前的 insert_id
+  ```php
+    class MySQL
+    {
+        // 實體
+        private static $_instance;
+
+        // 連線資源
+        public $connection = null;
+        private $new_db = null;
+
+        // 用戶端字集 (可指定)
+        public $_client_character_set;
+
+        public function __construct($host, $user, $password, $dbname, $charset = 'utf8')
+        {
+            $this->connection = new mysqli($host, $user, $password, $dbname);
+
+            if ($this->connection->connect_errno) {
+                die("Oops! Something went wrong. Please contact CR IT Section.");
+            }
+
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+            //mysqli_report(MYSQLI_REPORT_OFF);
+
+            $this->_client_character_set = strtolower($charset);
+
+            // 指定連線用的字集
+            $this->connection->set_charset($this->_client_character_set);
+            // composer require joshcam/mysqli-database-class
+            $this->new_db = new MysqliDb($this->connection);
+        }
+
+        public function setCharset($charset)
+        {
+            $this->_client_character_set = strtolower($charset);
+            $this->new_db = $this->new_db->addConnection('default', ['charset' => $this->_client_character_set]);
+            $this->connection->set_charset($this->_client_character_set);
+        }
+
+        // 若使用到實體呼叫，便要用 MySQL::connect 此 function 會回傳一實體
+        public static function connect($host, $user, $password, $dbname, $charset = 'utf8')
+        {
+            if (!(self::$_instance instanceof MySQL)) {
+                $class_name = __CLASS__;
+                self::$_instance = new $class_name($host, $user, $password, $dbname, $charset);
+            }
+            return self::$_instance;
+        }
+    }
+  ```
+
 - namespace 命名空間
+  - 若定義了 namespace，代表底下定義的 class 或 new 的 class 都會以該空間為主
+  - 使用別的 namespace 需要使用 use
+  - global namespace 則是這樣用
+    ```php
+    $exmaple = new \globalClass();
+    ```
 
 - ReflectionClass 反射類別
     >   可以得到Class的各種屬性，例如
@@ -969,7 +1049,6 @@
 
 ## CLass ##
 定義 class 方法，使用 new Class() 實作出 object
-
 
 1. 抽象方法
     在類中，沒有方法體的方法就是抽象方法。
