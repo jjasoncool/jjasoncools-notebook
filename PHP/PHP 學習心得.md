@@ -1,5 +1,4 @@
-
-            一般語法參考
+# 一般語法參考 #
 
 ## cli (command line 部分) ##
   - -v 查看目前版本
@@ -112,6 +111,7 @@
     >   單引號(Single quotes) 內不可以放變數，會將所有東西直接輸出的字串
     >   雙引號(Double quotes) 內可以直接放變數，會解析帶有$符號的變數
     >   **※注意:使用雙引號的變數，可以使用{}大括弧包起來，這樣便可以不需要使用連結符號 . 即可連接變數變成字串**
+    >   heredoc syntax 內部也可以放變數，但常數無法放
     ```php
     <?php
     // Use double quotes to concat more than two strings instead of multiple '.' operators.
@@ -285,12 +285,12 @@
   - str_shuffle ( string $str ) : string
     >   將字串視為陣列隨機排序
 
-## 特殊字串處理 ##
-    imap_rfc822_parse_adrlist ( string $address , string $default_host ) : `array`
+## 資料處理 ##
+  - imap_rfc822_parse_adrlist ( string $address , string $default_host ) : `array`
     >   將一串電子郵件地址轉換為 **ArrayObject** (PHP5 之後才有ArrayObject)
     >   可參考**class.phpmailer**內使用來檢驗email位址是否正確
 
-    特殊處理 XML/HTML **DOMDocument class**
+  - 特殊處理 XML/HTML **DOMDocument class**
     >   可以用來抓取html字串等等
     ```php
         $document = new DOMDocument();
@@ -305,15 +305,28 @@
         unset($document);
     ```
 
-    parse_str ( string $encoded_string [, array &$result ] ) : `void`
+  - parse_str ( string $encoded_string [, array &$result ] ) : `void`
     >   極度不建議在沒有 result 參數的情況下使用此函數，並且在 PHP 7.2 中將廢棄不設定參數的行為
     >   主要用來轉換 querystring 變成陣列輸出
     >   若字串變數含有點或空格，將被轉為底線_
+
+  - http_build_query ( mixed $query_data [, string $numeric_prefix [, string $arg_separator [, int $enc_type = PHP_QUERY_RFC1738 ]]] ) : `string`
+    >   將陣列或參數轉換為網址的GET參數
+    >   $query_data 可以使用物件或陣列，物件僅有public參數會被轉換
+    >   $numeric_prefix 若有設定，且傳入陣列沒有指定key時，將會自動產生設定的字串開頭連接數字key，例如設定obj_，將會產生obj_1=...&ogj_2=...&......
+    >   $arg_separator 代表割開每個變數的字元，預設為"&"，定義此選項可更改分割字串
+    >   $enc_type 預設為PHP_QUERY_RFC1738標準，此標準會把空格編碼成+號，但有可能與真正的+號混淆，另一選項為PHP_QUERY_RFC3986標準，空格將會被編碼成%20，不影響其他字符
+    ```php
+    // 可自訂只需要抓那些參數
+    $findkey = array_flip(array('error', 'msg'));
+    $param = http_build_query(array_intersect_key($_GET, $findkey));
+    ```
 
 ## 數值 ##
   - intval ( mixed $var [, int $base = 10 ] ) : `int`
     >   轉換參數為數值，不可轉換物件，否則將跳出 notice，並返回數值 1
     >   預設為十進制
+    >   可以轉換進位制
 
   - number_format ( float $number [, int $decimals = 0 ] ) : `string`
   - number_format ( float $number , int $decimals = 0 , string $dec_point = "." , string $thousands_sep = "," ) : `string`
@@ -535,31 +548,6 @@
     ```
     >   $callback 的部分若非動態函數，則是用字串代表該函數
 
-  - http_build_query ( mixed $query_data [, string $numeric_prefix [, string $arg_separator [, int $enc_type = PHP_QUERY_RFC1738 ]]] ) : `string`
-    >   將陣列或參數轉換為網址的GET參數
-    >   $query_data 可以使用物件或陣列，物件僅有public參數會被轉換
-    >   $numeric_prefix 若有設定，且傳入陣列沒有指定key時，將會自動產生設定的字串開頭連接數字key，例如設定obj_，將會產生obj_1=...&ogj_2=...&......
-    >   $arg_separator 代表割開每個變數的字元，預設為"&"，定義此選項可更改分割字串
-    >   $enc_type 預設為PHP_QUERY_RFC1738標準，此標準會把空格編碼成+號，但有可能與真正的+號混淆，另一選項為PHP_QUERY_RFC3986標準，空格將會被編碼成%20，不影響其他字符
-    ```php
-    // 可自訂只需要抓那些參數
-    $findkey = array_flip(array('error', 'msg'));
-    $param = http_build_query(array_intersect_key($_GET, $findkey));
-    ```
-
-  - file_get_contents ( string $filename [, bool $use_include_path = false [, resource $context [, int $offset = -1 [, int $maxlen ]]]] ) : `string`
-    >   抓取網址或者文本的方法
-    >   若是要做為執行某PHP的方式，盡量還是用CURL，速度差10倍
-    >   若是要 include 別的網頁，且對方有開啟 https，會需要驗證時，可以參考以下方法
-    ```php
-    $arrContextOptions = [
-        "ssl" => [
-            "verify_peer" => false,
-            "verify_peer_name" => false,
-        ],
-    ];
-    file_get_contents($網址, false, $arrContextOptions);
-    ```
 
   2. 動態陣列
      - 陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
@@ -585,19 +573,69 @@
        ```
 
 
-  1. 資料編碼
+  3. 資料編碼
         資料透過陣列轉換成json字串，或將json字串轉換成陣列
-        json_encode( mixed $value [, int $options = 0 [, int $depth = 512 ]] );
+     - json_encode( mixed $value [, int $options = 0 [, int $depth = 512 ]] );
         >   通常為將陣列轉為json字串，也可以使用物件
         >   PHP5.4 支援 JSON_PRETTY_PRINT
         >   PHP5.4之後，UTF-8的字串會被escape，若不要被escape，可用選項 JSON_UNESCAPED_UNICODE
         >   若要直接輸出至 javascript 內，可使用
         json_decode( string $json [, bool $assoc = FALSE [, int $depth = 512 [, int $options = 0 ]]] );
-        >   $assoc 設為 true 時，轉換時的key將會是根據陣列的key值決定，否則為123
+        >   $assoc 設為 true 時，轉換時的key將會是根據陣列的key值決定，否則為0123
 
 ## 變數 ##
+  - 動態變數
     Using ${} is a way to create dynamic variables
     動態產生變數，可連結字串
+
+  - Variable scope
+    - global $外部變數;
+    >   另一方式是在 function 內使用 global，但這是較不好的作法，因為使用 global 後，函數內的對變數變更將會變更外部參數
+    >   若專案巨大且頻繁使用，會不知道更改變數的位置，導致除錯困難
+
+    - static $靜態變數;
+    >   變數範圍的另一個重要特徴是靜態變數（static variable）。
+    >   靜態變數僅在局部函數域中存在，但當程式執行離開此範圍時，其值並不會消失。
+
+  - Function arguments
+    - function (&$傳入參數)
+    >   參數前面加上 &，即便沒有return 在function 對加上&的參數作變更，將直接影響到傳入的參數(被指向同一個地方)
+    >   也就是function 結束後，外部變數也會維持被變更後的結果
+
+    - 動態變數(Variable-length argument lists)
+    >   必須為 PHP 5.6 以上版本
+    >   在變數前面加上 ... 讓變數變成動態長度
+    ```php
+        // php 5.6+
+        function sum(...$numbers) {
+            $acc = 0;
+            foreach ($numbers as $n) {
+                $acc += $n;
+            }
+            return $acc;
+        }
+
+        echo sum(1, 2, 3, 4);
+
+        // older version
+        function sum() {
+            $acc = 0;
+            foreach (func_get_args() as $n) {
+                $acc += $n;
+            }
+            return $acc;
+        }
+
+        echo sum(1, 2, 3, 4);
+    ```
+
+    - (int) func_num_args ( void )
+    >   在function內使用，回傳 function 參數數量
+    >   若在 global 區間使用將會出錯
+
+    - (array) func_get_args ( void )
+    >   在function內使用，回傳 function 參數，並將其轉成陣列型態
+    >   若在 global 區間使用將會出錯
 
 
 ## 路徑處理 ##
@@ -711,10 +749,13 @@
   - openssl_decrypt ( string $data , string $method , string $key [, int $options = 0 [, string $iv = "" [, string $tag = "" [, string $aad = "" ]]]] ) : `string`
     >   openssl 加密方法
 
-- 緩衝區：主要用途為，當PHP仍然在執行，但有訊息想要先行輸出的時候，可以使用此緩衝區先傳送或處理訊息
+### 緩衝區 ###
+    主要用途為，當PHP仍然在執行，但有訊息想要先行輸出的時候，可以使用此緩衝區先傳送或處理訊息
   - ob_flush() : `void`
     >   將目前的輸出內容送至緩衝區
-    1. flush() 無論PHP 目前執行在任何情況，將目前buffer內的內容輸出至瀏覽器
+
+  - flush()
+    >   無論PHP 目前執行在任何情況，將目前buffer內的內容輸出至瀏覽器
 
   - ob_implicit_flush ([ int $flag = 1 ] ) : `void`
     >   開啟隱式 flush 模式。開啟模式後，不需要每次都呼叫 flush() 函數輸出內容
@@ -769,31 +810,45 @@
 
 
 ## 檔案操作 ##
-- ini_get('upload_max_filesize')
+  - ini_get('upload_max_filesize')
     >   抓取php.ini 的資料，此處為抓取可上傳的檔案容量
     >   post_max_size 如果檔案上傳透過form post，則需要設定此值大於或等於upload_max_filesize
 
-- file_put_contents ( string $filename , mixed $data [, int $flags = 0 [, resource $context ]] ) : *boolean*
+  - file_put_contents ( string $filename , mixed $data [, int $flags = 0 [, resource $context ]] ) : *boolean*
     >   如果檔案不存在將會創建一個新檔案，存在將會覆寫，除非有 flag 使用 FILE_APPEND
 
-- file_exists ( string $filename ) : *boolean*
-- is_file ( string $filename ) : *boolean*
+  - file_get_contents ( string $filename [, bool $use_include_path = false [, resource $context [, int $offset = -1 [, int $maxlen ]]]] ) : `string`
+    >   抓取網址或者文本的方法
+    >   若是要做為執行某PHP的方式，盡量還是用CURL，速度差10倍
+    >   若是要 include 別的網頁，且對方有開啟 https，會需要驗證時，可以參考以下方法
+    ```php
+    $arrContextOptions = [
+        "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ],
+    ];
+    file_get_contents($網址, false, $arrContextOptions);
+    ```
+
+  - file_exists ( string $filename ) : *boolean*
+  - is_file ( string $filename ) : *boolean*
     >   可以判斷檔案是否存在，但會寫入catch，可用clearstatcache()清空快取資料
     >   PHP 的 is_file() 及 file_exists() 都是用作檢查檔案是否存在，它們的分別是 file_exists() 輸入的參數是目錄也會回傳 TRUE，而 is_file() 則只會對檔案回傳 TRUE
 
-- unlink ( string $filename [, resource $context ] ) : *boolean*
+  - unlink ( string $filename [, resource $context ] ) : *boolean*
     >   刪除檔案，刪除成功將會回傳 boolean 值
 
-- rename ( string $oldname , string $newname [, resource $context ] ) : *boolean*
+  - rename ( string $oldname , string $newname [, resource $context ] ) : *boolean*
     >   重新命名檔案，成功與否回傳boolean
 
-- move_uploaded_file ( string $filename , string $path ) : *boolean*
+  - move_uploaded_file ( string $filename , string $path ) : *boolean*
     >   將經由合法上傳的文件移動至指定路徑，成功時回傳TRUE
     >   合法定義:經由 HTTP POST 上傳
     >   可以利用 PHP_OS 判斷作業系統，若LINUX為UTF-8檔名機制，若網頁仍為BIG5，需轉換檔名
     >   ※注意：如果文件已存在將會被覆蓋
 
-- readfile( string $filename )
+  - readfile( string $filename )
     >   readfile() will not present any memory issues, even when sending large files, on its own.
     >   If you encounter an out of memory error ensure that output buffering is off with ob_get_level().
     >   若讀取大型檔案的時候會超過記憶體，則可以另外加上
@@ -886,49 +941,7 @@
     // text with <div>tags</div>
 ```
 
-## 變量引用 ##
-- Function arguments
-    - function (&$傳入參數)
-    >   參數前面加上 &，即便沒有return 在function 對加上&的參數作變更，將直接影響到傳入的參數(被指向同一個地方)
-    >   也就是function 結束後，外部變數也會維持被變更後的結果
-
-    - global $外部變數;
-    >   另一方式是在 function 內使用 global，但這是較不好的作法，因為使用 global 後，函數內的對變數變更將會變更外部參數
-    >   若專案巨大且頻繁使用，會不知道更改變數的位置，導致除錯困難
-
-    - 動態變數(Variable-length argument lists)
-    >   必須為 PHP 5.6 以上版本
-    >   在變數前面加上 ... 讓變數變成動態長度
-    ```php
-        // php 5.6+
-        function sum(...$numbers) {
-            $acc = 0;
-            foreach ($numbers as $n) {
-                $acc += $n;
-            }
-            return $acc;
-        }
-
-        echo sum(1, 2, 3, 4);
-
-        // older version
-        function sum() {
-            $acc = 0;
-            foreach (func_get_args() as $n) {
-                $acc += $n;
-            }
-            return $acc;
-        }
-
-        echo sum(1, 2, 3, 4);
-    ```
-
-    - (int) func_num_args ( void )
-    >   回傳 function 參數數量
-
-    - (array) func_get_args ( void )
-    >   回傳 function 參數，並將其轉成陣列型態
-
+## 引用語法 ##
 - include_once
     >   將會引用程式碼一次，若已被引用則不會再次引用
 
@@ -962,15 +975,29 @@
 
 
 ## OOP & 實用class ##
+- 靜態方法
+  - 該class 不需要先被 new 出一個實體，即可直接使用內部的變量或者方法
+  - 對於執行效率而言，靜態的方式執行效率較好
+
 - 物件引用
     兩個冒號（::)是對類中的方法的靜態引用
     與 (->) 比較來說
     也就是不需要實例化對象(不需要new)，直接通過類名對類中的方法進行引用
 
-- $this 與 self
+  - Static 屬性和方法
+    1. Class之外：$物件變數->(限方法)、ClassName:: (屬性和方法)
+    2. Class當中：self:: & parent:: (屬性和方法)、$this-> (限方法)
+
+  - 非Static 屬性和方法 (實例物件，被 new 出來的實體)
+    1. Class之外：$物件變數-> (屬性和方法)
+    2. Class當中：self:: & parent:: (限方法)、$this-> (屬性和方法)
+
+- $this vs self
   - $this 是針對有實例化的物件，self:: 是對於靜態未實例化的物件
   - Use $this to refer to the current object. Use self to refer to the current class.
   - In other words, use $this->member for non-static members, use self::$member for static members.
+
+- self vs static
 
 - instanceof 判斷某驗數是否為某個 class 的實體
   - `$db->connection instanceof mysqli`
@@ -1190,10 +1217,15 @@
     >   因為user不能使用'your.site/../src/includeFile.php'去瀏覽你的頁面
 
 - 密碼驗證
-    password_hash ( string $password , int $algo [, array $options ] ) : `string`
+  - password_hash ( string $password , int $algo [, array $options ] ) : `string`
     >   最好的資料長度建議為255
     >   預設的方式將會動態產生 salt，此值是動態加入以擾亂辨識原本的密碼型態 (避免有人使用先算好的雜湊值碰撞硬解)
-    password_verify ( string $password , string $hash ) : *boolean*
+
+    算法 ($algo)
+    -  PASSWORD_DEFAULT 使用 bcrypt 算法 (PHP 5.5.0 預設)。 注意，該常數會隨着 PHP 加入更新更高強度的算法而改變。 所以，使用此常數生成結果的長度將在未來有變化。 因此，資料程式庫裡儲存結果的列可超過60個字元（最好是255個字元）。
+    -  PASSWORD_BCRYPT 使用 CRYPT_BLOWFISH 算法建立雜湊。這會產生相容使用 "$2y$" 的 crypt()。 結果將會是 60 個字元的字串， 或者在失敗時傳回 FALSE。
+
+  - password_verify ( string $password , string $hash ) : `boolean`
     >   可以驗證經由 password_hash 產生出來的亂數
 
 

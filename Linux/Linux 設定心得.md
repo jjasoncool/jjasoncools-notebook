@@ -114,7 +114,7 @@
 
 - 通用解 **fcitx 輸入法殼層** 配套新酷音
     `sudo dnf install fcitx fcitx-configtool fcitx-chewing`
-    - fcitx-configtool 可能會找不到，可以到 fedora prject 下載 rpm 安裝
+    - fcitx-configtool 可能會找不到，可以到 [fedora project](https://src.fedoraproject.org/projects/rpms/*) 下載 rpm 安裝
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
     - centos 使用 gnome 介面的話，可使用 `dnf install im-choose`
     - 使用 `imsettings-switch fcitx`
