@@ -13,6 +13,12 @@
   - 指令自動完成
   `yum install bash-completion*`
 
+- ssh 免密碼登入(git 的 ssh 設定也是相同原理)
+  - `ssh-keygen`
+    >   Generating public/private rsa key pair.
+    >   Enter file in which to save the key (/home/jason/.ssh/id_rsa): /home/jason/.ssh/id_rsa.rasp
+  - `ssh-copy-id -i ~/.ssh/id_rsa.rasp.pub jason@192.168.50.201`
+
 - **最小型安裝**設定螢幕省電
   - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
   - `setterm --term linux --blank 3 --powerdown 5 >> /var/log/crontab/screenblank.log 2>&1 > /dev/tty0`
