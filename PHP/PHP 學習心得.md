@@ -508,6 +508,50 @@
   - array_key_exists ( mixed $key , array $被搜尋的陣列 ): `bool`
     >   傳入值若沒有在陣列之中，則回傳false
 
+## 日期與時間處理 ##
+  - ※注意:2038 timestamp 會溢出32位元極限，因此要使用 timestamp 相關函數需要注意。
+    (timestamp) strtotime()
+    >   回傳時間戳
+    (timestamp) mktime($時, $分, $秒, $月, $日, $年, $是否為日光節約時間 = -1);
+    >   此函數可利用來計算時間區間，因使用時間戳記，故就算在函式內加減都沒有問題
+    >   經測試 mktime($時, $分, $秒, $月=date("n"), $日=date("j"), $年=date("Y")) 時，取得現在時間可將值代0，但年月日請不要代0，須代入date函數，避免錯誤
+    >   另外值內可以做加減 (不過如果要計算時間日期區間，建議使用MYSQL的function比較不會有問題)
+
+    date_default_timezone_set ( string $timezone_identifier )
+    >   在其中一支程式內套用選定時區，不影響其他程式碼
+
+  - DateTimeImmutable 物件與 DateTime 有何不同?
+    - DateTime behaves the same as DateTimeImmutable except objects are modified itself when modification methods such as DateTime::modify() are called.
+    - 從字面上解釋，不難理解 DateTimeImmutable 為保留初始值的作法，常常發現 DateTime 物件往往經過方法修改過後，一開始定義的初始值也會被連同修改，在複雜的程式碼經過多次運算後，往往會造成問題
+
+
+  - DateTime Object
+    (object)
+    ```php
+    // 單行輸出
+    (new DateTime())->format('Y-m-d H:i:s');
+    // 新增 datetime 物件 (php 5.2 可以用的日期物件)
+    $now = new DateTime();
+    $temp_time = new DateTime($row['temp_time']);
+    $temp_time->modify('+3 day');
+    echo $temp_time->format('Y-m-d H:i:s');
+    echo $now < $temp_time;
+
+    // 輸出日期差異總天數
+    $date_end->diff($date_start)->format('%a');
+
+    // DateTime 常用的函數 (php 5.3以後)
+    // 轉換成DateTimeImmutable
+    $date = new DateTime("2014-06-20 11:45 Europe/London");
+    $immutable = DateTimeImmutable::createFromMutable($date);
+
+    // DateTimeImmutable 常用的函數 (php 5.5以後)
+    // 轉換成DateTime
+    $date = new DateTimeImmutable("2014-06-20 11:45 Europe/London");
+    $mutable = DateTime::createFromImmutable( $date );
+
+    ```
+
 ## 其他應用 ##
   1. Variable functions
     >   字串可以直接當成function name 使用
@@ -574,13 +618,13 @@
 
 
   3. 資料編碼
-        資料透過陣列轉換成json字串，或將json字串轉換成陣列
+     - 資料透過陣列轉換成json字串，或將json字串轉換成陣列
      - json_encode( mixed $value [, int $options = 0 [, int $depth = 512 ]] );
         >   通常為將陣列轉為json字串，也可以使用物件
         >   PHP5.4 支援 JSON_PRETTY_PRINT
         >   PHP5.4之後，UTF-8的字串會被escape，若不要被escape，可用選項 JSON_UNESCAPED_UNICODE
         >   若要直接輸出至 javascript 內，可使用
-        json_decode( string $json [, bool $assoc = FALSE [, int $depth = 512 [, int $options = 0 ]]] );
+     - json_decode( string $json [, bool $assoc = FALSE [, int $depth = 512 [, int $options = 0 ]]] );
         >   $assoc 設為 true 時，轉換時的key將會是根據陣列的key值決定，否則為0123
 
 ## 變數 ##
@@ -665,8 +709,8 @@
     >   回傳 temp 的資料夾路徑，回傳的字串最後沒有包含資料夾分隔符號\
     >   例：`/home/user/tmp`
 
-### Class Directory ###
-- 檔案目錄操作
+## 目錄操作 ##
+- 目錄操作 Class Directory
 - method:
   - read: Same as closedir()
   - close: Same as readdir()
@@ -690,48 +734,60 @@
   - readdir ([ resource $dir_handle ] ) : `string`
     >   需使用經由 opendir() 方法的 resource
 
-## 日期與時間處理 ##
-  - ※注意:2038 timestamp 會溢出32位元極限，因此要使用 timestamp 相關函數需要注意。
-    (timestamp) strtotime()
-    >   回傳時間戳
-    (timestamp) mktime($時, $分, $秒, $月, $日, $年, $是否為日光節約時間 = -1);
-    >   此函數可利用來計算時間區間，因使用時間戳記，故就算在函式內加減都沒有問題
-    >   經測試 mktime($時, $分, $秒, $月=date("n"), $日=date("j"), $年=date("Y")) 時，取得現在時間可將值代0，但年月日請不要代0，須代入date函數，避免錯誤
-    >   另外值內可以做加減 (不過如果要計算時間日期區間，建議使用MYSQL的function比較不會有問題)
+  - mkdir ( string $pathname [, int $mode = 0777 [, bool $recursive = FALSE [, resource $context ]]] ) : `boolean`
+    >   建立目錄\
+    >   $mod 為 linux 權限，預設為 0777
+    >   $recursive 是否可以迴圈創立內部子資料夾
+    >   Returns TRUE on success or FALSE on failure.
 
-    date_default_timezone_set ( string $timezone_identifier )
-    >   在其中一支程式內套用選定時區，不影響其他程式碼
+## 檔案操作 ##
+  - ini_get('upload_max_filesize')
+    >   抓取php.ini 的資料，此處為抓取可上傳的檔案容量
+    >   post_max_size 如果檔案上傳透過form post，則需要設定此值大於或等於upload_max_filesize
 
-  - DateTimeImmutable 物件與 DateTime 有何不同?
-    - DateTime behaves the same as DateTimeImmutable except objects are modified itself when modification methods such as DateTime::modify() are called.
-    - 從字面上解釋，不難理解 DateTimeImmutable 為保留初始值的作法，常常發現 DateTime 物件往往經過方法修改過後，一開始定義的初始值也會被連同修改，在複雜的程式碼經過多次運算後，往往會造成問題
+  - file_put_contents ( string $filename , mixed $data [, int $flags = 0 [, resource $context ]] ) : *boolean*
+    >   如果檔案不存在將會創建一個新檔案，存在將會覆寫，除非有 flag 使用 FILE_APPEND
 
-
-  - DateTime Object
-    (object)
+  - file_get_contents ( string $filename [, bool $use_include_path = false [, resource $context [, int $offset = -1 [, int $maxlen ]]]] ) : `string`
+    >   抓取網址或者文本的方法
+    >   若是要做為執行某PHP的方式，盡量還是用CURL，速度差10倍
+    >   若是要 include 別的網頁，且對方有開啟 https，會需要驗證時，可以參考以下方法
     ```php
-    // 單行輸出
-    (new DateTime())->format('Y-m-d H:i:s');
-    // 新增 datetime 物件 (php 5.2 可以用的日期物件)
-    $now = new DateTime();
-    $temp_time = new DateTime($row['temp_time']);
-    $temp_time->modify('+3 day');
-    echo $temp_time->format('Y-m-d H:i:s');
-    echo $now < $temp_time;
+    $arrContextOptions = [
+        "ssl" => [
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ],
+    ];
+    file_get_contents($網址, false, $arrContextOptions);
+    ```
 
-    // 輸出日期差異總天數
-    $date_end->diff($date_start)->format('%a');
+  - file_exists ( string $filename ) : *boolean*
+  - is_file ( string $filename ) : *boolean*
+    >   可以判斷檔案是否存在，但會寫入catch，可用clearstatcache()清空快取資料
+    >   PHP 的 is_file() 及 file_exists() 都是用作檢查檔案是否存在，它們的分別是 file_exists() 輸入的參數是目錄也會回傳 TRUE，而 is_file() 則只會對檔案回傳 TRUE
 
-    // DateTime 常用的函數 (php 5.3以後)
-    // 轉換成DateTimeImmutable
-    $date = new DateTime("2014-06-20 11:45 Europe/London");
-    $immutable = DateTimeImmutable::createFromMutable($date);
+  - unlink ( string $filename [, resource $context ] ) : *boolean*
+    >   刪除檔案，刪除成功將會回傳 boolean 值
 
-    // DateTimeImmutable 常用的函數 (php 5.5以後)
-    // 轉換成DateTime
-    $date = new DateTimeImmutable("2014-06-20 11:45 Europe/London");
-    $mutable = DateTime::createFromImmutable( $date );
+  - rename ( string $oldname , string $newname [, resource $context ] ) : *boolean*
+    >   重新命名檔案，成功與否回傳boolean
 
+  - move_uploaded_file ( string $filename , string $path ) : *boolean*
+    >   將經由合法上傳的文件移動至指定路徑，成功時回傳TRUE
+    >   合法定義:經由 HTTP POST 上傳
+    >   可以利用 PHP_OS 判斷作業系統，若LINUX為UTF-8檔名機制，若網頁仍為BIG5，需轉換檔名
+    >   ※注意：如果文件已存在將會被覆蓋
+
+  - readfile( string $filename )
+    >   readfile() will not present any memory issues, even when sending large files, on its own.
+    >   If you encounter an out of memory error ensure that output buffering is off with ob_get_level().
+    >   若讀取大型檔案的時候會超過記憶體，則可以另外加上
+    ```php
+    // read big file will not error
+    if (ob_get_level()) {
+        ob_end_clean();
+    }
     ```
 
 ## 加解密與壓縮處理 ##
@@ -749,7 +805,7 @@
   - openssl_decrypt ( string $data , string $method , string $key [, int $options = 0 [, string $iv = "" [, string $tag = "" [, string $aad = "" ]]]] ) : `string`
     >   openssl 加密方法
 
-### 緩衝區 ###
+## 緩衝區 ##
     主要用途為，當PHP仍然在執行，但有訊息想要先行輸出的時候，可以使用此緩衝區先傳送或處理訊息
   - ob_flush() : `void`
     >   將目前的輸出內容送至緩衝區
@@ -808,58 +864,7 @@
 
 ## 圖像處理 ##
 
-
-## 檔案操作 ##
-  - ini_get('upload_max_filesize')
-    >   抓取php.ini 的資料，此處為抓取可上傳的檔案容量
-    >   post_max_size 如果檔案上傳透過form post，則需要設定此值大於或等於upload_max_filesize
-
-  - file_put_contents ( string $filename , mixed $data [, int $flags = 0 [, resource $context ]] ) : *boolean*
-    >   如果檔案不存在將會創建一個新檔案，存在將會覆寫，除非有 flag 使用 FILE_APPEND
-
-  - file_get_contents ( string $filename [, bool $use_include_path = false [, resource $context [, int $offset = -1 [, int $maxlen ]]]] ) : `string`
-    >   抓取網址或者文本的方法
-    >   若是要做為執行某PHP的方式，盡量還是用CURL，速度差10倍
-    >   若是要 include 別的網頁，且對方有開啟 https，會需要驗證時，可以參考以下方法
-    ```php
-    $arrContextOptions = [
-        "ssl" => [
-            "verify_peer" => false,
-            "verify_peer_name" => false,
-        ],
-    ];
-    file_get_contents($網址, false, $arrContextOptions);
-    ```
-
-  - file_exists ( string $filename ) : *boolean*
-  - is_file ( string $filename ) : *boolean*
-    >   可以判斷檔案是否存在，但會寫入catch，可用clearstatcache()清空快取資料
-    >   PHP 的 is_file() 及 file_exists() 都是用作檢查檔案是否存在，它們的分別是 file_exists() 輸入的參數是目錄也會回傳 TRUE，而 is_file() 則只會對檔案回傳 TRUE
-
-  - unlink ( string $filename [, resource $context ] ) : *boolean*
-    >   刪除檔案，刪除成功將會回傳 boolean 值
-
-  - rename ( string $oldname , string $newname [, resource $context ] ) : *boolean*
-    >   重新命名檔案，成功與否回傳boolean
-
-  - move_uploaded_file ( string $filename , string $path ) : *boolean*
-    >   將經由合法上傳的文件移動至指定路徑，成功時回傳TRUE
-    >   合法定義:經由 HTTP POST 上傳
-    >   可以利用 PHP_OS 判斷作業系統，若LINUX為UTF-8檔名機制，若網頁仍為BIG5，需轉換檔名
-    >   ※注意：如果文件已存在將會被覆蓋
-
-  - readfile( string $filename )
-    >   readfile() will not present any memory issues, even when sending large files, on its own.
-    >   If you encounter an out of memory error ensure that output buffering is off with ob_get_level().
-    >   若讀取大型檔案的時候會超過記憶體，則可以另外加上
-    ```php
-    // read big file will not error
-    if (ob_get_level()) {
-        ob_end_clean();
-    }
-    ```
-
-### Class ZipArchive ###
+## Class ZipArchive ##
 - PHP 5.2 之後才會支援的 Class，主要用來做zip壓縮相關的操作
 - method:
     (ture/error) ZipArchive::open ( string $filename [, int $flags ] )

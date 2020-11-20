@@ -33,9 +33,12 @@ input 只轉換 push 的時候的 CRLF 為 LF
             git ssh 連線方式
 ----------------------------------------
 ## 產生公私鑰 ##
-`ssh-keygen -t rsa -b 4096 -C "webserver_replica(註解)"`
+- `ssh-keygen -t rsa -b 4096 -C "webserver_replica(註解)"`
 - 預設將會把產生的金鑰存到 **/home/.ssh** 之下
-- 將xxx.pub內容複製到 gitlab 上
+- 可以自行取名 e.g. `~/.ssh/id_rsa.github`
+- 執行後將會產出兩個檔案，一個為 xxx(私鑰) 與 xxx.pub(公鑰)，將xxx.pub內容複製到 gitlab/github 上
+- `ssh-add <私鑰位置>`
+- 記得 `git remote add <使用ssh位址>`
 
 ----------------------------------------
             git bash 語法參考

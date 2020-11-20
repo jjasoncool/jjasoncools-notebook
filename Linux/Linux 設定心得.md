@@ -18,6 +18,13 @@
     >   Generating public/private rsa key pair.
     >   Enter file in which to save the key (/home/jason/.ssh/id_rsa): /home/jason/.ssh/id_rsa.rasp
   - `ssh-copy-id -i ~/.ssh/id_rsa.rasp.pub jason@192.168.50.201`
+  - ssh config
+    ```config
+    Host 192.168.50.201
+        HostName 192.168.50.201
+        User jason
+        IdentityFile ~/.ssh/id_rsa.rasp
+    ```
 
 - **最小型安裝**設定螢幕省電
   - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
