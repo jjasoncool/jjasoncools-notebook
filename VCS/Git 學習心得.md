@@ -1,7 +1,7 @@
 
-----------------------------------------
-            git server 建置
-----------------------------------------
+## git server 建置 ##
+這個作者很懶，什麼都沒有留下
+
 ## 開始使用 ##
 在你安裝 Git 後首先應該做的事是設定使用者名稱及電子郵件。 這一點非常重要，因為每次 Git 的提交會使用這些資訊，而且提交後不能再被修改：
 >   `git config --global user.name "jjasoncool"`\
@@ -15,10 +15,10 @@
 
 
 ## EOL ##
-取消 LF 與 CRLF 轉換
-true 依據平台轉換該平台使用的換行字元
-input 只轉換 push 的時候的 CRLF 為 LF
->   `git config --global core.autocrlf false`
+- 取消 LF 與 CRLF 轉換
+  - true 依據平台轉換該平台使用的換行字元
+  - input 只轉換 push 的時候的 CRLF 為 LF
+    >   `git config --global core.autocrlf false`
 
 ## UTF8化(windows) ##
 將git commit 內容以及設定都設定為utf-8
@@ -29,9 +29,7 @@ input 只轉換 push 的時候的 CRLF 為 LF
 避免中文文件或是檔案名被自動轉譯成路徑
 >   `git config --global core.quotepath false`
 
-----------------------------------------
-            git ssh 連線方式
-----------------------------------------
+# git ssh 連線方式 #
 ## 產生公私鑰 ##
 - `ssh-keygen -t rsa -b 4096 -C "webserver_replica(註解)"`
 - 預設將會把產生的金鑰存到 **/home/.ssh** 之下
@@ -40,9 +38,9 @@ input 只轉換 push 的時候的 CRLF 為 LF
 - `ssh-add <私鑰位置>`
 - 記得 `git remote add <使用ssh位址>`
 
-----------------------------------------
-            git bash 語法參考
-----------------------------------------
+
+# git bash 語法參考 #
+
 ## clone ##
 克隆倉庫的命令格式是 git clone [url]
 若你想要將倉儲克隆到「libgit2」以外名字的資料夾，只需要再多指定一個參數即可：
@@ -87,7 +85,6 @@ input 只轉換 push 的時候的 CRLF 為 LF
 >   `git remote rm paul`
 
 ## gitignore ##
-
 編寫 .gitignore 檔案的模式規則如下：
 - 空白列，或者以 # 開頭的列會被忽略。
 - 可使用標準的 Glob 模式。
@@ -113,13 +110,15 @@ Glob 模式就像是 Shell 所使用的簡化版正規運算式（regular expres
     doc/**/*.pdf
 ```
 - 另一種不將本地文件的變更提交的方式
-將文件從 git status 忽略掉
->   `git update-index --assume-unchanged `
-恢復忽略
->   `git update-index --no-assume-unchanged `
-查詢哪些文件被忽略了
->   `git ls-files -v | grep '^h'`
->   `git ls-files -v | grep '^h' | awk '{print $2}' | xargs git update-index --no-assume-unchanged `
+    將文件從 git status 忽略掉
+    >   `git update-index --assume-unchanged `
+
+    恢復忽略
+    >   `git update-index --no-assume-unchanged `
+
+    查詢哪些文件被忽略了
+    >   `git ls-files -v | grep '^h'`
+    >   `git ls-files -v | grep '^h' | awk '{print $2}' | xargs git update-index --no-assume-unchanged `
 
 
 ## 檔案修改狀態 ##
@@ -150,8 +149,7 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
 >   `git commit -m "字串"`:新增commit message
 >   `git commit --amend`:將暫存變更推送到最後一個commit的node (不新增新的node)
 
-- git commit message guide:
-
+### git commit message guide:
     feat: a new feature
     fix: a bug fix
     docs: changes to documentation
@@ -159,7 +157,6 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
     refactor: refactoring production code
     test: adding tests, refactoring test; no production code change
     chore: updating build tasks, package manager configs, etc; no production code change
-
 
 ## log ##
 >   `git log --pretty=oneline --graph`
@@ -172,7 +169,7 @@ ca82a6d - Scott Chacon, 6 years ago : changed the version number
 a11bef0 - Scott Chacon, 6 years ago : first commit
 ```
 
-- 常用選項
+### 常用選項 ###
 
     只顯示最後 n 筆提交。
     -(n)
@@ -248,23 +245,27 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
 刪除分支
 >   `git branch -d <branch_name>`
-刪除遠端分支
+
+刪除遠端分支 (對，push 空的分支到線上=刪除)
 >   `git push <remote-name> :<the-new-branch-name-you-want-delete>`
+
 刪除分支依據 regular exp
 >   `git branch --merged | grep -v \* | xargs git branch -d `
-刪除所有已經merge的分支 (注意，一定要在master上面)
+
+刪除所有已經merge的分支 (注意，一定要在master上面)\
 -v 代表反向搜尋，\* 代表找目前所在的 branch 以外的
 >   `git branch --merged | grep -v \* | xargs git branch -d `
 
 ## 合併分支 ##
 - merge
-  - 在 merge 的時候，合併後變成一個 commit 紀錄
+
+    在 merge 的時候，合併後變成一個 commit 紀錄
     >   `git merge --squash <branch_name>`
 
 - rebase
-  - 合併 commits
+
+    合併 commits，可以依據內容選擇合併 commit 或是保留
     >   `git rebase -i <commit hash>`
-    可以依據內容選擇合併 commit 或是保留
 
 ## 衝突 ##
 - conflict
@@ -281,10 +282,15 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 - 永久從版控中移除
 1. 可利用`git filter-branch`
     >   `git filter-branch -f --index-filter 'git rm --cached --ignore-unmatch [檔案路徑]' --prune-empty --tag-name-filter cat -- --all`
-   - 清除紀錄，並且將 reflog 設為逾期，並將垃圾清掉
+
+    清除紀錄，並且將 reflog 設為逾期，並將垃圾清掉
     >   `git reflog expire --expire=now --all && git gc --prune=now`
+
 2. 使用 `git filter-repo` **第三方套件，比git filter-branch快**
-   - 安裝 `pip3 install git-filter-repo`
+
+    安裝
+    >    `pip3 install git-filter-repo`
+
     | flag           | description                                          |
     | -------------- | ---------------------------------------------------- |
     | --force (-f)   | 強制執行，請不要將此註記常駐，以避免造成不可逆之錯誤 |
@@ -292,11 +298,17 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
     | --path-regex   | 使用正規表示式來規範路徑，多個相同選項將會取聯集結果 |
     | --invert-paths | 反向選取，原本為選取保留路徑                         |
 
-   - 清除某資料夾之下檔案
+    清除某資料夾之下檔案
     >   `git filter-repo --path-regex '^file/[\.\w-]+\.exe$' --invert-paths`
 
 ## add將本地已有檔案 與線上commit歷程合併
 >   `git reset --hard <remote>/<branch_name>`
+
+## 拆分子專案 ##
+先把要拆的專案變成一個新 branch (subProjectPath 不要用 ./ 開頭)
+>   `git subtree split -P <subProjectPath> -b <subProjectBranch>`
+>   `cd <subProjectPath> && git init`
+>   `git pull <subProjectPath> <subProjectBranch>`
 
 ## tags 標籤 ##
 一個輕量級的標籤就像是一個不會移動的分支——這個標籤只會指向一個特定的提交。

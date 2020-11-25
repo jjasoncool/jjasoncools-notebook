@@ -592,15 +592,14 @@
     ```
     >   $callback 的部分若非動態函數，則是用字串代表該函數
 
-
   2. 動態陣列
-     - 陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
+      - 陣列內的值可以用 &$變數(指向同一記憶體位址) 但目前似乎不能串接字串，只能是單獨值，因此必須使用一個欄位來做承接
         >   array1(&$test)
         >   array2(&$test)
         >   function (array1 , array2) .... 修改 $test 值，兩個陣列的值會同步變更，至於 $test 是否需宣告，則看是否有將此參數傳進入function(&$test)
         >   若僅是針對 array[0] 對址修改，其實test要取甚麼名字都無所謂(也無須宣告)
 
-     - array_map ( callable $callback , array $array , array ...$arrays ) : `array`
+      - array_map ( callable $callback , array $array , array ...$arrays ) : `array`
         >   可以在第一個參數放callable function (也就是有回傳值的函數)
         >   此函數將會將每一個 array 值，都透過 $callback 處理過一次，返還array
         >   若callback函數需要有兩個參數，則array1需對應callback的參數數量放置對應的array
@@ -610,14 +609,31 @@
         }, $rates);
         ```
 
-     - array_walk ( array &$array , callable $callback [, mixed $userdata = NULL ] ) : `bool`
-        >
-       ```php
+      - array_walk ( array &$array , callable $callback [, mixed $userdata = NULL ] ) : `boolean`
+        >   callback 會取得兩個參數，第一個是陣列的值，第二個為陣列的索引值，且陣列值為 call by reference
+        >   也就是說，在 callback function 內，陣列值的任何改變都會改變原輸入陣列
+        >   只有 array 的值才可以被改變，用戶不應在回調函數中改變該陣列本身的架構。例如增加/移除元素，unset 元素等等。如果 array_walk() 作用的陣列改變了，則此函數的的行為未經定義，且不可預期。
+        >   如果提供了可選參數 userdata，將被作為第三個參數傳遞給 callback function。
+        ```php
+        array_walk($array, function(&$val, $key) {
+            $val = array_intersect_key($val, array_flip(['姓名   ', '帳號', '額外權限', '預設權限']));
+        });
+        ```
 
-       ```
+      - array_walk_recursive ( array &$array , callable $callback [, mixed $userdata = NULL ] ) : `boolean`
+        >   基本上同 array_walk，不同點為 array_walk 僅在第一層做處理，recursive 將會遍歷所有陣列
+        >   注意下例中的鍵 'sweet' 並沒有察看出來。任何其值為 array 的鍵都不會被傳遞到回調函數中去。
+        ```php
+        $sweet = array('a' => 'apple', 'b' => 'banana');
+        $fruits = array('sweet' => $sweet, 'sour' => 'lemon');
+        function test_print($item, $key)
+        {
+            echo "$key holds $item\n";
+        }
+        array_walk_recursive($fruits, 'test_print');
+        ```
 
-
-  3. 資料編碼
+  2. 資料編碼
      - 資料透過陣列轉換成json字串，或將json字串轉換成陣列
      - json_encode( mixed $value [, int $options = 0 [, int $depth = 512 ]] );
         >   通常為將陣列轉為json字串，也可以使用物件
@@ -640,6 +656,7 @@
     - static $靜態變數;
     >   變數範圍的另一個重要特徴是靜態變數（static variable）。
     >   靜態變數僅在局部函數域中存在，但當程式執行離開此範圍時，其值並不會消失。
+    >   但離開局部函數時，無法對其取值
 
   - Function arguments
     - function (&$傳入參數)
@@ -954,8 +971,9 @@
     >   與include_once相同，差別為找不到檔案時，將會回傳錯誤，程式終止不運行
 
 ## 匿名函數 ##
-- 此為 PHP 5.4 以後新增之重要功能
--
+- 此為 PHP **5.4** 以後新增之重要功能
+  -
+- PHP **7.4** 新增箭頭函數
 
 ## 寫法邏輯 ##
 - 可以先將計算結果存入字串，需要的時候再輸出

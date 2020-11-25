@@ -110,6 +110,16 @@
     - 安裝完成後復原 `systemctl set-default graphical.target`
   - `export CC=/usr/local/gcc-9.1.0/bin/gcc` 使用**自編編譯器**的時候需要加上這個
 
+- 關閉某些輸入硬體功能(觸控螢幕)
+  - 暫時的
+    `xinput | grep 'ELAN Touchscreen' | grep -o --regexp=id=[0-9]* | cut -d= -f2 | xargs xinput disable`
+  - 永久的
+    `sudo vi /usr/share/X11/xorg.conf.d/40-libinput.conf`
+    ```conf
+        # 找到 Identifier "libinput touchscreen catchall" 新增
+        Option "Ignore" "on"
+    ```
+
 - 安裝下載的RPM包\
     `yum localinstall *.rpm`
 
