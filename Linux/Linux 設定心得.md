@@ -169,16 +169,26 @@
   - **服務安裝** 在/etc/systemd/system目錄下新增rclone.service檔案，內容如下
     ```ini
     [Unit]
-    Description=rclone
-    After=network.target
+    Description=RClone Service
+    After=network-online.target
+    Wants=network-online.target
 
     [Service]
     User=jason
     Group=jason
-    Type=forking
-    ExecStart=/usr/local/bin/rclone mount Google_Drive:/ /home/jason/Google_Drive --vfs-cache-mode full --default-permissions --allow-non-empty --daemon --allow-other --config /home/jason/.config/rclone/rclone.conf
-    ExecStop=/usr/bin/fusermount -uz /home/jason/Google_Drive
+    Type=notify
     Restart=1
+
+    ExecStart=/usr/local/bin/rclone \
+    mount Google_Drive:/ \
+    /home/jason/Google_Drive \
+    --config /home/jason/.config/rclone/rclone.conf \
+    --vfs-cache-mode full \
+    --default-permissions \
+    --allow-non-empty \
+    --allow-other
+
+    ExecStop=/usr/bin/fusermount -uz /home/jason/Google_Drive
 
     [Install]
     WantedBy=multi-user.target

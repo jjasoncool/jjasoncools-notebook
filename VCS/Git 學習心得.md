@@ -13,6 +13,9 @@
 若你想檢查設定值，可使用 git config --list 命令列出所有 Git 在目前位置能找到的設定值：
 >   `git config --list`
 
+若你想編輯 git 設定檔，可由下列指令編輯
+>   `git config --global --edit`
+
 
 ## EOL ##
 - 取消 LF 與 CRLF 轉換
@@ -35,9 +38,11 @@
 - 預設將會把產生的金鑰存到 **/home/.ssh** 之下
 - 可以自行取名 e.g. `~/.ssh/id_rsa.github`
 - 執行後將會產出兩個檔案，一個為 xxx(私鑰) 與 xxx.pub(公鑰)，將xxx.pub內容複製到 gitlab/github 上
+- 啟動 ssh-agent `eval "$(ssh-agent -s)"`
+- 目前加入清單的私鑰 `ssh-add -l`
 - `ssh-add <私鑰位置>`
+- `ls ~/.ssh/id_rsa* | grep -v "\.pub" | xargs ssh-add`
 - 記得 `git remote add <使用ssh位址>`
-
 
 # git bash 語法參考 #
 

@@ -108,10 +108,12 @@
 
 ## 字串 ##
   - 字串基本常識
-    >   單引號(Single quotes) 內不可以放變數，會將所有東西直接輸出的字串
-    >   雙引號(Double quotes) 內可以直接放變數，會解析帶有$符號的變數
-    >   **※注意:使用雙引號的變數，可以使用{}大括弧包起來，這樣便可以不需要使用連結符號 . 即可連接變數變成字串**
-    >   heredoc syntax 內部也可以放變數，但常數無法放
+
+        單引號(Single quotes) 內不可以放變數，會將所有東西直接輸出的字串
+        雙引號(Double quotes) 內可以直接放變數，會解析帶有$符號的變數
+        ※注意: 使用雙引號的變數，可以使用{}大括弧包起來，這樣便可以不需要使用連結符號 . 即可連接變數變成字串
+        heredoc syntax 內部也可以放變數，但常數無法放
+
     ```php
     <?php
     // Use double quotes to concat more than two strings instead of multiple '.' operators.
@@ -214,6 +216,9 @@
     >   limit 為正數，則回傳limit 數量的陣列；若為負數，則回傳總數量扣除limit數量的陣列，若為0則視為1
     >   注意:若被分割字串為空字串，explode 後會產生1個key為0的陣列元素，為避免此狀況，可利用 **array_filter()**
 
+  - preg_split ( string $pattern , string $subject [, int $limit = -1 [, int $flags = 0 ]] ) : `array|false`
+    >
+
   - str_replace ( mixed $search , mixed $replace , mixed $subject [, int &$count ] ) : `string/array`
     >   可使用陣列方式取代字串值， $search 將會鏡像對應 $replace 值，若 $replace 數量少於 $search ，其餘被取代字串將會被替代為空字符串
     >   使用陣列串值時，將會由第一個開始依序取代字元，例如 a 改成 apple，p 改成 pear，字串輸入 a p ，期望結果是 apple pear，但實際結果會是 apearpearle pear，可參考 **strtr()**
@@ -270,7 +275,7 @@
     >   double quote (")
     >   backslash ( \ )
 
-    (string) stripslashes ( string $str )
+  - stripslashes ( string $str ) : `string`
     >   將跳脫字元的字符還原成沒有跳脫的樣式
     >   與get_magic_quotes_gpc有關
 
@@ -333,34 +338,6 @@
     >   如果只給予1~2個參數，小數點為. 千分位為,
     >   決定數字顯示格式，第一個參數為數字變數、第二個參數為小數點數量、第三個參數為小數點顯示符號(依據國情不同)、第四個參數為千分位符號(依據國情不同) 預設四捨五入
 
-## 迴圈與跳出 ##
-  - return
-    >   回到原本呼叫的模組
-    >   若是在 include 或者被 require 的頁面，使用 return 將會返回該引用頁
-
-  - break
-    >   中斷當前的 for, foreach, while, do-while, switch 結構式
-    >   並且可以指令需要中斷多少個巢狀結構，預設值為1，意指中斷當前執行之上述類型結構式
-
-```php
-    <?php
-    $i = 1;
-    while (true) { // 看起來像無窮迴圈
-        if ($i==2) {// 2跳過不顯示，continue 代表迴圈持續執行，只是跳過單輪而已
-            $i++;
-            continue;
-        } else if ($i==5) {// 但到這邊 $i == 5 跳出迴圈，直接跳出，無論後面是否還有迴圈
-            break;
-        } else {
-            echo $i . '<br>';
-        }
-        $i++;
-    }
-    exit;
-    echo '這裡不輸出';
-    ?>
-```
-
 ## 陣列 ##
   - $變數 = array();
     >   要做push之前一定要先做宣告
@@ -413,6 +390,9 @@
   - array_keys ( array $array , mixed $search_value [, bool $strict = FALSE ] ) : `array`
     >   回傳一個陣列的所有key值
     >   若有定義 search_value，此函數將返回符合該值的陣列keys
+
+  - array_key_last ( array $array ) : mixed
+    >   取得最新的 key 值，不影響指標
 
   - array_values ( array $array ) : array
     >   回傳一個陣列的所有value值
@@ -507,6 +487,34 @@
 
   - array_key_exists ( mixed $key , array $被搜尋的陣列 ): `bool`
     >   傳入值若沒有在陣列之中，則回傳false
+
+## 迴圈與跳出 ##
+  - return
+    >   回到原本呼叫的模組
+    >   若是在 include 或者被 require 的頁面，使用 return 將會返回該引用頁
+
+  - break
+    >   中斷當前的 for, foreach, while, do-while, switch 結構式
+    >   並且可以指令需要中斷多少個巢狀結構，預設值為1，意指中斷當前執行之上述類型結構式
+
+```php
+    <?php
+    $i = 1;
+    while (true) { // 看起來像無窮迴圈
+        if ($i==2) {// 2跳過不顯示，continue 代表迴圈持續執行，只是跳過單輪而已
+            $i++;
+            continue;
+        } else if ($i==5) {// 但到這邊 $i == 5 跳出迴圈，直接跳出，無論後面是否還有迴圈
+            break;
+        } else {
+            echo $i . '<br>';
+        }
+        $i++;
+    }
+    exit;
+    echo '這裡不輸出';
+    ?>
+```
 
 ## 日期與時間處理 ##
   - ※注意:2038 timestamp 會溢出32位元極限，因此要使用 timestamp 相關函數需要注意。

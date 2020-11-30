@@ -391,7 +391,7 @@ $("textarea").resizable({
 array.forEach((value,index) => {
     console.log(index +" " + value);
 });
-// key value
+// object key value
 Object.keys(obj).forEach((key, index) => {
     console.log(`${key} - ${obj[key]}`);
 });
