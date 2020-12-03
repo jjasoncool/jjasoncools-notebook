@@ -8,6 +8,11 @@
 
 
 ## nodejs 套件管理 yarn ##
+  - Ubuntu repo
+    `curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -`
+    `echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list`
+  - Centos / Fedora repo
+    `curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo`
   - 安裝
     `sudo apt update && sudo apt install --no-install-recommends yarn` (suggestion)
     `npm install -g yarn`

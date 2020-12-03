@@ -184,6 +184,9 @@
     /home/jason/Google_Drive \
     --config /home/jason/.config/rclone/rclone.conf \
     --vfs-cache-mode full \
+    --dir-cache-time 96h \
+    --poll-interval 15s \
+    --timeout 1h \
     --default-permissions \
     --allow-non-empty \
     --allow-other

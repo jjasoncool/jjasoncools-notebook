@@ -365,6 +365,23 @@
   - asort ( array &$array [, int $sort_flags = SORT_REGULAR ] ) : `bool`
     >   對陣列做排序，關聯 key 值也會依據排序順序改變順序
 
+  - compact ( mixed $var_name , mixed ...$var_names ) : `array`
+    >   compact() 在当前的符号表中查找该变量名并将它添加到输出的数组中，变量名成为键名而变量的内容成为该键的值。
+    >   變量未定義，則會出現 E_NOTICE 錯誤
+    ```php
+    $city  = "San Francisco";
+    $state = "CA";
+    $event = "SIGGRAPH";
+
+    $location_vars = array("city", "state");
+    $result = compact("event", $location_vars);
+    // [
+    //     [event] => SIGGRAPH,
+    //     [city] => San Francisco,
+    //     [state] => CA,
+    // ]
+    ```
+
   - array_fill ($開始的陣列index, $填滿幾個, $填入值) : `array`
     >   此函數會使用數字型態index 填滿指定範圍的陣列
     >   可利用來避免陣列notice，例：
@@ -560,6 +577,13 @@
 
     ```
 
+## 錯誤處理 ##
+  - set_error_handler ( callable $error_handler [, int $error_types = E_ALL | E_STRICT ] ) : mixed
+    >   設定用戶的函數 (error_handler) 來處理程式檔中出現的錯誤。
+    >   本函數可以用你自己定義的方式來處理執行中的錯誤， 例如，在應用程式中嚴重錯誤發生時，或者在特定條件下觸發了一個錯誤(使用 trigger_error())，你需要對資料/檔案做清理回收。
+    - handler ( int $errno , string $errstr [, string $errfile [, int $errline [, array $errcontext ]]] ) : bool
+    >   此為回調函數，當錯誤發生時將會把當前的狀態傳入並提供參數
+
 ## 其他應用 ##
   1. Variable functions
     >   字串可以直接當成function name 使用
@@ -624,7 +648,7 @@
         >   如果提供了可選參數 userdata，將被作為第三個參數傳遞給 callback function。
         ```php
         array_walk($array, function(&$val, $key) {
-            $val = array_intersect_key($val, array_flip(['姓名   ', '帳號', '額外權限', '預設權限']));
+            $val = array_intersect_key($val, array_flip(['a', 'b', 'c', 'd']));
         });
         ```
 
@@ -978,10 +1002,123 @@
 - require_once
     >   與include_once相同，差別為找不到檔案時，將會回傳錯誤，程式終止不運行
 
+- 退出引用程式時，在該被引用的 php 內，使用 `return` 即可回到引用頁
+
 ## 匿名函數 ##
 - 此為 PHP **5.4** 以後新增之重要功能
-  -
-- PHP **7.4** 新增箭頭函數
+  1. 匿名函數（Anonymous functions），也叫閉包函數（closures），允許臨時建立一個沒有指定名稱的函數。最經常用作回調函數 callable 參數值使用。 (Closure class)
+  2. 若要使用父區域(parent scope)變數值，必須使用 use()，且 use 內使用的變數值是取該匿名函數被**定義**(defined)的當下取值。
+    ```php
+    $message = 'hello';
+
+    // No "use"
+    $example = function () {
+        var_dump($message);
+    };
+    $example();
+    // echo null
+
+    // Inherit $message
+    $example = function () use ($message) {
+        var_dump($message);
+    };
+    $example();
+    // echo 'hello'
+
+    // Inherited variable's value is from when the function
+    // is defined, not when called
+    $message = 'world';
+    $example();
+    // echo 'hello'
+    ```
+  3. 除非 use 內使用的值為 **call by reference**
+    ```php
+    $message = 'hello';
+
+    // Inherit by-reference
+    $example = function () use (&$message) {
+        var_dump($message);
+    };
+    $example();
+    // echo 'hello'
+
+    // The changed value in the parent scope
+    // is reflected inside the function call
+    $message = 'world';
+    $example();
+    // echo 'world'
+    ```
+  4. 匿名函數繼承父區域(parent scope)的變數與全域變數是不同的，閉包的父作用域是定義該閉包的函數（不一定是呼叫它的函數）。
+    ```php
+    // 官方範例：
+    class Cart
+    {
+        const PRICE_BUTTER  = 1.00;
+        const PRICE_MILK    = 3.00;
+        const PRICE_EGGS    = 6.95;
+
+        protected   $products = array();
+
+        public function add($product, $quantity)
+        {
+            $this->products[$product] = $quantity;
+        }
+
+        public function getQuantity($product)
+        {
+            return isset($this->products[$product]) ? $this->products[$product] : FALSE;
+        }
+
+        public function getTotal($tax)
+        {
+            // callback 的父區域
+            $total = 0.00;
+            /**
+             * 匿名函數，這個匿名函數的父作用域就是在這個 getTotal 函數內
+             * 所以 該匿名函式使用 use 的 $total 是取自上面的 $total = 0.00;
+             */
+            $callback =
+                function ($quantity, $product) use ($tax, &$total)
+                {
+                    $pricePerItem = constant(__CLASS__ . "::PRICE_" . strtoupper($product));
+                    $total += ($pricePerItem * $quantity) * ($tax + 1.0);
+                };
+
+            array_walk($this->products, $callback);
+            return round($total, 2);;
+        }
+    }
+
+    $my_cart = new Cart;
+
+    // 往購物車裡添加項目
+    $my_cart->add('butter', 1);
+    $my_cart->add('milk', 3);
+    $my_cart->add('eggs', 6);
+
+    // 打出出總價格，其中有 5% 的銷售稅.
+    print $my_cart->getTotal(0.05) . "\n";
+    // 最后結果是 54.29
+    ```
+- PHP **7.4** 新增箭頭函數 (Arrow Functions)
+  1. 箭頭函数是 PHP 7.4 的新語法，是一種更簡潔的 匿名函數 寫法。
+  2. 箭號函數的基本語法為 `fn(argument_list) => expr`
+  3. 箭號函數支援與 匿名函数 相同的功能，只是其父範圍的變數總是自動的。
+    ```php
+    $y = 1;
+    // $fn1 與 $fn2 作用相同
+    $fn1 = fn($x) => $x + $y;
+    // 等同 using $y by value:
+    $fn2 = function ($x) use ($y) {
+        return $x + $y;
+    };
+
+    // Arrow functions capture variables by value automatically, even when nested
+    $z = 1;
+    $fn = fn($x) => fn($y) => $x * $y + $z;
+    // Outputs 51
+    var_export($fn(5)(10));
+    ```
 
 ## 寫法邏輯 ##
 - 可以先將計算結果存入字串，需要的時候再輸出
@@ -1111,7 +1248,7 @@
 1. 抽象方法
     在類中，沒有方法體的方法就是抽象方法。
     ```php
-    abstract 可見性 function 方法名稱(參數1,.....);      // 如果沒有察看地指定可見性，則預設為public
+    abstract 可見性 function 方法名稱(參數1, ..);      // 如果沒有察看地指定可見性，則預設為public
     // 例：
     public function hello($args);
     // 修飾符abstract，也可以省略
@@ -1231,8 +1368,10 @@
     3. FILTER_SANITIZE_EMAIL - 移除數字與英文還有以下特殊符號 !#$%&'*+-=?^_`{|}~@.[] 以外之文字
 
   - filter_var_array ( array $data [, mixed $definition [, bool $add_empty = TRUE ]] ) : mixed
-    >   可以針對陣列內不同的資料做不同的過濾， $definition 可以對應輸入資料位置
+    >   可以針對陣列內不同的資料做不同的過濾， $definition 可以對應輸入資料位置(但不方便，必須每個欄位都對應)
     >   $add_empty 會將 null 塞入不存在的陣列直
+    >   若需要使用 filter flags，可使用以下
+    >   `array_walk_recursive($para, fn(&$val, $key) => $val = filter_var($val, FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_FLAG_NO_ENCODE_QUOTES));`
 
   - filter_input
 

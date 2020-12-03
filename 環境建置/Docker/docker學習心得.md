@@ -113,14 +113,20 @@
 ## docker-compose ##
 - 安裝
 - x86_64
-  - `sudo curl -L "https://github.com/docker/compose/releases/download/1.27.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+  - `sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
   - `sudo chmod +x /usr/local/bin/docker-compose`
-- arm
-  - `sudo curl -L --fail https://github.com/docker/compose/releases/download/1.27.2/run.sh -o /usr/local/bin/docker-compose`
+- INSTALL AS A CONTAINER (x86_64)
+  - `sudo curl -L --fail https://github.com/docker/compose/releases/download/1.27.4/run.sh -o /usr/local/bin/docker-compose`
   - `sudo chmod +x /usr/local/bin/docker-compose`
+- pip install
+  - `sudo apt-get install python3-pip`
+  - `sudo pip3 install docker-compose`
 
 - 設定檔 (.env) file
   - 此設定檔可以預先設定需要使用的程式以及版本
     ```env
 
     ```
+
+- 操作指令
+  - `docker-compose up`
