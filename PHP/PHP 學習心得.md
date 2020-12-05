@@ -365,6 +365,10 @@
   - asort ( array &$array [, int $sort_flags = SORT_REGULAR ] ) : `bool`
     >   對陣列做排序，關聯 key 值也會依據排序順序改變順序
 
+  - array_multisort ( array &$array1 [, mixed $array1_sort_order = SORT_ASC [, mixed $array1_sort_flags = SORT_REGULAR ]], mixed ...$rest ) : bool
+    >   rest 代表更多的陣列，若前面的陣列值相同時，對應該相同值後面的陣列會繼續排序
+    >   可利用在多維陣列排序
+
   - compact ( mixed $var_name , mixed ...$var_names ) : `array`
     >   compact() 在当前的符号表中查找该变量名并将它添加到输出的数组中，变量名成为键名而变量的内容成为该键的值。
     >   變量未定義，則會出現 E_NOTICE 錯誤

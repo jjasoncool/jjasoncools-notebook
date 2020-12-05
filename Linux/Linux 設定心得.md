@@ -542,9 +542,9 @@
 remove the ppa file from **/etc/apt/sources.list.d**
 Or, edit the **/etc/apt/sources.list**
 
-- 升級套件(僅升級目前套件，不解決相關依賴)
+- 升級套件(僅升級目前套件，不解決相關依賴，production 適用，避免因為更新造成現有服務不可用)
 `sudo apt-get update && sudo apt-get upgrade`
-- 智能升級套件(通過新版本自動處理不斷變化的依賴關係)
+- 智能升級套件(通過新版本自動處理不斷變化的依賴關係，會依據依賴性刪除或新增 package，被視為是有風險的升級)
 `sudo apt-get dist-upgrade`
 
 - H.264 libary 安裝\
