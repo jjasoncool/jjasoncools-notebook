@@ -184,7 +184,7 @@
     /home/jason/Google_Drive \
     --config /home/jason/.config/rclone/rclone.conf \
     --vfs-cache-mode full \
-    --umask 002
+    --umask 002 \
     --dir-cache-time 96h \
     --poll-interval 15s \
     --timeout 1h \
@@ -482,8 +482,8 @@
   "Arial"="NotoSansCJKtc-Regular.otf"
   "Arial Black"="NotoSansCJKtc-Regular.otf"
   ```
-  2. 下載中文字型放到 /home/[user]/.wine/drive_c/windows/Fonts
-  3. 使用regedit chinese.reg 就可以成功看到正常文字了
+  1. 下載中文字型放到 /home/$USER/.wine/drive_c/windows/Fonts
+  2. 使用regedit chinese.reg 就可以成功看到正常文字了
 
 - **Between 應用程式**
   1. winecfg 調整成 windows7 模式
@@ -575,3 +575,5 @@ Or, edit the **/etc/apt/sources.list**
 `add-apt-repository ppa:git-core/ppa # apt update; apt install git`
 
 ### raspberry pi 專屬 ###
+- 更新韌體後，需要先執行
+`zcat`

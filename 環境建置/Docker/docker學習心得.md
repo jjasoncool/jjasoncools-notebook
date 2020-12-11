@@ -1,7 +1,8 @@
 ## 新手上路 ##
 - 安裝 [document](https://docs.docker.com/engine/install/centos/)
-    - CENTOS 8 需要依賴 **containerd.io**
-    - `dnf install -y https://download.docker.com/linux/centos/8/$(uname -m)/stable/Packages/containerd.io-1.3.7-3.1.el8.$(uname -m).rpm`
+  - [安裝包網址](https://download.docker.com/linux/)
+  - CENTOS 8 需要依賴 **containerd.io**
+  - `dnf install -y https://download.docker.com/linux/centos/8/$(uname -m)/stable/Packages/containerd.io-1.4.3-3.1.el8.$(uname -m).rpm`
 
 - 基本上安裝好docker後，僅會有root在docker的群組權限之內，因此若要讓一般或者其他帳號使用
   - 需要將使用者加入docker群組

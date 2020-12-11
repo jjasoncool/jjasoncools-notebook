@@ -7,7 +7,10 @@
     `shutdown -r 0`
 
 - 複製檔案
-    `cp -fr /home/skjan/180418crweb/* /var/www/html`
+    `cp -fr /home/skjan/folder/* /var/www/html`
+    `yes | cp -fr /home/skjan/folder/* /var/www/html` (不會跳出是否覆蓋)
+
+
 - 修改檔名
   - 單一檔案修改
     `mv [options] filename1.ext filename2.ext`
@@ -50,6 +53,10 @@
 
   - 需要永久生效的話可以新增至該 user 的 .bashrc 裡面
     `cd ~ && vi .bashrc`
+
+- 輸出內容
+  - `指令 > /dev/null 2>&1`
+  - 輸出到 /dev/null，並且將錯誤也導向正常輸出 (1: 2:)
 
 ### 權限 ###
 - 設定權限

@@ -154,6 +154,7 @@
     >   基本上此函數雷同於substr，但是確保了字元的完整性
 
   - strcmp ( string $str1 , string $str2 ) : `int`
+    >   比較字串是否相等
     >   回傳值如果為0則字串相等
     >   如果字串1比字串2短，回傳值小於0
     >   如果字串1比字串2長，回傳值大於0
@@ -1390,6 +1391,12 @@
         ```
     >   因為user不能使用'your.site/../src/includeFile.php'去瀏覽你的頁面
 
+- 雜湊演算法
+  - hash_algos ( ) : `array`
+    >   列出目前所支援的雜湊演算方式
+  - hash ( string $algo , string $data [, bool $binary = FALSE ] ) : `string`|false
+    >   產出雜湊值
+
 - 密碼驗證
   - password_hash ( string $password , int $algo [, array $options ] ) : `string`
     >   最好的資料長度建議為255
@@ -1401,6 +1408,7 @@
 
   - password_verify ( string $password , string $hash ) : `boolean`
     >   可以驗證經由 password_hash 產生出來的亂數
+
 
 
 ## 系統紀錄參考 ##
