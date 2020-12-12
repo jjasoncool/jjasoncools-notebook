@@ -38,7 +38,7 @@
 - 預設將會把產生的金鑰存到 **/home/.ssh** 之下
 - 可以自行取名 e.g. `~/.ssh/id_rsa.github`
 - 執行後將會產出兩個檔案，一個為 xxx(私鑰) 與 xxx.pub(公鑰)，將xxx.pub內容複製到 gitlab/github 上
-- 啟動 ssh-agent `eval "$(ssh-agent -s)"`
+- 啟動 ssh-agent `eval "$(ssh-agent -s)" > /dev/null > 2>&1`
 - 目前加入清單的私鑰 `ssh-add -l`
 - `ssh-add <私鑰位置>`
 - `ls ~/.ssh/id_rsa* | grep -v "\.pub" | xargs ssh-add`
@@ -152,6 +152,7 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
 ## commit ##
 >   `git commit -m "字串"`:新增commit message
 >   `git commit --amend`:將暫存變更推送到最後一個commit的node (不新增新的node)
+>   `git commit --amend --reset-author --no-edit`:修改最後一個 commit 的作者與 email
 
 ### git commit message guide:
     feat: a new feature

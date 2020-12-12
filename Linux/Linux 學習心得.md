@@ -54,9 +54,10 @@
   - 需要永久生效的話可以新增至該 user 的 .bashrc 裡面
     `cd ~ && vi .bashrc`
 
-- 輸出內容
-  - `指令 > /dev/null 2>&1`
-  - 輸出到 /dev/null，並且將錯誤也導向正常輸出 (1: 2:)
+- 輸出內容管理
+  - 不輸出任何內容
+    `指令 > /dev/null 2>&1`
+    輸出到 /dev/null，並且將錯誤也導向正常輸出 (1:the standard output  2: the standard error)
 
 ### 權限 ###
 - 設定權限

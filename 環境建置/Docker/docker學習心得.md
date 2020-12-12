@@ -13,6 +13,30 @@
   - 需要將使用者移除docker群組
     `gpasswd -d $USER docker`
 
+## 指令參數說明 ##
+- **docker volumn**
+  - `create` 創建volume
+    - `-o` 其他選項(但目前還沒用到)
+  - `inspect` 列出詳細資訊關於某個 volume
+  - `ls` 列出volume
+  - `prune` 刪除所有沒用到的volume
+  - `rm` 刪除一個或多個volume
+
+- **docker run**
+  - `-rm` 暫時執行，若退出容器container即刪除
+  - `-e` 系統變數，對於此 container 生效，尤其是時區等需要預先設定
+  - `-d` 在背景執行
+  - `-name` 別名
+  - `--restart` 當 docker 服務重啟或者重新啟動容器時，此設定可影響 container 的動作
+    | flag           | description                                                       |
+    | -------------- | ----------------------------------------------------------------- |
+    | no             | 預設不重啟 container                                              |
+    | on-failure     | 重啟 container 當錯誤碼 非0值時(也就是出錯才重啟，重開機不會重啟) |
+    | always         | 總是重啟 container 當守護進程重啟或是手動重啟                     |
+    | unless-stopped | 只會在手動停止container 時重啟                                    |
+  - `-v` volume 將 container 中的一個區域對照到本機中 [host 路徑或 volume 名稱]:[container 路徑]:[options]
+    - *options* {rw:正常讀寫, ro:唯讀 (Note that the folder is then read-only in the container and read-write on the host)}
+
 ## 基本指令 ##
 ### 映像(images) ###
   - 搜尋要安裝的映像名稱
@@ -84,32 +108,6 @@
   - docker-compose
     ```yml
     ```
-
-
-## 指令參數說明 ##
-- **docker volumn**
-  - `create` 創建volume
-    - `-o` 其他選項(但目前還沒用到)
-  - `inspect` 列出詳細資訊關於某個 volume
-  - `ls` 列出volume
-  - `prune` 刪除所有沒用到的volume
-  - `rm` 刪除一個或多個volume
-
-- **docker run**
-  - `--rm` 暫時執行，若退出容器container即刪除
-  - `-e` 系統變數，對於此 container 生效，尤其是時區等需要預先設定
-  - `-d` 在背景執行
-  - `-name` 別名
-  - `--restart` 當 docker 服務重啟或者重新啟動容器時，此設定可影響 container 的動作
-    | flag           | description                                                       |
-    | -------------- | ----------------------------------------------------------------- |
-    | no             | 預設不重啟 container                                              |
-    | on-failure     | 重啟 container 當錯誤碼 非0值時(也就是出錯才重啟，重開機不會重啟) |
-    | always         | 總是重啟 container 當守護進程重啟或是手動重啟                     |
-    | unless-stopped | 只會在手動停止container 時重啟                                    |
-  - `-v` volume 將 container 中的一個區域對照到本機中 [host 路徑或 volume 名稱]:[container 路徑]:[options]
-    - *options* {rw:正常讀寫, ro:唯讀 (Note that the folder is then read-only in the container and read-write on the host)}
-
 
 ## docker-compose ##
 - 安裝
