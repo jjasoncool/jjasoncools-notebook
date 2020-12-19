@@ -38,10 +38,10 @@
 - 預設將會把產生的金鑰存到 **/home/.ssh** 之下
 - 可以自行取名 e.g. `~/.ssh/id_rsa.github`
 - 執行後將會產出兩個檔案，一個為 xxx(私鑰) 與 xxx.pub(公鑰)，將xxx.pub內容複製到 gitlab/github 上
-- 啟動 ssh-agent `eval "$(ssh-agent -s)" > /dev/null > 2>&1`
+- 啟動 ssh-agent `eval "$(ssh-agent -s)" > /dev/null 2>&1`
 - 目前加入清單的私鑰 `ssh-add -l`
 - `ssh-add <私鑰位置>`
-- `ls ~/.ssh/id_rsa* | grep -v "\.pub" | xargs ssh-add`
+- `ls ~/.ssh/id_rsa* | grep -v "\.pub" | xargs ssh-add > /dev/null 2>&1`
 - 記得 `git remote add <使用ssh位址>`
 
 # git bash 語法參考 #
@@ -52,10 +52,19 @@
 
 這個命令做的事與上一個命令大致相同，只不過在本地創建的倉庫名字變為 mylibgit
 
-## 連線到server repository(簡稱repo) ##
->   `git remote -v` 可以查閱目前有遠端連接的repo\
+## 連線到remote repository(簡稱repo) ##
+
+可以查閱目前有遠端連接的repo
+>   `git remote -v`
+
+新增 remote
 >   `git remote add <repo名稱> <repo連結>`
+
+移除 remote
 >   `git remote rm <repo名稱>`
+
+更改 remote url
+>   `git remote set-url <remote-name> <remote-url>`
 
 這個命令會連到遠端專案，然後從遠端專案中將你還沒有的資料全部拉下來；
 執行完成後，你應該會有那個遠端版本庫中所有分支的參照（reference）

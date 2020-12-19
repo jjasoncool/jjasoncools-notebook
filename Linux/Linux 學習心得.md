@@ -66,6 +66,12 @@
 - 防火牆
   - iptables
   - firewall-cmd *(centos)*
+    - 檢視目前網路狀態
+        `sudo firewall-cmd --zone=public --list-all`
+    - 新增某網段ip可通
+        `sudo firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=172.27.0.0/16 accept'`
+
+
   - ufw *(ubuntu)*
 
 ### 套件管理 ###
@@ -76,6 +82,7 @@
 - 檢查是否有通
   - ping
   - telnet
+    `telnet <ip or hostname> <port>`
 - 查看網卡
     `nmcli connection show`
 

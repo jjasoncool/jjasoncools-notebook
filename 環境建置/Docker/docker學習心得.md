@@ -26,6 +26,7 @@
   - `-rm` 暫時執行，若退出容器container即刪除
   - `-e` 系統變數，對於此 container 生效，尤其是時區等需要預先設定
   - `-d` 在背景執行
+  - `-w` 工作資料夾
   - `-name` 別名
   - `--restart` 當 docker 服務重啟或者重新啟動容器時，此設定可影響 container 的動作
     | flag           | description                                                       |
@@ -88,6 +89,10 @@
       4. 檢查 iptables 是否有開放 docker 可連線至外網
 
   - 容器互相連接
+    - CENTOS
+      - 需要下此指令 container 之間網路才會通
+        - `sudo vi /etc/firewalld/firewalld.conf` -> 修改 nftables to iptables
+        - `sudo firewall-cmd --zone=public --add-masquerade --permanent` (開啟轉發，較不安全)
 
 - LAMP
   - mariadb
@@ -97,16 +102,18 @@
     docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=admin -e TZ=Asia/Taipei --name dockermariadb --restart always -v mariadb_conf:/etc/mysql -v mariadb_data:/var/lib/mysql mariadb:latest
     ```
 
-  - Apache
-    ```
-    ```
+  - PHP-CLI
+    - 簡單來說，就是使用 docker run 把 host 目錄掛到 container 裡面，再使用該目錄執行 container 內的 php
+        `docker run -it --rm -v $(pwd):/src -w /src php:cli php`
+    - 掛到 host alias (但若程式指定要 php path 這招無效)
+        `alias php="docker run --rm -v \$PWD:/source -w /source php:cli-alpine php"`
+    - 使用 file 當作 php executable
+        `sudo echo "exec docker run --rm -v $PWD:/source -v /tmp:/tmp -v /opt:/opt -v /home:/home -w /source php:cli-alpine php \"\$@\"" > /usr/local/bin/php`
 
-  - PHP
-    ```
-    ```
 
   - docker-compose
     ```yml
+
     ```
 
 ## docker-compose ##
@@ -128,4 +135,7 @@
     ```
 
 - 操作指令
-  - `docker-compose up`
+  - `up`
+    - `--build`
+    - `-d`
+  -

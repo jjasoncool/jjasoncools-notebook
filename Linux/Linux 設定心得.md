@@ -267,48 +267,51 @@
         - 預設啟動服務 `systemctl enable httpd.service`
         - 重啟指令 `systemctl restart httpd.service`
         - **使用 FAST-CGI**
-          - **注意** LoadModule fcgid_module modules/mod_fcgid.so 這行要放在 LoadModule unixd_module modules/mod_unixd.so 後面
-          - httpd.conf 設定
-            ```conf
-            LoadModule fcgid_module modules/mod_fcgid.so
-            <IfModule fcgid_module>
-                FcgidMaxRequestsPerProcess 10000
+            ### UNIX SOCKET ###
+            - **注意** LoadModule fcgid_module modules/mod_fcgid.so 這行要放在 LoadModule unixd_module modules/mod_unixd.so 後面
+            - httpd.conf 設定
+                ```conf
+                LoadModule fcgid_module modules/mod_fcgid.so
+                <IfModule fcgid_module>
+                    FcgidMaxRequestsPerProcess 10000
 
-                <FilesMatch \.php$>
-                    SetHandler "proxy:unix:/usr/local/php/var/run/php-fpm/php-fpm.sock|fcgi://localhost/"
-                </FilesMatch>
-            </IfModule>
-            ```
-          - 開啟 LoadModule mod_proxy.so, mod_proxy_fcgi.so
-          - 新增檔案 `/usr/local/apache/cgi-bin/php.fastcgi`
-            ```sh
-            #!/bin/sh
-            # Set desired PHP_FCGI_* environment variables.
-            # Example:
-            # PHP FastCGI processes exit after 500 requests by default.
-            PHP_FCGI_MAX_REQUESTS=10000
-            export PHP_FCGI_MAX_REQUESTS
+                    <FilesMatch \.php$>
+                        SetHandler "proxy:unix:/usr/local/php/var/run/php-fpm/php-fpm.sock|fcgi://localhost/"
+                    </FilesMatch>
+                </IfModule>
+                ```
+            - 開啟 LoadModule mod_proxy.so, mod_proxy_fcgi.so
+            - 新增檔案 `/usr/local/apache/cgi-bin/php.fastcgi`
+                ```sh
+                #!/bin/sh
+                # Set desired PHP_FCGI_* environment variables.
+                # Example:
+                # PHP FastCGI processes exit after 500 requests by default.
+                PHP_FCGI_MAX_REQUESTS=10000
+                export PHP_FCGI_MAX_REQUESTS
 
-            # Replace with the path to your FastCGI-enabled PHP executable
-            exec /usr/local/php/bin/php-cgi
-            ```
-          - virtualhost 設定
-            ```conf
-            <VirtualHost *:80>
-                ServerAdmin nameyearbirthday@gmail.com
-                DocumentRoot "/var/local/web"
-                ServerName myweb
-                <Directory "/var/local/web">
-                    AddHandler fcgid-script .php
-                    Options +ExecCGI
-                    FcgidWrapper /usr/local/apache/cgi-bin/php.fastcgi .php
-                    AllowOverride None
-                    Require all granted
-                </Directory>
-                ErrorLog "logs/apps-error_log"
-                CustomLog "logs/apps-access_log" common
-            </VirtualHost>
-            ```
+                # Replace with the path to your FastCGI-enabled PHP executable
+                exec /usr/local/php/bin/php-cgi
+                ```
+            - virtualhost 設定
+                ```conf
+                <VirtualHost *:80>
+                    ServerAdmin nameyearbirthday@gmail.com
+                    DocumentRoot "/var/local/web"
+                    ServerName myweb
+                    <Directory "/var/local/web">
+                        AddHandler fcgid-script .php
+                        Options +ExecCGI
+                        FcgidWrapper /usr/local/apache/cgi-bin/php.fastcgi .php
+                        AllowOverride None
+                        Require all granted
+                    </Directory>
+                    ErrorLog "logs/apps-error_log"
+                    CustomLog "logs/apps-access_log" common
+                </VirtualHost>
+                ```
+            ### TCP SOCKET ###
+
 
     2. 安裝**PHP**
        - makefile 與 編譯問題:
@@ -576,4 +579,6 @@ Or, edit the **/etc/apt/sources.list**
 
 ### raspberry pi 專屬 ###
 - 更新韌體後，需要先執行
-`zcat`
+    `zcat vlinuz > vilnux`
+- 刪除回報問題
+    `sudo rm /var/crash/*`

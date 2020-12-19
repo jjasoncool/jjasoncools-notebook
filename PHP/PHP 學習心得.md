@@ -217,6 +217,8 @@
     >   limit 為正數，則回傳limit 數量的陣列；若為負數，則回傳總數量扣除limit數量的陣列，若為0則視為1
     >   注意:若被分割字串為空字串，explode 後會產生1個key為0的陣列元素，為避免此狀況，可利用 **array_filter()**
 
+  - mb_split ( string $pattern , string $string [, int $limit = -1 ] ) : `array|false`
+
   - preg_split ( string $pattern , string $subject [, int $limit = -1 [, int $flags = 0 ]] ) : `array|false`
     >
 
