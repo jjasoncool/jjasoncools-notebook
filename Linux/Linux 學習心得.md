@@ -7,15 +7,25 @@
     `shutdown -r 0`
 
 - 複製檔案
-    `cp -fr /home/skjan/folder/* /var/www/html`
-    `yes | cp -fr /home/skjan/folder/* /var/www/html` (不會跳出是否覆蓋)
-
+    `cp -fr /home/skjan/folder/* /var/www/html/`
+    `yes | cp -fr /home/skjan/folder/* /var/www/html/` (不會跳出是否覆蓋)
 
 - 修改檔名
   - 單一檔案修改
     `mv [options] filename1.ext filename2.ext`
   - 多重檔案修改
     `rename [options] expression replacement file`
+
+- 同步資料夾
+    `rsync -avu --delete --exclude ".git/" --exclude "cfg.php" /home/user/A/ /home/user/B/`
+    | flags             | Description                                                                                |
+    | ----------------- | ------------------------------------------------------------------------------------------ |
+    | -a                | Do the sync preserving all filesystem attributes                                           |
+    | -v                | run verbosely                                                                              |
+    | -u                | only copy files with a newer modification time (or size difference if the times are equal) |
+    | --delete          | delete the files in target folder that do not exist in the source                          |
+    | --exclude=PATTERN | exclude files matching PATTERN                                                             |
+    | -n                | perform a trial run with no changes made                                                   |
 
 - 讀檔內容show在command line裡面
     `cat filename`
@@ -59,6 +69,12 @@
     `指令 > /dev/null 2>&1`
     輸出到 /dev/null，並且將錯誤也導向正常輸出 (1:the standard output  2: the standard error)
 
+- 製作可開機 usb
+  - 先列出可用來做usb之裝置
+    `lsblk`
+  - if 是來源檔案位置，of 是目標位置(通常是整個)usb磁碟
+    `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress`
+
 ### 權限 ###
 - 設定權限
     `chmod [權限模式] [檔案]`
@@ -91,8 +107,3 @@
     `crontab -e`
 
 ### shell ###
-- 製作可開機 usb
-  - 先列出可用來做usb之裝置
-    `lsblk`
-  - if 是來源檔案位置，of 是目標位置(通常是整個)usb磁碟
-    `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress`

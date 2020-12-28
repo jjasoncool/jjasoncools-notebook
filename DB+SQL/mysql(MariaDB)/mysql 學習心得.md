@@ -27,6 +27,8 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
     -- 搜尋字串位置 取代 like%
         LOCATE("被搜尋字串","完整字串或被搜尋欄位")
         -- 若此值大於0，代表有被搜尋到
+    -- 取代字串
+        REPLACE(string, find_string, replace_with)
 
     -- 搜尋特定用 , 分隔的字串位置
         FIND_IN_SET()

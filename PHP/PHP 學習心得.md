@@ -569,6 +569,10 @@
     echo $temp_time->format('Y-m-d H:i:s');
     echo $now < $temp_time;
 
+    // 修改日期利用 date (P{y}Y{m1}M{d}DT{h}H{m2}M{s}S)
+    // For example, P1Y2DT5S means 1 year, 2 days, and 5 seconds.
+    $temp_time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
+
     // 輸出日期差異總天數
     $date_end->diff($date_start)->format('%a');
 
@@ -792,7 +796,7 @@
 
   - mkdir ( string $pathname [, int $mode = 0777 [, bool $recursive = FALSE [, resource $context ]]] ) : `boolean`
     >   建立目錄\
-    >   $mod 為 linux 權限，預設為 0777
+    >   $mod 為 linux 權限，預設為 0777，**注意：0777 不可為字串**
     >   $recursive 是否可以迴圈創立內部子資料夾
     >   Returns TRUE on success or FALSE on failure.
 

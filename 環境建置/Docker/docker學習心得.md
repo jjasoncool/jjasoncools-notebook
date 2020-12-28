@@ -13,6 +13,9 @@
   - 需要將使用者移除docker群組
     `gpasswd -d $USER docker`
 
+- docker 使用 iptables 配置，若使用新版 redhat 系產品，需修改`/etc/firewalld/firewalld.conf`
+  - 將 `FirewallBackend` 選項修改為 **iptables**，避免一些網路問題
+
 ## 指令參數說明 ##
 - **docker volumn**
   - `create` 創建volume
@@ -70,6 +73,9 @@
 
 
 ### 網路(network) ###
+  - 新增用戶自訂網路
+    `docker network create sk_service`
+
   - 取得 container 在 host 內的 ip
     `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name_or_id`
     `docker inspect [containerID] | grep "IPAddress"`
@@ -116,6 +122,34 @@
 
     ```
 
+- node express + mongodb
+  - mongodb
+    `docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_PASSWORD=admin -e MONGO_INITDB_ROOT_USERNAME=root --name dkmongo mongo:latest`
+
+## dockerfile ##
+```dockerfile
+# Use the official image as a parent image.
+FROM node:current-slim
+
+# Set the working directory.
+WORKDIR /usr/src/app
+
+# Copy the file from your host to your current location.
+COPY package.json .
+
+# Run the command inside your image filesystem.
+RUN npm install
+
+# Add metadata to the image to describe which port the container is listening on at runtime.
+EXPOSE 8080
+
+# Run the specified command within the container.
+CMD [ "npm", "start" ]
+
+# Copy the rest of your app's source code from your host to your image filesystem.
+COPY . .
+```
+
 ## docker-compose ##
 - 安裝
 - x86_64
@@ -136,6 +170,6 @@
 
 - 操作指令
   - `up`
-    - `--build`
-    - `-d`
+    - `--build` 重新依據 dockerfile build image
+    - `-d` 背景執行
   -

@@ -21,6 +21,7 @@
 - 取消 LF 與 CRLF 轉換
   - true 依據平台轉換該平台使用的換行字元
   - input 只轉換 push 的時候的 CRLF 為 LF
+  - false 不轉換
     >   `git config --global core.autocrlf false`
 
 ## UTF8化(windows) ##
