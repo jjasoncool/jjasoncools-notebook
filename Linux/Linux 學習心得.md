@@ -2,7 +2,7 @@
 - 系統關機/重新啟動
     >shutdown [OPTION] TIME [MESSAGE]
   - 系統關機
-    `shutdown -h 0`
+    `shutdown -P 0`
   - 系統重新啟動
     `shutdown -r 0`
 
@@ -26,6 +26,14 @@
     | --delete          | delete the files in target folder that do not exist in the source                          |
     | --exclude=PATTERN | exclude files matching PATTERN                                                             |
     | -n                | perform a trial run with no changes made                                                   |
+
+- 建立連結(link)
+  - Hard Link:連結至同一個inode區塊，故實際上的檔案與內容完全相同，且若多個硬連結其中一個消失，並不影響檔案完整性
+    - 但不要使用在目錄上，因當前目錄./與父目錄../會是不同物件
+    `ln <source file> <link file>`
+  - Symbolic Link:即傳統捷徑，為創一單一檔案，並指向原始路徑，若原始路徑變更，則會找不到該原始路徑出錯
+    - 須使用 `-s` 創立
+    `ln -s <source file> <link file>`
 
 - 讀檔內容show在command line裡面
     `cat filename`

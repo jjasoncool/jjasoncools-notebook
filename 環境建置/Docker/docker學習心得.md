@@ -20,7 +20,7 @@
 - **docker volumn**
   - `create` 創建volume
     - `-o` 其他選項(但目前還沒用到)
-  - `inspect` 列出詳細資訊關於某個 volume
+  - `inspect` 列出關於某個 volume 的詳細資訊
   - `ls` 列出volume
   - `prune` 刪除所有沒用到的volume
   - `rm` 刪除一個或多個volume
@@ -151,25 +151,30 @@ COPY . .
 ```
 
 ## docker-compose ##
-- 安裝
-- x86_64
-  - `sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
-  - `sudo chmod +x /usr/local/bin/docker-compose`
-- INSTALL AS A CONTAINER (x86_64)
-  - `sudo curl -L --fail https://github.com/docker/compose/releases/download/1.27.4/run.sh -o /usr/local/bin/docker-compose`
-  - `sudo chmod +x /usr/local/bin/docker-compose`
-- pip install
-  - `sudo apt-get install python3-pip`
-  - `sudo pip3 install docker-compose`
+- 安裝有三種方式，可自選，arm只能用第三種
+  1. x86_64
+     - `sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+     - `sudo chmod +x /usr/local/bin/docker-compose`
+  2. INSTALL AS A CONTAINER (x86_64)
+     - `sudo curl -L --fail https://github.com/docker/compose/releases/download/1.27.4/run.sh -o /usr/local/bin/docker-compose`
+     - `sudo chmod +x /usr/local/bin/docker-compose`
+  3. pip install
+     - `sudo apt-get install python3-pip`
+     - `sudo pip3 install docker-compose`
 
 - 設定檔 (.env) file
   - 此設定檔可以預先設定需要使用的程式以及版本
     ```env
-
+    MY_IMAGE_VERSION=latest
     ```
+  - 在 docker-compose.yaml 中就可以使用 ${MY_IMAGE_VERSION}
 
 - 操作指令
-  - `up`
-    - `--build` 重新依據 dockerfile build image
+  - `build` 重新建立 image file
+  - `config` 檢視要執行的 config 檔案，會將所有參數套用的結果顯示出來
+  - `up` 啟動 docker-compose 服務
     - `-d` 背景執行
-  -
+    - `--build` 重新依據 dockerfile build image
+    - `--force-recreate` 強制重新 create container
+  - `run`
+    - `-d` 背景執行
