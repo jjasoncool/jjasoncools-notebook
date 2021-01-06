@@ -163,6 +163,7 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
 >   `git commit -m "字串"`:新增commit message
 >   `git commit --amend`:將暫存變更推送到最後一個commit的node (不新增新的node)
 >   `git commit --amend --reset-author --no-edit`:修改最後一個 commit 的作者與 email
+>   `git commit --fixup=<commit>`: 修正該commit，跟--amend同，但不問你commit message(不新增新的node)
 
 ### git commit message guide:
     feat: a new feature

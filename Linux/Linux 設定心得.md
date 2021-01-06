@@ -239,7 +239,7 @@
        - 必須先把**APR**和**APR-Util**解壓縮放到apache原始檔的srclib資料夾裡面，並將資料夾分別命名為**apr**和**apr-util**
        - 若要支援 fastCGI 必須下載 Apache mod_fcgid FastCGI module 並且放到httpd之下(散的檔案直接合併至apache的source裡面) `./buildconf`
        - 若跳錯 /usr/bin/env: ‘python’: No such file or directory -> `dnf install -y python3 && alternatives --set python /usr/bin/python3`
-       - **centos8** 可使用 `alternatives --set python /usr/bin/python3`
+       - **centos8** 可使用 `alternatives --set python /usr/bin/python3`，**注意：update-alternatives 是 alternatives 的 link**
        - `./configure --prefix=/usr/local/apache --with-included-apr --with-pcre --enable-module=so --enable-expires=shared --enable-rewrite=shared --enable-fcgid`
        - `make && make install`
        - 若有缺少的套件都用yum裝一裝 `yum install libxml2-devel pcre-devel`
@@ -501,6 +501,9 @@
     `winetricks corefonts meiryo`
   4. 正常安裝即可運作
 
+- 移除已安裝的windows程式
+    `wine uninstaller`
+
 ### FILE SYSTEM ###
 - 列出目前硬碟掛載與結構
     `lsblk -f`
@@ -511,6 +514,7 @@
     - **fd00** Linux RAID
     - **8e00** Linux LVM
   - `mkfs.xfs -f -b size=4096 /dev/sdb1`將分割區格式化成xfs系統
+
 - 組raid陣列
   - `mdadm --create /dev/md1 --auto=yes --level=1 --raid-devices=2 /dev/sda1 /dev/sdb1`
 - 依序組 PV VG LV
@@ -524,14 +528,19 @@
   - 需要修改 `/etc/fstab` 開機掛載硬碟
   - `/dev/mapper/backup-lvbackup   /backup           xfs     defaults        0 0`
 
+- 使用 sshfs mount 遠端資料夾
+  - `sshfs [user@]hostname:[directory] mountpoint`
+    - `sshfs 192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/`
+  - `fusermount -u mountpoint`
+    - `fusermount -u /home/jason/remote/192.168.55.200/`
 ### 除錯 ###
-- YUM 安裝到一半重開機
+- YUM 安裝到一半重開機 (導致無法順利更新)
   - `yum complete-transaction`
   - `package-cleanup --problems` 列出有問題的套件
   - `package-cleanup --dupes` 列出重複套件 (通常有問題)
   - `package-cleanup --cleandupes` 清除重複套件
 
-# UBUNTU (18.04 LTS) #
+# UBUNTU (20.04 LTS) #
 
 ### 安裝注意 ###
 - /boot 不可以使用 XFS 模式，因為grub2 無法辨識 XFS 硬碟格式
@@ -541,9 +550,10 @@
 ### 基本設定 ###
 - add repo
 ``
+
 - remove repo
-remove the ppa file from **/etc/apt/sources.list.d**
-Or, edit the **/etc/apt/sources.list**
+    remove the ppa file from **/etc/apt/sources.list.d**
+    Or, edit the **/etc/apt/sources.list**
 
 - 升級套件(僅升級目前套件，不解決相關依賴，production 適用，避免因為更新造成現有服務不可用)
 `sudo apt-get update && sudo apt-get upgrade`
@@ -560,15 +570,13 @@ Or, edit the **/etc/apt/sources.list**
 `sudo update-alternatives --set editor [程式路徑]`
 
 - python 預設使用 python3
-`sudo update-alternatives`
+`sudo update-alternatives --set python /usr/bin/python3`
+`sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1`
 
 ### 輸入法 ###
   - 通用解 fcitx 配套新酷音
     `sudo apt install fcitx fcitx-chewing`
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
-
-- 移除已安裝的windows程式
-`wine uninstaller`
 
 ### git ###
 - For the latest stable version for your release of Debian/Ubuntu
@@ -579,6 +587,7 @@ Or, edit the **/etc/apt/sources.list**
 
 ### raspberry pi 專屬 ###
 - 更新韌體後，需要先執行
-    `zcat vlinuz > vilnux`
+    `cd /boot/firmware/`
+    `zcat vmlinuz > vmlinux`
 - 刪除回報問題
     `sudo rm /var/crash/*`

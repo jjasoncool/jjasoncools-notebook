@@ -150,6 +150,23 @@
     searchParams.toString(); // "q=URLUtils.searchParams"
     ```
 
+# javascript ES6 #
+## arrow function ##
+```js
+ele => ele.jobno === 3
+// 就是
+function(ele) {
+  return ele.jobno === 3
+}
+// 等同
+(ele) => {
+    return ele.jobno === 3
+}
+
+```
+## promise ##
+## async ##
+## await ##
 
 # JQuery 參考 function #
 ## 選擇器 ##

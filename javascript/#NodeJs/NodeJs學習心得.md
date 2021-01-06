@@ -1,7 +1,7 @@
 ## nvm nodejs 版本管理系統 ##
 - 基本套件安裝 (管理 nodejs 版本的系統)
   - nvm [github](https://github.com/nvm-sh/nvm)
-    `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`
+    `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash`
   - `nvm ls-remote | grep "Latest LTS"` 列出可以選用安裝的選項
   - `nvm install {version}` version 可以填版本號，如12
   - `nvm use {version}` 切換版本
