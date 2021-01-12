@@ -18,6 +18,9 @@
 
   - yarn 安裝套件位置 **不推薦，只有自己的電腦環境能用** (windows 要加到 path 內才有作用)
     `yarn global bin`
+  - yarn 目錄初始化
+    `yarn init`
+    `yarn init -y`(如果不要問一堆的話)
   - yarn 安裝套件
     `yarn add <package name>`
   - yarn 安裝開發環境套件

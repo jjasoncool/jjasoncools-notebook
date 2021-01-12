@@ -41,6 +41,14 @@
 - 修改檔案內容
   - **sed**
   - `sed -i 's/open-vsx.org\/vscode\/gallery/marketplace.visualstudio.com\/_apis\/public\/gallery/g; s/open-vsx.org\/vscode\/item/marketplace.visualstudio.com\/items/g;' /usr/share/codium/resources/app/product.json`
+  - 分隔符號
+    - 一般常見的是使用 **/**，但若方便區隔可利用較少使用之分隔符，如：**|**
+  - 需跳脫的字元：
+    - 除了分隔符需要跳脫之外，單引號', 括弧[]都需要注意，避免錯誤
+  - 跳脫字元單引號
+    - A single quote may not occur between single quotes, even when preceded by a backslash.
+    - One trick is to use shell string concatenation of adjacent strings and escape the embedded quote using shell escaping:
+    - `sed 's/ones/two'\''s/' <<< 'ones thing'`
 
 - 刪除檔案或資料夾
     | rm  | 說明 |

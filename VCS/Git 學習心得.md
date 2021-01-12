@@ -283,6 +283,10 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
     合併 commits，可以依據內容選擇合併 commit 或是保留
     >   `git rebase -i <commit hash>`
 
+- 合併特定分支的某一檔案
+
+    >   `git checkout -p <branch> <file>`
+
 ## 衝突 ##
 - conflict
 

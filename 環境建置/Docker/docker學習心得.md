@@ -100,6 +100,18 @@
         - `sudo vi /etc/firewalld/firewalld.conf` -> 修改 nftables to iptables
         - `sudo firewall-cmd --zone=public --add-masquerade --permanent` (開啟轉發，較不安全)
 
+  - 容器新增 hostname
+    - docker-compose 使用 network 項目，這樣在同一個 network 的 container 都會認為 html_12 就是 apache
+        ```yml
+          apache:
+            image: httpd:${APACHE_VERSION}
+            ...
+            networks:
+              default:
+                aliases:
+                  - html_12
+        ```
+
 - LAMP
   - mariadb
     ```
