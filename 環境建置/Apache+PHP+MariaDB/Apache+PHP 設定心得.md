@@ -386,6 +386,18 @@ ApacheMonitor:
         RewriteCond %{REQUEST_URI} !CRTestEnvirement
         # 代表URI 不包含 CRTestEnvirement(我自己的測試目錄)，自動將位址轉到測試目錄之下，因為程式內位址為寫死
         RewriteRule ^(.*)$ https://%{SERVER_NAME}/CRTestEnvirement%{REQUEST_URI} [R=301,L]
+
+    # 虛擬路徑
+    <Directory "${FILEROOT}/CRTestEnvirement/dcs">
+        RewriteEngine On
+        # /dcs/1111111/foo.js => /foo.js?imono=1111111
+        # /dcs/1111111/ => /?imono=1111111
+        # GET會拿到資料，且 request uri 還會是 /dcs/1111111/
+        RewriteRule "^([0-9]{7})/(.*)$" "$2?imono=$1"
+        # 單純過濾 static
+        RewriteRule "^([0-9]{7})/$" "index.php" [PT]
+        RewriteRule "^([0-9]{7})/(.*)$" "$2" [PT]
+    </Directory>
     ```
 
    - RewriteEngine 規則
@@ -655,4 +667,4 @@ setting 如下：
         ]
     },
 ```
-設定完成後即可下中斷點，利用code runner或是直接使用瀏覽器開啟該頁面執行時，即可針對斷點debug
+設定完成後即可下中斷點，利用code runner或是直接使用�

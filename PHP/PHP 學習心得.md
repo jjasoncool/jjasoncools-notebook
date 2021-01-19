@@ -120,6 +120,10 @@
     // PHP is forced to re-concatenate with every '.' operator.
     "{$str1}{$str2}{$str3}"; // one concat = fast
     $str1 . $str2 . $str3;   // two concats = slow
+    <<<EOD
+    foo bar
+    EOD;
+
     ?>
     ```
   - strtolower ( string $string ) : string
@@ -1473,7 +1477,7 @@ $spreadsheet->getActiveSheet()->getColumnDimension(Cell\Coordinate::stringFromCo
     >   官方建議替代function
     >   `explode()` 不使用正規表示法，使用某特定字符作為切開字串
     >   `preg_split()` 比較像原本的功能，使用正規表示法切開字串
-    >   `str_split()`
+    >   `str_split()` 利用字串長度分割為陣列
 
 - preg_replace ()
     >   The /e modifier is deprecated, use preg_replace_callback instead

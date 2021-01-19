@@ -184,6 +184,14 @@ ca82a6d - Scott Chacon, 6 years ago : changed the version number
 085bb3b - Scott Chacon, 6 years ago : removed unnecessary test
 a11bef0 - Scott Chacon, 6 years ago : first commit
 ```
+>   `git reflog --pretty=oneline --graph`
+
+可以查閱到所有的log紀錄
+
+## 指標(移動指標) ##
+>   `git checkout <commit id>`
+>   `git switch master`
+
 
 ### 常用選項 ###
 
