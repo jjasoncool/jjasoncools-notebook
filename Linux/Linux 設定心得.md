@@ -532,6 +532,9 @@
     - `sshfs 192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/`
   - `fusermount -u mountpoint`
     - `fusermount -u /home/jason/remote/192.168.55.200/`
+  - 開機時 mount (修改 /etc/fstab 檔案)
+    - `jason@192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/ fuse.sshfs defaults,allow_other,_netdev 0 0`
+    - `mount -a`
 ### 除錯 ###
 - YUM 安裝到一半重開機 (導致無法順利更新)
   - `yum complete-transaction`

@@ -492,6 +492,7 @@
     >   搜尋陣列內是否有值，若有則回傳該陣列的key值，若有重複符合值，回傳第一個符合值的 key。
     >   若您想要回傳的結果包含所有 key 值的陣列，請使用 **array_keys()**
     >   可配合 **array_column()** 搜尋二維陣列，或是使用 foreach 迴圈的 $value 放入array_search尋找
+    >   `$first_key = array_search($value, array_column($multi_array, 'second_key'))`
     >   若該變數沒有在陣列中被被搜尋到，會返回 false 值
 
 
@@ -853,6 +854,9 @@
         ob_end_clean();
     }
     ```
+
+  - mime_content_type ( resource|string $filename ) : string|false
+    >   下載檔案依據檔名產出該檔案應該有的 mime
 
 ## 加解密與壓縮處理 ##
   - base64_encode ( string $data ) : `string`

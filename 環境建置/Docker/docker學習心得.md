@@ -101,7 +101,7 @@
         - `sudo firewall-cmd --zone=public --add-masquerade --permanent` (開啟轉發，較不安全)
 
   - 容器新增 hostname
-    - docker-compose 使用 network 項目，這樣在同一個 network 的 container 都會認為 html_12 就是 apache
+    - docker-compose 使用 network 項目，這樣在同一個 network 的 container 都會認為 html_12 就是 apache (可以配合 vhost 使用)
         ```yml
           apache:
             image: httpd:${APACHE_VERSION}
@@ -110,6 +110,8 @@
               default:
                 aliases:
                   - html_12
+                  - CI
+                  - ...
         ```
 
 - LAMP
