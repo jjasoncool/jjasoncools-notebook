@@ -376,6 +376,8 @@ DELETE `job` FROM `deadline` LEFT JOIN `job` ....
 
 -- 正規表示法撈取資料 (此例為撈取只有數字的資料)
 select * from `tables` where colValue REGEXP '^[0-9]+$';
+SELECT * FROM sv2.status_info_fish
+WHERE REMARK REGEXP '\w*\s*\\* This ship does not need to apply BWM Convention.';
 
 ```
 

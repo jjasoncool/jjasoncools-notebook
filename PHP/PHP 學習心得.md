@@ -375,6 +375,18 @@
   - array_multisort ( array &$array1 [, mixed $array1_sort_order = SORT_ASC [, mixed $array1_sort_flags = SORT_REGULAR ]], mixed ...$rest ) : bool
     >   rest 代表更多的陣列，若前面的陣列值相同時，對應該相同值後面的陣列會繼續排序
     >   可利用在多維陣列排序
+    ```php
+    [
+        ['name' => 'Dupont', 'age' => 72],
+        ['name' => 'Albert', 'age' => 11],
+        ['name' => 'Durand', 'age' => 56],
+        ['name' => 'Michel', 'age' => 52],
+        ['name' => 'Dupont', 'age' => 36],
+        ['name' => 'Plutot', 'age' => 27]
+    ];
+    $columns = array_column($array, 'age');
+    array_multisort($columns, SORT_ASC, $array);
+    ```
 
   - compact ( mixed $var_name , mixed ...$var_names ) : `array`
     >   compact() 在当前的符号表中查找该变量名并将它添加到输出的数组中，变量名成为键名而变量的内容成为该键的值。
@@ -563,7 +575,7 @@
 
 
   - DateTime Object
-    (object)
+    - 將時間變為時間物件，以利後續操作
     ```php
     // 單行輸出
     (new DateTime())->format('Y-m-d H:i:s');
@@ -591,6 +603,51 @@
     $date = new DateTimeImmutable("2014-06-20 11:45 Europe/London");
     $mutable = DateTime::createFromImmutable( $date );
 
+    ```
+  - DateInterval Object
+    - 將時間區間變為物件，以利後續操作
+    ```php
+    ```
+
+  - DatePeriod Object
+    - DatePeriod 類表示一個時間周期。 一個時間周期可以用來在給定的一段時間之內， 以一定的時間間隔進行迭代。
+
+    ```php
+    /**
+     * 從時間區間取得日期陣列
+     *
+     * @param DateTime $start
+     * @param DateTime $end
+     * @param string $format
+     * @return array
+     */
+    function getDatesFromRange($start, $end, $format = 'Y-m-d')
+    {
+        if (
+            ($start instanceof DateTime || $start instanceof DateTimeImmutable)
+            && ($end instanceof DateTime || $end instanceof DateTimeImmutable)
+        ) {
+            // Declare an empty array
+            $array = array();
+
+            // Variable that store the date interval
+            // of period 1 day
+            $interval = new DateInterval('P1D');
+            // need include end day
+            $start = $start->setTime(0,0,0);
+            $realEnd = $end->setTime(0,0,1);
+
+            $period = new DatePeriod($start, $interval, $realEnd);
+
+            // Use loop to store date into array
+            foreach($period as $date) {
+                $array[] = $date->format($format);
+            }
+
+            // Return the array elements
+            return $array;
+        }
+    }
     ```
 
 ## 錯誤處理 ##
