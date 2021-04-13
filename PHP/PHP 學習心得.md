@@ -591,7 +591,9 @@
     $temp_time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
 
     // 輸出日期差異總天數
-    $date_end->diff($date_start)->format('%a');
+    $date_start->diff($date_end)->format('%a');
+    // 輸出時間差異時數
+    $time_start->diff($time_end)->format('%h');
 
     // DateTime 常用的函數 (php 5.3以後)
     // 轉換成DateTimeImmutable
@@ -635,6 +637,7 @@
             $interval = new DateInterval('P1D');
             // need include end day
             $start = $start->setTime(0,0,0);
+            // 不滿一天就會被算成一天
             $realEnd = $end->setTime(0,0,1);
 
             $period = new DatePeriod($start, $interval, $realEnd);
@@ -881,7 +884,7 @@
             "verify_peer_name" => false,
         ],
     ];
-    file_get_contents($網址, false, $arrContextOptions);
+    file_get_contents($網址, false, stream_context_create($arrContextOptions));
     ```
 
   - file_exists ( string $filename ) : *boolean*

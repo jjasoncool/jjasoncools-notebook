@@ -46,7 +46,12 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
         -- 將字串頭尾空白去掉，可拿來對付BIG5 許功蓋結尾會補一個 slash\避免跳脫query字串
         TRIM('\ ') -- 就可以成功塞入反斜線
 
-    -- 判斷
+    -- 正規表示法過濾字串
+        -- mariadb 10.0.5以後才有的功能，mysql 要到8.0才有
+        REGEXP_SUBSTR(subject,pattern)
+        REGEXP_REPLACE(subject, pattern, replace)
+
+-- 判斷
         IF(condition, value_if_true, value_if_false)
 
 -- 時間日期

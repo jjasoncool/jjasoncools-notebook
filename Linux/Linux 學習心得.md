@@ -85,11 +85,20 @@
     `指令 > /dev/null 2>&1`
     輸出到 /dev/null，並且將錯誤也導向正常輸出 (1:the standard output  2: the standard error)
 
-- 製作可開機 usb
+- **dd** 磁碟備份
+    | options | Description                    |
+    | ------- | ------------------------------ |
+    | if=     | 輸入來源                       |
+    | of=     | 輸出來源                       |
+    | bs=     | 複製區塊大小 default:512 bytes |
+
   - 先列出可用來做usb之裝置
     `lsblk`
-  - if 是來源檔案位置，of 是目標位置(通常是整個)usb磁碟
-    `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress`
+  - 磁碟抹除
+    - `sudo dd bs=4M if=/dev/zero of=/dev/sda`
+  - 製作可開機 usb
+    - if 是來源檔案位置，of 是目標位置(通常是整個)usb磁碟
+      `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress`
 
 ### 權限 ###
 - 設定權限
