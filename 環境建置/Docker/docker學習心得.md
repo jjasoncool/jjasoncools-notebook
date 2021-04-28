@@ -1,5 +1,6 @@
 ## 新手上路 ##
-- 安裝 [document](https://docs.docker.com/engine/install/centos/)
+- ubuntu安裝 [document](https://docs.docker.com/engine/install/ubuntu/)
+- centos安裝 [document](https://docs.docker.com/engine/install/centos/)
   - [安裝包網址](https://download.docker.com/linux/)
   - CENTOS 8 需要依賴 **containerd.io**
   - `dnf install -y https://download.docker.com/linux/centos/8/$(uname -m)/stable/Packages/containerd.io-1.4.3-3.1.el8.$(uname -m).rpm`
@@ -182,6 +183,21 @@ COPY . .
     MY_IMAGE_VERSION=latest
     ```
   - 在 docker-compose.yaml 中就可以使用 ${MY_IMAGE_VERSION}
+
+- yaml 設定
+    ```yaml
+        #
+        networks:
+          default:
+            aliases:
+              - html_12
+              - CI
+              - symfony
+        # An entry with the ip address and hostname is created in /etc/hosts inside containers
+        extra_hosts:
+        - "somehost:162.242.195.82"
+        - "otherhost:50.31.209.229"
+    ```
 
 - 操作指令
   - `build` 重新建立 image file

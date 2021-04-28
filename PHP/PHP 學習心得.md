@@ -590,6 +590,12 @@
     // For example, P1Y2DT5S means 1 year, 2 days, and 5 seconds.
     $temp_time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
 
+    // diff()
+    // 輸出結果會是後面剪掉前面時間，正負值可用 %R 檢視
+    // 代表 $date_end 比 $date_start 小
+    $date_start->diff($date_end)->format('%R') == '-'
+    // 代表 $date_end 比 $date_start 大
+    $date_start->diff($date_end)->format('%R') == '+'
     // 輸出日期差異總天數
     $date_start->diff($date_end)->format('%a');
     // 輸出時間差異時數
