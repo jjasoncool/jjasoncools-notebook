@@ -161,6 +161,7 @@
 - **home底下資料夾語言**
   - 執行 `LANG=en_US.UTF-8 xdg-user-dirs-update --force`
 
+### 檔案與檔案系統管理 ###
 - **rclone**
   - 先到官網下載[rclone](https://rclone.org/downloads/)\
   - 使用 `rclone config` 開始新建需要掛載的雲端
@@ -420,6 +421,45 @@
             systemtap
             systemtap-devel
 
+### 檔案與磁碟管理 ###
+- 列出目前硬碟掛載與結構
+    `lsblk -f`
+
+- 將硬碟先切出partition
+  - `gdisk /dev/sdb` 選擇n新增分割(以下為常用)
+    - **8300** Linux filesystem
+    - **fd00** Linux RAID
+    - **8e00** Linux LVM
+  - `mkfs.xfs -f -b size=4096 /dev/sdb1`將分割區格式化成xfs系統
+
+- 組raid陣列
+  - 使用 `gdisk /dev/sda` 將硬碟 format 成 **Linux RAID**
+  - `mdadm --create /dev/md1 --auto=yes --level=6 --raid-devices=4 /dev/sda1 /dev/sdb1`
+  - 列出詳細資料 `mdadm --detail /dev/md1`
+  - 從 RAID 陣列移除一個元件分割區。例如，若要移除 /dev/sda1，請輸入 `sudo mdadm /dev/md1 --fail /dev/sda1 --remove /dev/sda1`
+  - 再次將分割區新增至 RAID 陣列。例如，若要新增 /dev/sda1，請輸入 `sudo mdadm -a /dev/md1 /dev/sda1`
+  - mount 至需要的位置，修改 /etc/fstab 新增 `UUID=[array UUID] /raid6_array            xfs     defaults        0 0`
+
+- 依序組 PV VG LV
+  - PV `pvcreate /dev/md1`
+  - VG `vgcreate backup /dev/md1`
+  - LV `lvcreate -l 100%FREE -n lvbackup backup`
+- 將組好的LV 切成 xfs 分割區
+  - `mkfs.xfs /dev/backup/lvbackup`
+- mount 到 指定路徑
+  - `mkdir /backup && mount /dev/backup/lvbackup /backup`
+  - 需要修改 `/etc/fstab` 開機掛載硬碟
+  - `/dev/mapper/backup-lvbackup   /backup           xfs     defaults        0 0`
+
+- 使用 sshfs mount 遠端資料夾
+  - `sshfs [user@]hostname:[directory] mountpoint`
+    - `sshfs 192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/`
+  - `fusermount -u mountpoint`
+    - `fusermount -u /home/jason/remote/192.168.55.200/`
+  - 開機時 mount (修改 /etc/fstab 檔案)
+    - `jason@192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/ fuse.sshfs defaults,allow_other,_netdev 0 0`
+    - `mount -a`
+
 ### 排程、資料同步 ###
 - 例行性排程
   - 例如每天執行php語法
@@ -503,38 +543,6 @@
 - 移除已安裝的windows程式
     `wine uninstaller`
 
-### FILE SYSTEM ###
-- 列出目前硬碟掛載與結構
-    `lsblk -f`
-
-- 將硬碟先切出partition
-  - `gdisk /dev/sdb` 選擇n新增分割(以下為常用)
-    - **8300** Linux filesystem
-    - **fd00** Linux RAID
-    - **8e00** Linux LVM
-  - `mkfs.xfs -f -b size=4096 /dev/sdb1`將分割區格式化成xfs系統
-
-- 組raid陣列
-  - `mdadm --create /dev/md1 --auto=yes --level=1 --raid-devices=2 /dev/sda1 /dev/sdb1`
-- 依序組 PV VG LV
-  - PV `pvcreate /dev/md1`
-  - VG `vgcreate backup /dev/md1`
-  - LV `lvcreate -l 100%FREE -n lvbackup backup`
-- 將組好的LV 切成 xfs 分割區
-  - `mkfs.xfs /dev/backup/lvbackup`
-- mount 到 指定路徑
-  - `mkdir /backup && mount /dev/backup/lvbackup /backup`
-  - 需要修改 `/etc/fstab` 開機掛載硬碟
-  - `/dev/mapper/backup-lvbackup   /backup           xfs     defaults        0 0`
-
-- 使用 sshfs mount 遠端資料夾
-  - `sshfs [user@]hostname:[directory] mountpoint`
-    - `sshfs 192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/`
-  - `fusermount -u mountpoint`
-    - `fusermount -u /home/jason/remote/192.168.55.200/`
-  - 開機時 mount (修改 /etc/fstab 檔案)
-    - `jason@192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/ fuse.sshfs defaults,allow_other,_netdev 0 0`
-    - `mount -a`
 ### 除錯 ###
 - YUM 安裝到一半重開機 (導致無法順利更新)
   - `yum complete-transaction`
