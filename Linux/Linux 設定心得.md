@@ -312,7 +312,11 @@
                 </VirtualHost>
                 ```
             ### TCP SOCKET ###
-
+            ```conf
+                <FilesMatch \.php$>
+                    SetHandler "proxy:fcgi://php-fpm:9000"
+                </FilesMatch>
+            ```
 
     2. 安裝**PHP**
        - makefile 與 編譯問題:
@@ -441,9 +445,18 @@
   - mount 至需要的位置，修改 /etc/fstab 新增 `UUID=[array UUID] /raid6_array            xfs     defaults        0 0`
 
 - 依序組 PV VG LV
-  - PV `pvcreate /dev/md1`
-  - VG `vgcreate backup /dev/md1`
-  - LV `lvcreate -l 100%FREE -n lvbackup backup`
+  - PV (實體 partion) `pvcreate /dev/md1`
+  - VG (建立在PV之上，虛擬的硬碟，可以整合多個PV成為一個VG) `vgcreate backup /dev/md1`
+    - vgcreate ：就是主要建立 VG 的指令啦！他的參數比較多，等一下介紹。
+    - vgscan ：搜尋系統上面是否有 VG 存在？
+    - vgdisplay ：顯示目前系統上面的 VG 狀態
+    - vgextend ：在 VG 內增加額外的 PV
+    - vgreduce ：在 VG 內移除 PV
+    - vgchange ：設定 VG 是否啟動 (active)
+    - vgremove ：刪除 VG
+  - LV (邏輯磁區，從VG中分割出的一塊空間) `lvcreate -l 100%FREE -n lvbackup backup`
+
+
 - 將組好的LV 切成 xfs 分割區
   - `mkfs.xfs /dev/backup/lvbackup`
 - mount 到 指定路徑

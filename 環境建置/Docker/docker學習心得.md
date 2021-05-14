@@ -41,6 +41,7 @@
     | unless-stopped | 只會在手動停止container 時重啟                                    |
   - `-v` volume 將 container 中的一個區域對照到本機中 [host 路徑或 volume 名稱]:[container 路徑]:[options]
     - *options* {rw:正常讀寫, ro:唯讀 (Note that the folder is then read-only in the container and read-write on the host)}
+  - example: `docker run --name chia-farm -d -v chia_temp:/temp_plots -v chia_plots:/plots -e TZ=Asia/Taipei ghcr.io/chia-network/chia`
 
 ## 基本指令 ##
 ### 映像(images) ###
@@ -62,6 +63,8 @@
     `docker run -d -it --name dk_centos centos:latest`
   - 執行目前已存在之容器
     `docker start my_container`
+  - 修改容器名稱
+    `docker rename CONTAINER NEW_CONTAINER_NAME`
   - 停止執行容器
     `docker stop my_container`
   - 進入容器指令介面
@@ -71,6 +74,7 @@
   - 新增儲存倉庫
     `docker volume create [volume_name]`
   - 都會存放在 host 特定位置 **/var/lib/docker/volumes/**
+  - 指定 volume 位置 `docker volume create [vol_name] -o type=none -o o=bind -o device=[host_mount_point]`
 
 
 ### 網路(network) ###
