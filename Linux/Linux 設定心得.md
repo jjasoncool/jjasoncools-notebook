@@ -13,6 +13,8 @@
   - 指令自動完成
   `yum install bash-completion*`
 
+- 啟用/設定網路
+
 - ssh 免密碼登入(git 的 ssh 設定也是相同原理)
   - `ssh-keygen`
     >   Generating public/private rsa key pair.
@@ -41,10 +43,12 @@
   - 列出自訂新增的 repository
     - `yum repolist`
     - 刪除或新增設定檔 `/etc/yum.repos.d/`
+  - 安裝舊版的軟體包
+    `dnf downgrade code-1.56.2`
 
 - 安裝**桌面GUI**
   - `yum groupinstall GNOME "X Window System" fonts`
-  - GNOME 一些好用管理工具 `yum install gnome-tweaks`
+  - GNOME 一些好用管理工具 `yum install gnome-tweaks gnome-shell-extension-dash-to-dock gnome-shell-extension-top-icons`
 
 - 安裝**xrdp** (方便可以使用windows rdp)
   - `yum install epel-release xrdp xorgxrdp -y`
@@ -127,6 +131,7 @@
     - epel 提供許多實用套件，安裝僅需下指令\
     `yum install epel-release`
     - CENTOS 8 官方建議開啟 powertools
+    `dnf install dnf-plugins-core`
     `dnf config-manager --set-enabled PowerTools`
 
 - 安裝 [GCC](https://gcc.gnu.org/mirrors.html) (編譯原始碼的工具)
@@ -137,10 +142,12 @@
 
 - 通用解 **fcitx 輸入法殼層** 配套新酷音
     `sudo dnf install fcitx fcitx-configtool fcitx-chewing`
-    - fcitx-configtool 可能會找不到，可以到 [fedora project](https://src.fedoraproject.org/projects/rpms/*) 下載 rpm 安裝
+    - fcitx-configtool 可能會找不到，可以到 [fedora project](https://src.fedoraproject.org/projects/rpms/*) 下載 rpm 安裝(fc33版本)
     - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
-    - centos 使用 gnome 介面的話，可使用 `dnf install im-choose`
+    - centos 使用 gnome 介面的話，可使用 `dnf install im-chooser`
+    - `mv /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop.backup` (wayland 3.x 版才需要)
     - 使用 `imsettings-switch fcitx`
+    - `mv /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop.backup /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop` (wayland 3.x 版才需要)
     - 很酷的功能 ctrl+： 可以有剪貼簿暫存功能
 
 - 安裝可以遠端rdp的client端 `sudo dnf install remmina`
@@ -442,19 +449,30 @@
   - 列出詳細資料 `mdadm --detail /dev/md1`
   - 從 RAID 陣列移除一個元件分割區。例如，若要移除 /dev/sda1，請輸入 `sudo mdadm /dev/md1 --fail /dev/sda1 --remove /dev/sda1`
   - 再次將分割區新增至 RAID 陣列。例如，若要新增 /dev/sda1，請輸入 `sudo mdadm -a /dev/md1 /dev/sda1`
+  - 上述新增會是成為 spare ，使用此指令加入成員 `mdadm -v --grow --raid-devices=[總共幾顆硬碟] /dev/md1`
+  - 若是擴大硬碟，或是全部更換更大硬碟，可以使用 `mdadm --grow /dev/md1 -z max`
+    - Change the active size of devices in an array.
+      This is useful if all devices have been replaced
+      with larger devices.   Value is in Kilobytes, or
+      the special word 'max' meaning 'as large as possible'.
   - mount 至需要的位置，修改 /etc/fstab 新增 `UUID=[array UUID] /raid6_array            xfs     defaults        0 0`
+  - 原有磁碟陣列的硬碟，因重灌OS須恢復陣列 `mdadm --assemble --scan [或知道那些硬碟直接列出]`
 
 - 依序組 PV VG LV
   - PV (實體 partion) `pvcreate /dev/md1`
+    - 更新空間 `pvresize /dev/md1`
+    - `pvs` 列出目前 pv 狀況
   - VG (建立在PV之上，虛擬的硬碟，可以整合多個PV成為一個VG) `vgcreate backup /dev/md1`
     - vgcreate ：就是主要建立 VG 的指令啦！他的參數比較多，等一下介紹。
     - vgscan ：搜尋系統上面是否有 VG 存在？
     - vgdisplay ：顯示目前系統上面的 VG 狀態
-    - vgextend ：在 VG 內增加額外的 PV
-    - vgreduce ：在 VG 內移除 PV
+    - vgextend ：在 VG 內增加額外的 **PV**
+    - vgreduce ：在 VG 內移除 **PV**
     - vgchange ：設定 VG 是否啟動 (active)
     - vgremove ：刪除 VG
   - LV (邏輯磁區，從VG中分割出的一塊空間) `lvcreate -l 100%FREE -n lvbackup backup`
+    - 刪除邏輯磁區 `lvremove /dev/vg_raid6/lv_raid6`
+    - 若需要加大邏輯磁區 `lvresize -l 100%FREE /dev/vg_raid6/lv_nextcloud`
 
 
 - 將組好的LV 切成 xfs 分割區
