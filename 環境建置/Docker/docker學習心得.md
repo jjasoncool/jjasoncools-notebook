@@ -16,6 +16,7 @@
 
 - docker 使用 iptables 配置，若使用新版 redhat 系產品，需修改`/etc/firewalld/firewalld.conf`
   - 將 `FirewallBackend` 選項修改為 **iptables**，避免一些網路問題
+  - 或者將 docker 網路介面新增至 trust `firewall-cmd --permanent --zone=trusted --add-interface=docker0`
 
 ## 指令參數說明 ##
 - **docker volumn**

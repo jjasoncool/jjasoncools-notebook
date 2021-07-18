@@ -27,6 +27,7 @@
         User jason
         IdentityFile ~/.ssh/id_rsa.rasp
     ```
+  - [git 的 ssh 設定](../VCS/Git%20學習心得.md)
 
 - **最小型安裝**設定螢幕省電
   - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
