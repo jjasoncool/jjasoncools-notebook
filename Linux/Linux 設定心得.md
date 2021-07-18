@@ -631,5 +631,25 @@
 - 更新韌體後，需要先執行
     `cd /boot/firmware/`
     `zcat vmlinuz > vmlinux`
+  - 自動運行(每次更新後都做這件事情)
+  - Add a new script to the *boot partition* called **auto_decompress_kernel** with the following (`sudo chmod +x auto_decompress_kernel`):
+    ```bash
+    #!/bin/bash -e
+
+    #Set Variables
+    BTPATH=/boot/firmware
+    CKPATH=$BTPATH/vmlinuz
+    DKPATH=$BTPATH/vmlinux
+
+    #Check if compression needs to be done.
+    if [ -e $BTPATH/check.md5 ]; then
+        if md5sum --status --ignore-missing -c $BTPATH/check.md5; then
+        echo -e "\e[32mFiles have not changed, Decompression not needed\e[0m"
+    ```
+  - Create a script in the */ect/apt/apt.conf.d/* directory and call it **999_decompress_rpi_kernel**. The script should contain the following (`sudo chmod +x 999_decompress_rpi_kernel`):
+    ```bash
+    DPkg::Post-Invoke {"/bin/bash /boot/firmware/auto_decompress_kernel"; };
+    ```
+
 - 刪除回報問題
     `sudo rm /var/crash/*`
