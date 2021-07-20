@@ -20,9 +20,9 @@
     >   Generating public/private rsa key pair.
     >   Enter file in which to save the key (/home/jason/.ssh/id_rsa): /home/jason/.ssh/id_rsa.rasp
   - `ssh-copy-id -i ~/.ssh/id_rsa.rasp.pub jason@192.168.50.201`
-  - ssh config
+  - vscode ssh config
     ```config
-    Host 192.168.50.201
+        Host 192.168.50.201
         HostName 192.168.50.201
         User jason
         IdentityFile ~/.ssh/id_rsa.rasp
@@ -645,6 +645,42 @@
     if [ -e $BTPATH/check.md5 ]; then
         if md5sum --status --ignore-missing -c $BTPATH/check.md5; then
         echo -e "\e[32mFiles have not changed, Decompression not needed\e[0m"
+        exit 0
+        else echo -e "\e[31mHash failed, kernel will be compressed\e[0m"
+        fi
+    fi
+
+    #Backup the old decompressed kernel
+    mv $DKPATH $DKPATH.bak
+
+    if [ ! $? == 0 ]; then
+        echo -e "\e[31mDECOMPRESSED KERNEL BACKUP FAILED!\e[0m"
+        exit 1
+    else 	echo -e "\e[32mDecompressed kernel backup was successful\e[0m"
+    fi
+
+    #Decompress the new kernel
+    echo "Decompressing kernel: "$CKPATH".............."
+
+    zcat $CKPATH > $DKPATH
+
+    if [ ! $? == 0 ]; then
+        echo -e "\e[31mKERNEL FAILED TO DECOMPRESS!\e[0m"
+        exit 1
+    else
+        echo -e "\e[32mKernel Decompressed Succesfully\e[0m"
+    fi
+
+    #Hash the new kernel for checking
+    md5sum $CKPATH $DKPATH > $BTPATH/check.md5
+
+    if [ ! $? == 0 ]; then
+        echo -e "\e[31mMD5 GENERATION FAILED!\e[0m"
+        else echo -e "\e[32mMD5 generated Succesfully\e[0m"
+    fi
+
+    #Exit
+    exit 0
     ```
   - Create a script in the */ect/apt/apt.conf.d/* directory and call it **999_decompress_rpi_kernel**. The script should contain the following (`sudo chmod +x 999_decompress_rpi_kernel`):
     ```bash
