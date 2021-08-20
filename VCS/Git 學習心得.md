@@ -188,13 +188,7 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
 可以查閱到所有的log紀錄
 
-## 指標(移動指標) ##
->   `git checkout <commit id>`
->   `git switch master`
-
-
 ### 常用選項 ###
-
     只顯示最後 n 筆提交。
     -(n)
 
@@ -217,6 +211,10 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
     列出修改檔案中有加入或移除指定字串的提交。
     -S[字串]
 
+## 指標(移動指標) ##
+>   `git checkout <commit id>`
+>   `git switch master`
+
 ## 復原動作 ##
 確認之前的 git 操作紀錄
 >   `git reflog`
@@ -231,6 +229,12 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
 將檔案復原(新增的檔案)，放棄儲存至最初commit的樣子
 >   `git clean -f <path>`
+
+## commit 的相對指標 ##
+- `HEAD~` 代表
+  -
+- `HEAD^` 代表
+  -
 
 ## 暫存目前工作進度 ##
 暫存目前的工作，建立暫時的commit

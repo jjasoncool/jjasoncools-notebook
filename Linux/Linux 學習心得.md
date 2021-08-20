@@ -21,11 +21,13 @@
     | flags             | Description                                                                                |
     | ----------------- | ------------------------------------------------------------------------------------------ |
     | -a                | Do the sync preserving all filesystem attributes                                           |
+    | -A                | preserve ACLs                                                                              |
     | -v                | run verbosely                                                                              |
     | -u                | only copy files with a newer modification time (or size difference if the times are equal) |
     | --delete          | delete the files in target folder that do not exist in the source                          |
     | --exclude=PATTERN | exclude files matching PATTERN                                                             |
     | -n                | perform a trial run with no changes made                                                   |
+    | -progress         | show progress during transfer                                                              |
 
 - 建立連結(link)
   - Hard Link:連結至同一個inode區塊，故實際上的檔案與內容完全相同，且若多個硬連結其中一個消失，並不影響檔案完整性

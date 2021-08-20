@@ -14,6 +14,9 @@
   `yum install bash-completion*`
 
 - 啟用/設定網路
+  - `ip link` 列出所有網路卡
+  - `ip link set eth0 up` 開啟 eth0 的網路卡
+  - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
 
 - ssh 免密碼登入(git 的 ssh 設定也是相同原理)
   - `ssh-keygen`
@@ -474,6 +477,7 @@
   - LV (邏輯磁區，從VG中分割出的一塊空間) `lvcreate -l 100%FREE -n lvbackup backup`
     - 刪除邏輯磁區 `lvremove /dev/vg_raid6/lv_raid6`
     - 若需要加大邏輯磁區 `lvresize -l 100%FREE /dev/vg_raid6/lv_nextcloud`
+    - 已經有格式化的磁區也一併擴大 `xfs_growfs /mountpoint`
 
 
 - 將組好的LV 切成 xfs 分割區
