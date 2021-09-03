@@ -38,7 +38,7 @@
   - `echo hello world! > /dev/tty0` 可以知道 `> /dev/tty0` 可以將指令輸出至螢幕內
   - 可以將此行命令放至crontab中讓開機可被執行 (使用 root)
   - `@reboot` 參數代表開機會執行的動作
-  - `@reboot /usr/local/sbin/screenblank.sh`
+  - `@reboot sh /usr/local/sbin/screenblank.sh`
 
 - **repository**
   - 列出目前已安裝套件
