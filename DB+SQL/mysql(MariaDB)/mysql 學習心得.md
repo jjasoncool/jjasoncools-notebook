@@ -51,6 +51,11 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
         REGEXP_SUBSTR(subject,pattern)
         REGEXP_REPLACE(subject, pattern, replace)
 
+    -- JSON 資料處理
+        JSON_CONTAINS(json_doc, val[, path])
+        -- Where json_doc is the JSON document, val is the value to find, and path an optional value that specifies a path within the document.
+        -- 可以用 val 確認 json_doc 是否包含此值，可利用在 join 上
+
 -- 判斷
         IF(condition, value_if_true, value_if_false)
 
