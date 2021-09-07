@@ -99,6 +99,11 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
             %w	Day of the week (0=Sunday..6=Saturday)
             %a	Abbreviated weekday name (Sun..Sat)
             %W	Weekday name (Sunday..Saturday)
+            %X 	Year for the week where Sunday is the first day of the week, numeric, four digits; used with %V
+            %x 	Year for the week, where Monday is the first day of the week, numeric, four digits; used with %v
+            %V 	Week (01..53), where Sunday is the first day of the week; WEEK() mode 2; used with %X
+            %v 	Week (01..53), where Monday is the first day of the week; WEEK() mode 3; used with %x
+
 
     -- 時間區間比較
         DATE_ADD(時間, INTERVAL 增減值 時間單位)
@@ -130,6 +135,9 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
             DATE(NOW()),
             DATE_SUB(DATE(NOW()), INTERVAL -10 DAY)
             FROM dual;
+    -- 第幾周
+        WEEKOFYEAR(日期)
+        -- This function assumes that the first day of the week is Monday and the first week of the year has more than 3 days.
 
 -- 加密
     SELECT SHA2('abc', 224);
@@ -511,5 +519,4 @@ WHERE IDno IN (
 **嚴格模式也會導致日期塞入資料的時候發生錯誤，因此若是空的日期必須轉成null才可以塞到資料庫裏面**
 
 - Invalid datetime format: 1292 Incorrect date value: ''
-  - 這個錯誤代表日期不可以使用空字串，除非關閉 mysql 的嚴格模式
--
+  - 這個錯誤代表日期不可以使用空字串，除非關閉 mysql 的嚴格模��
