@@ -154,6 +154,9 @@ FROM node:current-slim
 # Set the working directory.
 WORKDIR /usr/src/app
 
+# ADD has some features (like local-only tar extraction and remote URL support) that are not immediately obvious. Consequently, the best use for ADD is local tar file auto-extraction into the image
+ADD package.json .
+
 # Copy the file from your host to your current location.
 COPY package.json .
 

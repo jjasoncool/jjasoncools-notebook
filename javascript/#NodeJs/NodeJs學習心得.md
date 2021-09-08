@@ -5,19 +5,23 @@
   - `nvm ls-remote | grep "Latest LTS"` 列出可以選用安裝的選項
   - `nvm install {version}` version 可以填版本號，如12
   - `nvm use {version}` 切換版本
+  - `nvm alias default {version}` 預設版本
 
 ## nodejs 套件管理 yarn ##
-  - Ubuntu repo
-    `curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -`
-    `echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list`
-  - Centos / Fedora repo
-    `curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo`
   - 安裝
-    `sudo apt update && sudo apt install --no-install-recommends yarn` (suggestion)
-    `npm install -g yarn`
+    1. 使用 repo 安裝
+      - Ubuntu repo
+        `curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -`
+        `echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list`
+      - Centos / Fedora repo
+        `curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo`
+        `sudo apt update && sudo apt install --no-install-recommends yarn`
+    2. 使用 npm 安裝 (v2 suggestion)
+      `npm install -g yarn`
 
   - yarn 安裝套件位置 **不推薦，只有自己的電腦環境能用** (windows 要加到 path 內才有作用)
     `yarn global bin`
+
   - yarn 目錄初始化
     `yarn init`
     `yarn init -y`(如果不要問一堆的話)
@@ -32,7 +36,7 @@
     `yarn --production`
 
 ## 開發環境 ##
-- nest
+- koa
   -
 
 ## webpack ##
