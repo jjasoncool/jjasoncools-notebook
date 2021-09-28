@@ -476,7 +476,7 @@
     - vgremove ：刪除 VG
   - LV (邏輯磁區，從VG中分割出的一塊空間) `lvcreate -l 100%FREE -n lvbackup backup`
     - 刪除邏輯磁區 `lvremove /dev/vg_raid6/lv_raid6`
-    - 若需要加大邏輯磁區 `lvresize -l 100%FREE /dev/vg_raid6/lv_nextcloud`
+    - 若需要加大邏輯磁區 `lvresize -l +100%FREE /dev/vg_raid6/lv_raid6`
     - 已經有格式化的磁區也一併擴大 `xfs_growfs /mountpoint`
 
 

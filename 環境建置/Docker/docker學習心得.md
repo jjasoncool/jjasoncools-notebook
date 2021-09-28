@@ -137,8 +137,10 @@
     - 掛到 host alias (但若程式指定要 php path 這招無效)
         `alias php="docker run --rm -v \$PWD:/source -w /source php:cli-alpine php"`
     - 使用 file 當作 php executable
-        `sudo echo "exec docker run --rm -v $PWD:/source -v /tmp:/tmp -v /opt:/opt -v /home:/home -w /source php:cli-alpine php \"\$@\"" > /usr/local/bin/php`
+        `sudo echo "exec docker run --rm -v \$PWD:/source -v /tmp:/tmp -v /opt:/opt -v /home:/home -w /source php:cli-alpine php \"\$@\"" > /usr/local/bin/php`
 
+  - phpcs
+        `sudo echo "exec docker run --rm -v \$PWD:/code -v /tmp:/tmp -v /opt:/opt -v /home:/home -w /code php:phpcs phpcs \"\$@\"" > /usr/local/bin/phpcs`
 
   - docker-compose
     ```yml
