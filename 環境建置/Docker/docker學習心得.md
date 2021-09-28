@@ -58,6 +58,8 @@
     `docker images`
   - 刪除目前下載image
     `docker rmi [image]`
+  - 自己建立映像擋
+    `docker build ./ -t php:phpcs`
 
 ### 容器(containers) ###
   - 查詢目前安裝容器
