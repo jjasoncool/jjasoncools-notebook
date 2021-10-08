@@ -36,7 +36,10 @@
     `yarn --production`
 
 ## 開發環境 ##
-- koa
-  -
+### koa ###
+  - `npx `
+
+    執行 node server
+  - `nodemon src/server.js`
 
 ## webpack ##

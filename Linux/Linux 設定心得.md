@@ -18,6 +18,10 @@
   - `ip link set eth0 up` 開啟 eth0 的網路卡
   - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
 
+- 同步網際網路時間
+  - `dnf install chrony`
+  - `systemctl enable chronyd`
+
 - ssh 免密碼登入(git 的 ssh 設定也是相同原理)
   - `ssh-keygen`
     >   Generating public/private rsa key pair.

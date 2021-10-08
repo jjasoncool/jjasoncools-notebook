@@ -130,6 +130,10 @@
 - 查看網卡
     `nmcli connection show`
 
+- 關閉使用特定 port 的服務
+    `fuser -k 8080/tcp`
+    `kill $(lsof -t -i:8080)`
+
 ### 排程 ###
 - 設定排程 (for user)
     `crontab -e`
