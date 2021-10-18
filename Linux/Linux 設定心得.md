@@ -621,6 +621,7 @@
 
 - python 預設使用 python3
 `sudo update-alternatives --set python /usr/bin/python3`
+`sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1`
 `sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1`
 
 ### 輸入法 ###

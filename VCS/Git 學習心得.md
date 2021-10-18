@@ -291,9 +291,11 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
     >   `git merge --squash <branch_name>`
 
 - rebase
-
-    合併 commits，可以依據內容選擇合併 commit 或是保留
+    - rebase 是將目前的 commit 重新經過計算 sha 值再成立 commits 到current branch 之上
+    - 合併 commits，可以依據內容選擇合併 commit 或是保留
     >   `git rebase -i <commit hash>`
+    - 若要復原 rebase 可以使用 ORIG_HEAD 回到 rebase 之前的狀態
+    >   `git reset ORIG_HEAD --hard`
 
 - 合併特定分支的某一檔案
 
