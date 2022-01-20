@@ -134,6 +134,9 @@
     `fuser -k 8080/tcp`
     `kill $(lsof -t -i:8080)`
 
+  - fuser is more useful in identifying process id opening a particular file.
+  - lsof is useful to find out all file(s) opened by particular process.
+
 ### 排程 ###
 - 設定排程 (for user)
     `crontab -e`

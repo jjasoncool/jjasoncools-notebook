@@ -1,4 +1,36 @@
 # 一般語法參考 #
+  - [Nullable types](https://www.php.net/manual/en/migration71.new-features.php)
+    - 參數以及傳回值的類別現在可以通過在類別前加上一個問號使之允許為空。 當啟用這個特徴時，傳入的參數或者函數傳回的結果要麽是給定的類別，要麽是 null
+    ```php
+    function testReturn(): ?string
+    {
+        return 'elePHPant';
+    }
+
+    var_dump(testReturn());
+
+    function testReturn(): ?string
+    {
+        return null;
+    }
+
+    var_dump(testReturn());
+
+    function test(?string $name)
+    {
+        var_dump($name);
+    }
+
+    test('elePHPant');
+    test(null);
+    test();
+    ```
+    以上範例會輸出：
+    string(10) "elePHPant"
+    NULL
+    string(10) "elePHPant"
+    NULL
+    Uncaught Error: Too few arguments to function test(), 0 passed in...
 
 ## cli (command line 部分) ##
   - -v 查看目前版本
