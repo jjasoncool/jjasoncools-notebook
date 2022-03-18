@@ -18,6 +18,14 @@
   - `ip link set eth0 up` 開啟 eth0 的網路卡
   - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
 
+- 設定 dnf / http_proxy
+  1. dnf 使用 proxy
+  - `sudo vi /etc/dnf/dnf.conf` 修改套件檔設定
+  - 在 [main] 區塊新增 `proxy=http://servername:port`
+  2. 網路透過 proxy (使用root權限建立 http_proxy 與 https_proxy 變數)
+  - `echo -e "export http_proxy=http://servername:port\nexport https_proxy=http://servername:port" > /etc/profile.d/proxy.sh`
+
+
 - 同步網際網路時間
   - `dnf install chrony`
   - `systemctl enable chronyd`

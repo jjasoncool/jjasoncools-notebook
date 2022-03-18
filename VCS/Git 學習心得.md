@@ -16,6 +16,11 @@
 若你想編輯 git 設定檔，可由下列指令編輯
 >   `git config --global --edit`
 
+## 連線設定 ##
+有些地方的網路需要經過 proxy 伺服器，可以設定
+>   `git config --global http.proxy [domain]:[port]`
+>   `git config --global https.proxy [domain]:[port]`
+
 
 ## EOL ##
 - 取消 LF 與 CRLF 轉換
