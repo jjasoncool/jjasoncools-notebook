@@ -10,11 +10,11 @@
     ```js
     var player = {score: 1, name: 'Jeff'};
     var newPlayer = Object.assign({}, player, {score: 2});
-    // 現在 player 保持不變，而 newPlayer 則是 {score: 2, name: 'Jeff'}
-
     // 如果你想使用 object spread 語法的話，你可以用以下的寫法：
-    // var newPlayer = {...player, score: 2};
+    var newPlayer = {...player, score: 2};
+    // 現在 player 保持不變，而 newPlayer 則是 {score: 2, name: 'Jeff'}
     ```
+
 
 ## react ##
 
