@@ -28,7 +28,7 @@
     | --delete          | delete the files in target folder that do not exist in the source                          |
     | --exclude=PATTERN | exclude files matching PATTERN                                                             |
     | -n                | perform a trial run with no changes made                                                   |
-    | --progress         | show progress during transfer                                                              |
+    | --progress        | show progress during transfer                                                              |
 
 - 建立連結(link)
   - Hard Link:連結至同一個inode區塊，故實際上的檔案與內容完全相同，且若多個硬連結其中一個消失，並不影響檔案完整性
@@ -102,6 +102,48 @@
   - 製作可開機 usb
     - if 是來源檔案位置，of 是目標位置(通常是整個)usb磁碟
       `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress`
+
+### console manager ###
+- tmux (可使用 ctrl+b 當作 `tmux` prefix)
+    | 模組    | 簡介                                              |
+    | ------- | ------------------------------------------------- |
+    | server  | 服務。tmux 執行的基礎服務，以下模組均依賴此服務。 |
+    | session | 對談。一個服務可以包含多個對談。                  |
+    | window  | 窗口。一個對談可以包含多個窗口。                  |
+    | panel   | 面板。一個窗口可以包含多個面板。                  |
+
+  - 列出目前使用中的 session
+
+    `tmux ls`
+    -> 0: 1 windows (created Wed Dec 16 16:45:19 2020)
+
+  - 連結至該使用中的 session
+
+    `tmux attach -t 0`
+
+  - 連結至該使用中的 session
+
+    `tmux kill-session`
+
+  - Key Binding (ctrl+b 後按鍵對應之功能)
+    | Key | Function                                            |
+    | --- | --------------------------------------------------- |
+    | :   | Enter the tmux command prompt.                      |
+    | ?   | List all key bindings.                              |
+    | "   | Split the current pane into two, top and bottom.    |
+    | %   | Split the current pane into two, left and right.    |
+    | o   | Select the next pane in the current window.         |
+    | n   | Change to the next window.                          |
+    | p   | Change to the previous window.                      |
+    | (   | Switch the attached client to the previous session. |
+    | )   | Switch the attached client to the next session.     |
+    | d   | Detach the current client.                          |
+
+
+  - 更多說明
+
+    `man tmux`
+
 
 ### 權限 ###
 - 設定權限

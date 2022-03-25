@@ -84,6 +84,19 @@
 
 
 ### 網路(network) ###
+  - docker 透過 proxy 連線下載 image
+    1. 區域設定(for user)
+    2. 全域設定(for service)
+       - `sudo mkdir -p /etc/systemd/system/docker.service.d`
+       - `vi /etc/systemd/system/docker.service.d/http-proxy.conf`
+       - 輸入以下內容
+            ```conf
+            [Service]
+            Environment="HTTP_PROXY=http://domain.com:8080"
+            Environment="HTTPS_PROXY=http://domain.com:8080"
+            Environment="NO_PROXY=localhost,127.0.0.1"
+            ```
+
   - 新增用戶自訂網路
     `docker network create sk_service`
 
