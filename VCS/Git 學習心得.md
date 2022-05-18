@@ -22,6 +22,11 @@
 >   `git config --global https.proxy [domain]:[port]`
 
 
+## 共用資料夾 ##
+如果出現 unsafe repository，指令會給予提示
+>   `git config --global -add safe.directory '%(prefix)/[PATH]'`
+>   `git config --global --unset-all safe.directory`
+
 ## EOL ##
 - 取消 LF 與 CRLF 轉換
   - true 依據平台轉換該平台使用的換行字元

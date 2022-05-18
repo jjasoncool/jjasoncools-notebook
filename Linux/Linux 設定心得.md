@@ -17,6 +17,10 @@
   - `ip link` 列出所有網路卡
   - `ip link set eth0 up` 開啟 eth0 的網路卡
   - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
+  - 如果已經有nmcli指令，就可以不用手動作上面的動作
+  - `nmcli connection modify enp0s3 ipv4.addresses 192.168.55.200/24` 設定DHCP取固定IP
+  - `nmcli connection up enp0s3` 開啟網卡
+  - `systemctl restart NetworkManager`
 
 - 設定 dnf / http_proxy
   1. dnf 使用 proxy
