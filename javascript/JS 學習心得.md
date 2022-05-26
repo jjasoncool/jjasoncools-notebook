@@ -38,20 +38,40 @@
         callback
             用於處理陣列中每個元素的函式，可傳入四個參數：
             accumulator
-                用來累積回呼函式回傳值的累加器（accumulator）或 initialValue（若有提供的話，詳如下敘）。累加器是上一次呼叫後，所回傳的累加數值。
+                用來累積回呼函式回傳值的累加器（accumulator）或 initialValue（若有提供的話，詳如下敘）。累加器是**上一次呼叫後，所回傳的累加數值**。
             currentValue
                 原陣列目前所迭代處理中的元素。
             currentIndex(選擇性)
-                原陣列目前所迭代處理中的元素之索引。若有傳入 initialValue，則由索引 0 之元素開始，若無則自索引 1 之元素開始。
+                原陣列目前所迭代處理中的元素之索引。若**有傳入 initialValue，則由索引 0 之元素開始，若無則自索引 1 之元素開始**。
             array(選擇性)
                 呼叫 reduce() 方法的陣列。
 
         initialValue(選擇性)
-            於第一次呼叫 callback 時要傳入的累加器初始值。若沒有提供初始值，則原陣列的第一個元素將會被當作初始的累加器。假如於一個空陣列呼叫 reduce() 方法且沒有提供累加器初始值，將會發生錯誤。
+            於第一次呼叫 callback 時要傳入的累加器初始值。若沒有提供初始值，則原陣列的第一個元素將會被當作初始的累加器。假如**於一個空陣列呼叫 reduce() 方法且沒有提供累加器初始值，將會發生錯誤**。
+    ```js
+    const result = {
+        success: ["max-length", "no-amd", "prefer-arrow-functions"],
+        failure: ["no-var", "var-on-top", "linebreak"],
+        skipped: ["no-extra-semi", "no-dup-keys"]
+    };
+    function makeList(arr) {
+        // Only change code below this line
+        const failureItems = [];
+        let result = arr.reduce((initValue, currentValue) => {
+            failureItems.push(`<li class="text-warning">${currentValue}</li>`);
+            // return 會變成下一次的 initValue
+            return [...initValue, currentValue];
+        }, []);
+        console.log(result);
+
+        return failureItems;
+    }
+
+    const failuresList = makeList(result.failure);
+    ```
 
 - recursion
-  - 迭代
-    ```js
+  ```js
     function rangeOfNumbers(startNum, endNum) {
         // rangeOfNumbers(1,5) = [1,2,3,4,5]
         if (startNum == endNum) {
@@ -59,36 +79,145 @@
         }
         return [startNum, ...rangeOfNumbers(startNum + 1, endNum)];
     };
-    ```
+  ```
 
 ## javascript ES6 ##
-- arrow function
+### arrow function ###
+```js
+ele => ele.jobno === 3
+// 就是
+function(ele) {
+    return ele.jobno === 3
+}
+// 等同
+(ele) => {
+    return ele.jobno === 3
+}
+```
+
+### Destructuring Assignment ###
+- 直接展開
     ```js
-    ele => ele.jobno === 3
-    // 就是
-    function(ele) {
-        return ele.jobno === 3
-    }
-    // 等同
-    (ele) => {
-        return ele.jobno === 3
-    }
+
     ```
 
-- Destructuring Assignment
-  - 直接展開
-  - 截斷陣列
-  - 當作function參數過濾
-  ```js
+- 截斷陣列
+    ```js
+    const [a, b, ...arr] = [1, 2, 3, 4, 5, 7];
+    console.log(a, b);
+    console.log(arr);
+
+    // The console would display the values 1, 2 and [3, 4, 5, 7].
+    ```
+
+- 當作function參數過濾
+    ```js
     const user = { name: 'John Doe', age: 34 };
 
     const name = user.name;
     const age = user.age;
 
-    // 以上等同於此句
+    // 以上等同於下句
     const { name, age } = user;
-  ```
 
+    // 若是要指定給不同名稱變數
+    const newName = user.name;
+    const newAge = user.age;
+
+    // 以上同下句
+    const { name: newName, age: newAge } = user;
+    ```
+
+### Object Property Shorthand ###
+```js
+let a = 'foo',
+    b = 42,
+    c = {};
+
+// Shorthand property names (ES2015)
+// 等同 let o = {a :a, b: b, c: c}
+let o = {a, b, c}
+```
+
+### Class (Function with constructor) ###
+```js
+// constructor
+class Vegetable {
+    constructor(vege) {
+    this.name = vege;
+    }
+}
+
+const carrot = new Vegetable('carrot');
+console.log(carrot.name); // Should display 'carrot'
+
+// setter & getter
+class Thermostat {
+    constructor(degree) {
+    this.Fahrenheit = degree;
+    this.Celsius = (this.Fahrenheit - 32) * 5 / 9;
+    }
+
+    get temperature() {
+    return this.Celsius;
+    }
+
+    set temperature(update) {
+    this.Celsius = update;
+    }
+}
+
+const thermos = new Thermostat(76); // Setting in Fahrenheit scale
+let temp = thermos.temperature; // 24.44 in Celsius
+thermos.temperature = 26;
+temp = thermos.temperature; // 26 in Celsius
+```
+
+### Module Export Import ###
+```js
+// add.js
+// 將 function 變為模組
+const add = (x, y) => {
+  return x + y;
+}
+
+export { add, a, b };
+
+// index.js
+// 引用
+import { add, a, b } from './math_functions.js';
+// 可直接呼叫 add
+// 或者
+import * as myMathModule from "./math_functions.js";
+// 呼叫時必須包含 alias name
+myMathModule.add(2,3);
+
+
+// export default
+// Usually you will use this syntax if only one value is being exported from a file. It is also used to create a fallback value for a file or module.
+export default function add(x, y) {
+  return x + y;
+}
+// 不需要中括弧
+import add from "./math_functions.js";
+```
+
+### promise ###
+```js
+const makeServerRequest = new Promise((resolve, reject) => {
+  // responseFromServer is set to true to represent a successful response from a server
+  let responseFromServer = true;
+
+  if(responseFromServer) {
+    resolve("We got the data");
+  } else {
+    reject("Data not received");
+  }
+});
+```
+
+
+### Object Mutation ###
 - 透過 Mutation（修改）來改變資料
     ```js
     var player = {score: 1, name: 'Jeff'};
@@ -104,9 +233,8 @@
     // 現在 player 保持不變，而 newPlayer 則是 {score: 2, name: 'Jeff'}
     ```
 
-## promise ##
-## async ##
-## await ##
+### async ###
+### await ###
 
 ## react ##
 - 在 React 中，我們遵循的傳統通常是用 on\[Event\] 來命名那些代表 event 的 prop，用 handle\[Event\] 來命名那些 handle event 的方法
