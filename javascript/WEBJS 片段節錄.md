@@ -1,28 +1,4 @@
 # javascript 參考物件 #
-- 運算子
-  - (一元運算子)加號 (+) 一元運算子。嘗試將運算元轉換成數字，假如它還不是數字的話。
-    >   +"3" 回傳 3
-    >   +true 回傳 1
-
-- 宣告變數
-    **以下兩種變數宣告若在全域範圍內表現則雷同**
-  - var
-    >   用於一般宣告變數，需要在**區域**之外被讀取 **※區域指的是 function 或者迴圈包住的 {} 之中**
-    >   重複宣告時將會用新值覆蓋舊值
-
-  - let
-    >   用於單一性宣告變數，可在**區域**之內被讀取其值 **※區域指的是 function 或者迴圈包住的 {} 之中**
-    >   block-scoped
-    >   重複宣告時將會出錯
-
-  - const
-    >   宣告之後，不能再被改變 (在**區域**函數內)
-    >   block-scoped
-    >   須注意的是，若宣告陣列，陣列被視為 pass by reference 所以對陣列做push,pop不會有問題
-
-- JSON (JavaScript Object Notation.)
-    >   JSON.stringify
-
 
 - location
     - hash:回傳#後面的值
@@ -81,8 +57,7 @@
   - .trim()
     >   字串切頭尾
 
-  - JSON.parse()
-    >   json字串轉換為javascript物件
+
 
 - 型別判斷
   - typeof
@@ -149,24 +124,6 @@
     searchParams.delete("topic");
     searchParams.toString(); // "q=URLUtils.searchParams"
     ```
-
-# javascript ES6 #
-## arrow function ##
-```js
-ele => ele.jobno === 3
-// 就是
-function(ele) {
-  return ele.jobno === 3
-}
-// 等同
-(ele) => {
-    return ele.jobno === 3
-}
-
-```
-## promise ##
-## async ##
-## await ##
 
 # JQuery 參考 function #
 ## 選擇器 ##

@@ -1,0 +1,7 @@
+*.*
+!.gitignore
+!/**/*.md
+
+# 特別排除
+Linux/**/*
+UML/Mermaid/*

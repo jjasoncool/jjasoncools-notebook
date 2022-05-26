@@ -1,4 +1,93 @@
 ## 基本概念 ##
+- 運算子
+  - (一元運算子)加號 (+) 一元運算子。嘗試將運算元轉換成數字，假如它還不是數字的話。
+    - +"3" 回傳 3
+    - +true 回傳 1
+
+- 宣告變數
+
+    **以下兩種變數宣告若在全域範圍內表現則雷同**
+
+  - var
+    - 用於一般宣告變數，需要在**區域**之外被讀取 **※區域指的是 function 或者迴圈包住的 {} 之中**
+    - 重複宣告時將會用新值覆蓋舊值
+
+  - let
+    - 用於單一性宣告變數，可在**區域**之內被讀取其值 **※區域指的是 function 或者迴圈包住的 {} 之中**
+    - block-scoped
+    - 重複宣告時將會出錯
+
+  - const
+    - 宣告之後，不能再被改變 (在**區域**函數內)
+    - block-scoped
+    - 須注意的是，若宣告陣列，陣列被視為 pass by reference 所以對陣列做元素變更，如:push,pop不會有問題
+
+- JSON (JavaScript Object Notation.)
+
+  - javascript物件轉換為JSON字串
+
+    `JSON.stringify()`
+
+  - JSON字串轉換為javascript物件
+
+    `JSON.parse()`
+
+- arr.reduce(callback[accumulator, currentValue, currentIndex, array], initialValue)
+  - 參數
+
+        callback
+            用於處理陣列中每個元素的函式，可傳入四個參數：
+            accumulator
+                用來累積回呼函式回傳值的累加器（accumulator）或 initialValue（若有提供的話，詳如下敘）。累加器是上一次呼叫後，所回傳的累加數值。
+            currentValue
+                原陣列目前所迭代處理中的元素。
+            currentIndex(選擇性)
+                原陣列目前所迭代處理中的元素之索引。若有傳入 initialValue，則由索引 0 之元素開始，若無則自索引 1 之元素開始。
+            array(選擇性)
+                呼叫 reduce() 方法的陣列。
+
+        initialValue(選擇性)
+            於第一次呼叫 callback 時要傳入的累加器初始值。若沒有提供初始值，則原陣列的第一個元素將會被當作初始的累加器。假如於一個空陣列呼叫 reduce() 方法且沒有提供累加器初始值，將會發生錯誤。
+
+- recursion
+  - 迭代
+    ```js
+    function rangeOfNumbers(startNum, endNum) {
+        // rangeOfNumbers(1,5) = [1,2,3,4,5]
+        if (startNum == endNum) {
+            return [startNum];
+        }
+        return [startNum, ...rangeOfNumbers(startNum + 1, endNum)];
+    };
+    ```
+
+## javascript ES6 ##
+- arrow function
+    ```js
+    ele => ele.jobno === 3
+    // 就是
+    function(ele) {
+        return ele.jobno === 3
+    }
+    // 等同
+    (ele) => {
+        return ele.jobno === 3
+    }
+    ```
+
+- Destructuring Assignment
+  - 直接展開
+  - 截斷陣列
+  - 當作function參數過濾
+  ```js
+    const user = { name: 'John Doe', age: 34 };
+
+    const name = user.name;
+    const age = user.age;
+
+    // 以上等同於此句
+    const { name, age } = user;
+  ```
 
 - 透過 Mutation（修改）來改變資料
     ```js
@@ -15,7 +104,9 @@
     // 現在 player 保持不變，而 newPlayer 則是 {score: 2, name: 'Jeff'}
     ```
 
+## promise ##
+## async ##
+## await ##
 
 ## react ##
-
 - 在 React 中，我們遵循的傳統通常是用 on\[Event\] 來命名那些代表 event 的 prop，用 handle\[Event\] 來命名那些 handle event 的方法
