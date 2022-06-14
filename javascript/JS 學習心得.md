@@ -182,6 +182,19 @@ const add = (x, y) => {
 }
 
 export { add, a, b };
+// or
+export const add = (x, y) => {
+  return x + y;
+}
+export a = 'some'
+export b = 'thing'
+
+// or old nodejs syntax
+module.exports = {
+    add,
+    a,
+    b,
+}
 
 // index.js
 // 引用
@@ -195,27 +208,43 @@ myMathModule.add(2,3);
 
 // export default
 // Usually you will use this syntax if only one value is being exported from a file. It is also used to create a fallback value for a file or module.
+// new syntax
 export default function add(x, y) {
   return x + y;
 }
+// old nodejs syntax
+module.exports = {
+    default: function add(x, y) {
+        return x + y;
+    }
+}
 // 不需要中括弧
 import add from "./math_functions.js";
+import { default as add } from "./math_functions.js";
 ```
 
 ### promise ###
 ```js
-const makeServerRequest = new Promise((resolve, reject) => {
-  // responseFromServer is set to true to represent a successful response from a server
-  let responseFromServer = true;
+// 常用在 call db, filesystem, 所有 io 和 webapi
+// https://pjchender.dev/javascript/note-event-loop-microtask/
+// https://www.jsv9000.app/?code=c2V0VGltZW91dChmdW5jdGlvbiBhKCkgeyBjb25zb2xlLmxvZygnTWFjcm8gVGFzaycpIH0sIDApOwoKUHJvbWlzZS5yZXNvbHZlKCkKLnRoZW4oZnVuY3Rpb24gYigpIHsgY29uc29sZS5sb2coJ01pY3JvIHRhc2snKSB9KTsKCmNvbnNvbGUubG9nKCdZbycpOw%3D%3D
+const touchGirlsBreast = new Promise((success, reject) => {
+  // need girls react true/false
+  let result = touch();
 
-  if(responseFromServer) {
-    resolve("We got the data");
+  if(result) {
+    success("We got the life goal!");
   } else {
-    reject("Data not received");
+    reject("Hentai");
   }
+}).then(message => {
+  // 定義 then
+  console.log(message);
+}).catch(error => {
+  // 定義 catch
+  console.log(error);
 });
 ```
-
 
 ### Object Mutation ###
 - 透過 Mutation（修改）來改變資料
