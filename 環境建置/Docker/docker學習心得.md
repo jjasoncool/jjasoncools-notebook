@@ -242,6 +242,39 @@ COPY . .
         - "somehost:162.242.195.82"
         - "otherhost:50.31.209.229"
     ```
+  - network
+
+    In the example below, three services are provided (web, worker, and db), along with two networks (new and legacy). The db service is reachable at the hostname db or database on the new network, and at db or mysql on the legacy network.
+
+    ```yaml
+    version: "3.9"
+
+    services:
+    web:
+        image: "nginx:alpine"
+        networks:
+        - new
+
+    worker:
+        image: "my-worker-image:latest"
+        networks:
+        - legacy
+
+    db:
+        image: mysql
+        networks:
+        new:
+            aliases:
+            - database
+        legacy:
+            aliases:
+            - mysql
+
+    networks:
+    new:
+    legacy:
+    ```
+
 
 - 操作指令
   - `build` 重新建立 image file

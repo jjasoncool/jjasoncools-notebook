@@ -8,6 +8,8 @@
     -- 類似mysql的 field()，但是全部都需要使用 case when 進行手動排序
     ORDER BY CASE item WHEN '8104150ML012PP' THEN 1 WHEN '81041STK034673' THEN 2 ELSE 5 END, ROW;
 
+-- 從別的Table複製資料及欄位到新Table
+    SELECT * INTO Table_New FROM Table_Old
 ```
 ----------------------------------------
 ## function ##

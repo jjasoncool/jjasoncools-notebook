@@ -284,6 +284,9 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 瀏覽分支
 >   `git branch -a`
 
+分支改名
+>   `git branch -m master main`
+
 創建分支
 >   `git branch <branch_name>`
   - 與上述語句相同
@@ -300,6 +303,7 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 >   `git branch -d <branch_name>`
 
 刪除遠端分支 (對，push 空的分支到線上=刪除)
+>   `git push <remote-name> --delete <branch-name>`
 >   `git push <remote-name> :<the-new-branch-name-you-want-delete>`
 
 刪除分支依據 regular exp

@@ -98,7 +98,9 @@ function(ele) {
 ### Destructuring Assignment ###
 - 直接展開
     ```js
-
+    const a = ['a', 'b', 'c'];
+    const b = [1, 2, ...a, 3];
+    // result: b = [1, 2, 'a', 'b', 'c', 3]
     ```
 
 - 截斷陣列
