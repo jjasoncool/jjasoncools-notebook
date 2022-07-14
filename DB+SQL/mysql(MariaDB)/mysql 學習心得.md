@@ -247,16 +247,16 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
     -- | 資料表 | 整個表格只可以有一個PK | 表格內可有多個UK |
     -- | 欄位 | 不可為null | 可為null |
 
-    ALTER TABLE test2.ss_all ADD UNIQUE `unique_index`(`cr_no`, `status`, `c1`);
-    ALTER TABLE `ss_all` DROP INDEX `unique_index`;
+    ALTER TABLE db.table ADD UNIQUE `unique_index`(`idno`, `status`, `memberid`);
+    ALTER TABLE db.table DROP INDEX `unique_index`;
 
-    -- 新增 refereence key
+    -- 新增 reference key (foreign key)
         -- 對應動作選向
         CASCADE:
-            如果是 parent紀錄被刪除了，那對應FK的chlid紀錄也一併刪除；
-            如果是 parent FK更新了新值，則child 對應的FK會更新。
+            如果是 parent 紀錄被刪除了，那對應 FK 的 chlid 紀錄也一併刪除；
+            如果是 parent FK 更新了新值，則 child 對應的FK會更新。
         SET NULL:
-            刪除更新 parent都會導致 child的 FK紀錄設為 Null，如果設定為 SET NULL 記得 「child FK 欄位不要加 NOT NULL 會衝突」。
+            刪除更新 parent 都會導致 child 的 FK 紀錄設為 Null，如果設定為 SET NULL 記得 「child FK 欄位不要加 NOT NULL 會衝突」。
         RESTRICT:
             只要child中有包含該FK值，完全不能刪除該筆parent或更新parent的FK欄位。
         NO ACTION:
@@ -264,7 +264,8 @@ SELECT 'foo' AS bar UNION ALL SELECT 'foo' AS bar;
         SET DEFAULT:
             在MySQL InnoDB中不支援。
         -- 我也不知道為什麼一定要使用`符號，但不用會出錯(mysql 5.7)
-        ALTER TABLE sv2.psc_item ADD CONSTRAINT `psc_fk` FOREIGN KEY (`pid`) REFERENCES sv2.psc (`id`) ON UPDATE CASCADE ON DELETE CASCADE;
+        -- 指令下在 child table，當主表進行動作時，依據 ON UPDATE 以及 ON DELETE 決定對子表資料進行什麼動作
+        ALTER TABLE childTable ADD CONSTRAINT `foreign_key` FOREIGN KEY (`pid`) REFERENCES mainTable (`id`) ON UPDATE CASCADE ON DELETE CASCADE;
 
 -- view 視圖
 

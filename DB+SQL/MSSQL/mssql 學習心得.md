@@ -10,6 +10,8 @@
 
 -- 從別的Table複製資料及欄位到新Table
     SELECT * INTO Table_New FROM Table_Old
+    -- 包含新增欄位
+    SELECT CAST(NULL AS DATETIME) AS LogDate, CAST('' AS NVARCHAR(50)) AS Mode, * INTO Table_New FROM Table_Old;
 ```
 ----------------------------------------
 ## function ##
@@ -17,6 +19,9 @@
 ```sql
 -- 排序
     OVER()
+
+-- 新ROWID
+    SELECT newId() AS ColId FROM table1
 
 ```
 ----------------------------------------

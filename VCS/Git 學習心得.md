@@ -77,6 +77,9 @@
 更改 remote url
 >   `git remote set-url <remote-name> <remote-url>`
 
+更改 remote name
+>   `git remote rename <old-name> <new-name>`
+
 這個命令會連到遠端專案，然後從遠端專案中將你還沒有的資料全部拉下來；
 執行完成後，你應該會有那個遠端版本庫中所有分支的參照（reference）
 （譯註：再次強調，遠端的分支在本地端的分身——遠端追蹤分支），可以隨時用來合併或檢視

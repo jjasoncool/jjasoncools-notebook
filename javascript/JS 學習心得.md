@@ -178,7 +178,7 @@ temp = thermos.temperature; // 26 in Celsius
 ### Module Export Import ###
 ```js
 // add.js
-// 將 function 變為模組
+// 將 function,object,value...等 變為模組
 const add = (x, y) => {
   return x + y;
 }
