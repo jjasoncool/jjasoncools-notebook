@@ -94,6 +94,17 @@
     AlwaysGroupCheck=true
     ```
 
+    - linux 可利用 any-vnc 轉 vnc server 的畫面給 xrdp
+      - 先安裝x11vnc
+        `dnf install x11vnc`
+
+      - 設定密碼
+        `x11vnc -storepasswd`
+
+      - 開啟 vnc server
+        `sudo x11vnc -auth guess -forever -loop -noxdamage -repeat -rfbauth /home/jason/.vnc/passwd -rfbport 5900 -shared`
+
+
   - **X11桌面配置**
     - 桌面有哪些 session 放在 **/usr/share/xsessions**
     - 若要配置不同的預設GUI介面
@@ -523,6 +534,9 @@
   - 安裝 qmeu `yum install qemu qemu-kvm qemu-img virt-manager libvirt libvirt-client virt-install virt-viewer bridge-utils`
 - WINDOWS 啟用 virtio
 - CENTOS 8 最小安裝後，安裝 GNOME，後面需要安裝xorg 驅動才可以縮放螢幕(檢視->縮放顯示->將VM自動縮放...大小) `dnf install xorg*drv* spice-vdagent`
+- bridge 設定
+  - nmcli connection add type bridge autoconnect yes con-name virbr0 ifname virbr0
+  - nmcli connection add type bridge-slave autoconnect yes con-name enp5s0 ifname enp5s0 master br0
 
 ### WINE ###
 - ※注意：這邊安裝的時候都不要直接使用root帳號，否則整個wine會被安裝到 root(/) 之下，這邊使用 sudo 取得權限，安裝仍然會安裝在/home/user之下
