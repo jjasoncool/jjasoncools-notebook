@@ -14,13 +14,39 @@
   `yum install bash-completion*`
 
 - 啟用/設定網路
-  - `ip link` 列出所有網路卡
-  - `ip link set eth0 up` 開啟 eth0 的網路卡
-  - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
-  - 如果已經有nmcli指令，就可以不用手動作上面的動作
-  - `nmcli connection modify enp0s3 ipv4.addresses 192.168.55.200/24` 設定DHCP取固定IP
-  - `nmcli connection up enp0s3` 開啟網卡
-  - `systemctl restart NetworkManager`
+  - linux native 內建
+    - `ip link` 列出所有網路卡
+    - `ip link set eth0 up` 開啟 eth0 的網路卡
+    - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
+    - 如果已經有nmcli指令，就可以不用手動作上面的動作
+    - `nmcli connection modify enp0s3 ipv4.addresses 192.168.55.200/24` 設定DHCP取固定IP
+    - `nmcli connection up enp0s3` 開啟網卡
+    - `systemctl restart NetworkManager`
+
+  - openvswitch
+    ```bash
+    # 新增 switch
+    sudo nmcli con add type ovs-bridge conn.interface ovs-bridge con-name ovs-bridge
+    sudo nmcli con add type ovs-port conn.interface ovs-bridge-port master ovs-bridge con-name ovs-bridge-port
+    sudo nmcli con add type ovs-interface slave-type ovs-port conn.interface ovs-bridge master ovs-bridge-port con-name ovs-bridge-int
+    # 新增介面 (enp5s0)
+    sudo nmcli con add type ovs-port conn.interface ovs-port-eth master ovs-bridge con-name ovs-port-eth
+    sudo nmcli con add type ethernet conn.interface enp5s0 master ovs-port-eth con-name ovs-port-eth-int
+
+    sudo nmcli con down enp5s0 ; \
+    sudo nmcli con up ovs-port-eth-int ; \
+    sudo nmcli con up ovs-bridge-int
+    ```
+    `route -n`
+    出現UG 跟 U 才是對的
+    Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+    0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 enp3s0
+    0.0.0.0         192.168.50.1    0.0.0.0         UG    800    0        0 ovs-bridge
+    172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+    172.19.0.0      0.0.0.0         255.255.0.0     U     0      0        0 br-3c8be35bd66b
+    192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 enp3s0
+    192.168.50.0    0.0.0.0         255.255.255.0   U     800    0        0 ovs-bridge
+    192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
 
 - 設定 dnf / http_proxy
   1. dnf 使用 proxy
@@ -75,7 +101,7 @@
   - 需先安裝此套件再行安裝NVDIA驅動程式
   - 修改主要配置檔 **/etc/xrdp/xrdp.ini**
     ```ini
-
+    # 依據需求開啟不同的服務如 xrog / anyvnc
     ```
   - 新增防火牆允許範圍
     `firewall-cmd --permanent --add-port=3389/tcp`
