@@ -25,6 +25,8 @@
 
   - openvswitch
     ```bash
+    # 先安裝 NetworkManager-ovs
+    sudo dnf install NetworkManager-ovs -y
     # 新增 switch
     sudo nmcli con add type ovs-bridge conn.interface ovs-bridge con-name ovs-bridge
     sudo nmcli con add type ovs-port conn.interface ovs-bridge-port master ovs-bridge con-name ovs-bridge-port
@@ -91,6 +93,10 @@
     - 刪除或新增設定檔 `/etc/yum.repos.d/`
   - 安裝舊版的軟體包
     `dnf downgrade code-1.56.2`
+
+  - dnf 錯誤訊息 `This system is not registered with an entitlement server. You can use subscription-manager to register.`
+    - `vi /etc/yum/pluginconf.d/subscription-manager.conf`
+    - 將裡面的 enable=1 改為 0
 
 - 安裝**桌面GUI**
   - `yum groupinstall GNOME "X Window System" fonts`

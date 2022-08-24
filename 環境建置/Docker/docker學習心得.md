@@ -82,6 +82,9 @@
   - 都會存放在 host 特定位置 **/var/lib/docker/volumes/**
   - 指定 volume 位置 `docker volume create [vol_name] -o type=none -o o=bind -o device=[host_mount_point]`
 
+### 檔案(files) ###
+  - 複製檔案至 container 內
+    `docker cp [host主機檔案路徑] container_id:[container檔案路徑]`
 
 ### 網路(network) ###
   - docker 透過 proxy 連線下載 image
@@ -99,7 +102,7 @@
                 }
             }
             ```
-    3. 全域設定(for service)
+    2. 全域設定(for service)
        - `sudo mkdir -p /etc/systemd/system/docker.service.d`
        - `vi /etc/systemd/system/docker.service.d/http-proxy.conf`
        - 輸入以下內容
@@ -109,7 +112,18 @@
             Environment="HTTPS_PROXY=http://domain.com:8080"
             Environment="NO_PROXY=localhost,127.0.0.1"
             ```
-
+    3. 服務設定(for container)
+       - 在 dockerfile 加入以下內容
+            ```dockerfile
+            ENV http_proxy=http://domain.com:8080
+            ENV https_proxy=http://domain.com:8080
+            ```
+       - 在 docker-compose 加入以下內容
+            ```yml
+            environment:
+             - http_proxy=http://domain.com:8080
+             - https_proxy=http://domain.com:8080
+            ```
   - 新增用戶自訂網路
     `docker network create sk_service`
 
@@ -207,6 +221,10 @@ ENTRYPOINT
 
 # Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
+
+# 新增環境變數
+ENV key=value
+
 ```
 
 ## docker-compose ##
@@ -252,27 +270,30 @@ COPY . .
     services:
     web:
         image: "nginx:alpine"
+        environment:
+          - http_proxy=http://example.org:8080
+          - https_proxy=http://example.org:8080
         networks:
-        - new
+          - new
 
     worker:
         image: "my-worker-image:latest"
         networks:
-        - legacy
+          - legacy
 
     db:
         image: mysql
         networks:
         new:
             aliases:
-            - database
+              - database
         legacy:
             aliases:
-            - mysql
+              - mysql
 
     networks:
-    new:
-    legacy:
+        new:
+        legacy:
     ```
 
 
