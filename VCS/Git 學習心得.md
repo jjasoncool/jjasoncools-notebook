@@ -49,7 +49,7 @@
 - 預設將會把產生的金鑰存到 **/home/.ssh** 之下
 - 可以自行取名 e.g. `~/.ssh/id_rsa.github`
 - 執行後將會產出兩個檔案，一個為 xxx(私鑰) 與 xxx.pub(公鑰)，將xxx.pub內容複製到 gitlab/github 上
-- 啟動 ssh-agent (加入~/.bashrc下) `eval "$(ssh-agent -s)" > /dev/null 2>&1`
+- 啟動 ssh-agent (加入~/.bashrc下，須重啟 terminal) `eval "$(ssh-agent -s)" > /dev/null 2>&1`
 - 列出目前加入清單的私鑰 `ssh-add -l`
 - 手動加入私鑰`ssh-add <私鑰位置>`
   - 用指令一次加入的方式(加入~/.bashrc下) `ls ~/.ssh/id_rsa* | grep -v "\.pub" | xargs ssh-add > /dev/null 2>&1`
