@@ -16,6 +16,9 @@
 若你想編輯 git 設定檔，可由下列指令編輯
 >   `git config --global --edit`
 
+若你想移除某項設定
+>   `git config --unset [項目]`
+
 ## 連線設定 ##
 有些地方的網路需要經過 proxy 伺服器，可以設定
 >   `git config --global http.proxy [domain]:[port]`
@@ -181,6 +184,9 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
 
 修改最後一個 commit 的作者與 email
 >   `git commit --amend --reset-author --no-edit`
+同理，修改很多個commit 的作者與 email
+>   `git commit --amend --reset-author --no-edit`
+
 
 修正該commit，跟--amend同，但不問你commit message(不新增新的node)
 >   `git commit --fixup=<commit>`
