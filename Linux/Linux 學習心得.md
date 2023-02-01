@@ -6,6 +6,11 @@
   - 系統重新啟動
     `shutdown -r 0`
 
+- 登出某個使用者 session
+  - 登出使用者桌面環境
+    `loginctl list-sessions`
+    `loginctl kill-session [session號碼]`
+
 - 複製檔案
     `cp -fr /home/skjan/folder/* /var/www/html/`
     `yes | cp -fr /home/skjan/folder/* /var/www/html/` (不會跳出是否覆蓋)
@@ -183,5 +188,9 @@
 ### 排程 ###
 - 設定排程 (for user)
     `crontab -e`
+
+### User ###
+- su
+  - In docker, no login user you can use `su -l www-data -s /bin/bash` to login
 
 ### shell ###

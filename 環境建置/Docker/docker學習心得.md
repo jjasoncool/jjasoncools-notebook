@@ -60,6 +60,8 @@
     `docker rmi [image]`
   - 自己建立映像擋
     `docker build ./ -t php:phpcs`
+  - 清除build快取
+    `docker builder prune`
 
 ### 容器(containers) ###
   - 查詢目前安裝容器
