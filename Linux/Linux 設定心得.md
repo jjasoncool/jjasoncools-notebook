@@ -523,7 +523,7 @@
 
 - 依序組 PV VG LV
   - PV (實體 partion) `pvcreate /dev/md1`
-    - 更新空間 `pvresize /dev/md1`
+    - 更新空間 `pvresize /dev/md1`，需要使用這個之前，請使用`parted`更改實體硬碟大小
     - `pvs` 列出目前 pv 狀況
   - VG (建立在PV之上，虛擬的硬碟，可以整合多個PV成為一個VG) `vgcreate backup /dev/md1`
     - vgcreate ：就是主要建立 VG 的指令啦！他的參數比較多，等一下介紹。
@@ -535,7 +535,8 @@
     - vgremove ：刪除 VG
   - LV (邏輯磁區，從VG中分割出的一塊空間) `lvcreate -l 100%FREE -n lvbackup backup`
     - 刪除邏輯磁區 `lvremove /dev/vg_raid6/lv_raid6`
-    - 若需要加大邏輯磁區 `lvresize -l +100%FREE /dev/vg_raid6/lv_raid6`
+    - 若需要加大邏輯磁區 `lvresize -r -l +100%FREE /dev/vg_raid6/lv_raid6`
+    - 其中 -r 表示在擴充完畢後自動調整檔案系統大小
     - 已經有格式化的磁區也一併擴大 `xfs_growfs /mountpoint`
 
 

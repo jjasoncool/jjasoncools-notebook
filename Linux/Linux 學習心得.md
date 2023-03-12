@@ -163,6 +163,19 @@
     - 新增某網段ip可通
         `sudo firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=172.27.0.0/16 accept'`
 
+- selinux
+  - 服務開啟給system_u
+        `chcon system_u:object_r:systemd_unit_file_t:s0 /etc/systemd/system/xxxx.service`
+
+  - 確認是否為selinux阻擋服務
+        `sudo ausearch -m avc -ts recent | grep [my_service]`
+  - 產出排除模組
+        `sudo grep pm2 /var/log/audit/audit.log | audit2allow -M pm2-codeguys`
+
+  - 安裝排除模組
+        `semodule -i [module_name]`
+        `semodule -r [module_name]`
+
 
   - ufw *(ubuntu)*
 
@@ -188,9 +201,22 @@
 ### 排程 ###
 - 設定排程 (for user)
     `crontab -e`
+    ```ini
+    # .---------------- minute (0 - 59)
+    # |  .------------- hour (0 - 23)
+    # |  |  .---------- day of month (1 - 31)
+    # |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+    # |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+    # |  |  |  |  |
+    # *  *  *  *  * user-name command to be executed
+    ```
 
 ### User ###
 - su
   - In docker, no login user you can use `su -l www-data -s /bin/bash` to login
 
 ### shell ###
+
+### process ###
+- list process
+    `ls -l /proc/*/exe`
