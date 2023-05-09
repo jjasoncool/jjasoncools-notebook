@@ -74,6 +74,10 @@
         User jason
         IdentityFile ~/.ssh/id_rsa.rasp
     ```
+  - **注意** 如果已經使用 ssh-copy-id 之後，仍需要打密碼，很有可能是 `home/[username]` 資料夾權限設定錯誤
+    1. 不能有 w 權限在 group 與 other
+    2. .ssh 資料夾權限須為 700
+    3. .ssh 內部檔案權限須為 600
   - [git 的 ssh 設定](../VCS/Git%20學習心得.md)
 
 - **最小型安裝**設定螢幕省電
