@@ -793,6 +793,7 @@
   - 動態變數
     Using ${} is a way to create dynamic variables
     動態產生變數，可連結字串
+    PHP(8.2) Deprecated:  Using ${var} in strings is deprecated, use {$var} instead
 
   - Variable scope
     - global $外部變數;

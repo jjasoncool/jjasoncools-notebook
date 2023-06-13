@@ -135,10 +135,11 @@
         `dnf install x11vnc`
 
       - 設定密碼
-        `x11vnc -storepasswd`
+        `x11vnc -storepasswd <save path>`
 
       - 開啟 vnc server
         `sudo x11vnc -auth guess -forever -loop -noxdamage -repeat -rfbauth /home/jason/.vnc/passwd -rfbport 5900 -shared`
+      - 如果要多人協作，可以加上選項 `-multiptr`
 
 
   - **X11桌面配置**
@@ -517,7 +518,7 @@
   - 從 RAID 陣列移除一個元件分割區。例如，若要移除 /dev/sda1，請輸入 `sudo mdadm /dev/md1 --fail /dev/sda1 --remove /dev/sda1`
   - 再次將分割區新增至 RAID 陣列。例如，若要新增 /dev/sda1，請輸入 `sudo mdadm -a /dev/md1 /dev/sda1`
   - 上述新增會是成為 spare ，使用此指令加入成員 `mdadm -v --grow --raid-devices=[總共幾顆硬碟] /dev/md1`
-  - 若是擴大硬碟，或是全部更換更大硬碟，可以使用 `mdadm --grow /dev/md1 -z max`
+  - 若是擴大硬碟，或是**全部更換更大硬碟**，可以使用 `mdadm --grow /dev/md1 -z max`
     - Change the active size of devices in an array.
       This is useful if all devices have been replaced
       with larger devices.   Value is in Kilobytes, or
