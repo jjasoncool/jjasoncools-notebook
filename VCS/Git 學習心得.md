@@ -382,6 +382,10 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 >   `cd <subProjectPath> && git init`
 >   `git pull <subProjectPath> <subProjectBranch>`
 
+## git flow ##
+可以透過以下指令建立建議的git flow branches
+>   `git flow init`
+
 ## tags 標籤 ##
 一個輕量級的標籤就像是一個不會移動的分支——這個標籤只會指向一個特定的提交。
 
