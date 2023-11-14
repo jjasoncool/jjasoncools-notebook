@@ -108,7 +108,7 @@
 
 - 安裝**xrdp** (方便可以使用windows rdp)
   - `yum install epel-release xrdp xorgxrdp -y`
-  - 需先安裝此套件再行安裝NVDIA驅動程式
+  - 需先安裝此套件再行安裝NVIDIA驅動程式
   - 修改主要配置檔 **/etc/xrdp/xrdp.ini**
     ```ini
     # 依據需求開啟不同的服務如 xrog / anyvnc

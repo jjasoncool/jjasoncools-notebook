@@ -93,8 +93,10 @@
 >   `git fetch --prune <repo名稱>`
 
 從遠端拉資料
->   `git checkout --track <remote>/<branch_name>`
+>   `git checkout --track <remote>/<branch_name>` \
+>   注意，這個 \<remote\> 沒有在 git remote 內，只要是公開的 repo 就能 pull \
 >   `git pull <remote> <branch_name>`
+
 拉錯分支可以這樣返回
 >   `git reset <remote>/<branch_name>`
 

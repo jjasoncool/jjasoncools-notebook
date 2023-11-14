@@ -32,6 +32,10 @@
 
     `JSON.parse()`
 
+- array
+  - 清除陣列
+    `arr.length = 0`
+
 - arr.reduce(callback[accumulator, currentValue, currentIndex, array], initialValue)
   - 參數
 
