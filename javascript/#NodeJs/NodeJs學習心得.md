@@ -1,5 +1,5 @@
-## nvm nodejs 版本管理系統 ##
-- 基本套件安裝 (管理 nodejs 版本的系統)
+## nodejs 版本管理系統 ##
+- nvm安裝
   - nvm [github](https://github.com/nvm-sh/nvm)
 
     `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash`
@@ -7,6 +7,8 @@
   - `nvm install {version}` version 可以填版本號，如12
   - `nvm use {version}` 切換版本
   - `nvm alias default {version}` 預設版本
+
+- nsm 安裝 (另一個跨平台的cli，比nvm好用)
 
 ## nodejs 套件管理 yarn ##
   - 安裝

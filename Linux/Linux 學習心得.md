@@ -94,19 +94,22 @@
     輸出到 /dev/null，並且將錯誤也導向正常輸出 (1:the standard output  2: the standard error)
 
 - **dd** 磁碟備份
-    | options | Description                    |
-    | ------- | ------------------------------ |
-    | if=     | 輸入來源                       |
-    | of=     | 輸出來源                       |
-    | bs=     | 複製區塊大小 default:512 bytes |
+    | options | Description                               |
+    | ------- | ----------------------------------------- |
+    | if=     | 輸入來源                                  |
+    | of=     | 輸出來源                                  |
+    | bs=     | 複製區塊大小 default:512 bytes            |
+    | ; sync  | 確保檔案完整的複製正確，避免只有在cache中 |
 
   - 先列出可用來做usb之裝置
     `lsblk`
   - 磁碟抹除
-    - `sudo dd bs=4M if=/dev/zero of=/dev/sda`
+    `sudo dd bs=4M if=/dev/zero of=/dev/sda; sync`
   - 製作可開機 usb
     - if 是來源檔案位置，of 是目標位置(通常是整個)usb磁碟
-      `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress`
+    - `; sync`解釋:`;`用於分隔命令，而`sync`是一個命令，用於refresh檔案系統的緩存，將資料寫入硬碟，sync的目的是確保所有的數據都已經完全寫入目標設備，而不僅僅是存在於系統緩存中
+    `sudo dd bs=4M if=/home/jason/Downloads/CentOS-8.2.2004-x86_64-dvd1.iso of=/dev/sde conv=fdatasync status=progress; sync`
+
 
 ### console manager ###
 - tmux (可使用 ctrl+b 當作 `tmux` prefix)

@@ -249,6 +249,8 @@ ENV key=value
   - 在 docker-compose.yaml 中就可以使用 ${MY_IMAGE_VERSION}
 
 - yaml 設定
+  - 通常 container_name 就會被視為該 container 的 hostname
+  - 以下為設定額外的ip對應 hostname
     ```yaml
         #
         networks:
