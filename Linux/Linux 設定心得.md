@@ -1,9 +1,79 @@
 # CentOS7 & fedora
 
-## 以下設定若為 fedora 專有套件管理 將會使用dnf指令
+- 以下設定若為 fedora 專有套件管理 將會使用dnf指令
 
-### 基本設定
+### 系統設定
 
+- **最小型安裝**設定螢幕省電
+  - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
+  - `setterm --term linux --blank 3 --powerdown 5 >> /var/log/crontab/screenblank.log 2>&1 > /dev/tty0`
+  - `echo hello world! > /dev/tty0` 可以知道 `> /dev/tty0` 可以將指令輸出至螢幕內
+  - 可以將此行命令放至crontab中讓開機可被執行 (使用 root)
+  - `@reboot` 參數代表開機會執行的動作
+  - `@reboot sh /usr/local/sbin/screenblank.sh`
+
+- **repository**
+  - 列出目前已安裝套件
+    `rpm -qa`
+    `dnf list --installed gnome*`
+  - 列出自訂新增的 repository
+    - `yum repolist`
+    - 刪除或新增設定檔 `/etc/yum.repos.d/`
+  - 安裝舊版的軟體包
+    `dnf downgrade code-1.56.2`
+  - dnf 錯誤訊息 *This system is not registered with an entitlement server. You can use subscription-manager to register.*
+    - `vi /etc/yum/pluginconf.d/subscription-manager.conf`
+    - 將裡面的 enable=1 改為 0
+- 安裝**桌面GUI**
+  - `yum groupinstall GNOME "X Window System" fonts`
+  - GNOME 一些好用管理工具
+    - `yum install gnome-tweaks gnome-shell-extension-dash-to-dock gnome-shell-extension-top-icons`
+
+- 安裝下載的RPM包\
+  `yum localinstall *.rpm`
+
+- 安裝epel
+  - epel 提供許多實用套件，安裝僅需下指令
+    - `yum install epel-release`
+    -
+  - CENTOS 8 官方建議開啟 powertools
+    - `dnf install dnf-plugins-core`
+    - `dnf config-manager --set-enabled PowerTools`
+    -
+- 安裝 [GCC](https://gcc.gnu.org/mirrors.html) (編譯原始碼的工具)
+  - 選擇其中一個站點，進入releases/ 之下 選擇一個版本下載，檔案為.tar.gz檔案\
+    直接用 `yum install gcc*` 比較快
+- 安裝 **chromium** `yum install chromium`
+- 通用解 **fcitx 輸入法殼層** 配套新酷音
+  - `sudo dnf install fcitx fcitx-configtool fcitx-chewing`
+  - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
+  - fcitx-configtool 可能會找不到，可以到 [fedora project](https://src.fedoraproject.org/projects/rpms/*) 下載 rpm 安裝(fc33版本)
+  - centos 使用 gnome 介面的話，可使用 `dnf install im-chooser`
+    - `mv /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop.backup` (wayland 3.x 版才需要)
+    - 使用 `imsettings-switch fcitx`
+    - `mv /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop.backup /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop` (wayland 3.x 版才需要)
+  - 很酷的功能 ctrl+： 可以有剪貼簿暫存功能
+  - 有新的套件 **fcitx5**，設定更容易了，基本上只要
+    - `sudo dnf install fcitx5 fcitx5-chewing`
+
+- 安裝可以遠端rdp的client端 `sudo dnf install remmina`
+  - centos 8 要額外執行指令 `dnf copr enable castor/remmina`
+  - 關於 copr 額外套件說明:
+    - First, make sure you have installed dnf core plugins:\
+      `dnf install dnf-plugins-core`
+    - Enable your repository:\
+      `dnf copr enable your_name/test-project`
+    - And install the package:\
+      `dnf install package`
+    - To uninstall your package:\
+      `dnf remove package`
+    - And to disable your repository:\
+      `dnf copr disable your_name/test-project`
+- 要解h264問題直接安裝vlc撥放器
+- **home底下資料夾語言**
+  - 執行 `LANG=en_US.UTF-8 xdg-user-dirs-update --force`
+
+### 安全設定
 - 禁止 root 使用 ssh 登入
 
   > CentOS 7 預設容許任何帳號透過 ssh 登入，包括 root 和一般帳號，為了不讓 root 帳號被黑客暴力入侵，我們必須禁止 root 帳號的 ssh 功能，事實上 root 也沒有必要 ssh 登入伺服器，因為只要使用 su 或 sudo (當然需要輸入 root 的密碼) 普通帳號便可以擁有 root 的權限。
@@ -14,7 +84,8 @@
   3. 最後輸入以下指令重新啟動 sshd：\
     `systemctl restart sshd.service`
   - 指令自動完成 `yum install bash-completion*`
-- 啟用/設定網路
+
+### 啟用/設定網路
   - linux native 內建
     - `ip link` 列出所有網路卡
     - `ip link set eth0 up` 開啟 eth0 的網路卡
@@ -58,12 +129,14 @@
   1. dnf 使用 proxy
   - `sudo vi /etc/dnf/dnf.conf` 修改套件檔設定
   - 在 [main] 區塊新增 `proxy=http://servername:port`
-  1. 網路透過 proxy (使用root權限建立 http_proxy 與 https_proxy 變數)
+  2. 網路透過 proxy (使用root權限建立 http_proxy 與 https_proxy 變數)
   - `echo -e "export http_proxy=http://servername:port\nexport https_proxy=http://servername:port" > /etc/profile.d/proxy.sh`
 
 - 同步網際網路時間
   - `dnf install chrony`
   - `systemctl enable chronyd`
+
+### 遠端設定
 
 - ssh 免密碼登入(git 的 ssh 設定也是相同原理)
   - `ssh-keygen`
@@ -84,28 +157,7 @@
     2. .ssh 資料夾權限須為 700
     3. .ssh 內部檔案權限須為 600
   - [git 的 ssh 設定](../VCS/Git%20%E5%AD%B8%E7%BF%92%E5%BF%83%E5%BE%97.md)
-- **最小型安裝**設定螢幕省電
-  - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
-  - `setterm --term linux --blank 3 --powerdown 5 >> /var/log/crontab/screenblank.log 2>&1 > /dev/tty0`
-  - `echo hello world! > /dev/tty0` 可以知道 `> /dev/tty0` 可以將指令輸出至螢幕內
-  - 可以將此行命令放至crontab中讓開機可被執行 (使用 root)
-  - `@reboot` 參數代表開機會執行的動作
-  - `@reboot sh /usr/local/sbin/screenblank.sh`
-- **repository**
-  - 列出目前已安裝套件
-    `rpm -qa`
-    `dnf list --installed gnome*`
-  - 列出自訂新增的 repository
-    - `yum repolist`
-    - 刪除或新增設定檔 `/etc/yum.repos.d/`
-  - 安裝舊版的軟體包
-    `dnf downgrade code-1.56.2`
-  - dnf 錯誤訊息 `This system is not registered with an entitlement server. You can use subscription-manager to register.`
-    - `vi /etc/yum/pluginconf.d/subscription-manager.conf`
-    - 將裡面的 enable=1 改為 0
-- 安裝**桌面GUI**
-  - `yum groupinstall GNOME "X Window System" fonts`
-  - GNOME 一些好用管理工具 `yum install gnome-tweaks gnome-shell-extension-dash-to-dock gnome-shell-extension-top-icons`
+
 - 安裝**xrdp** (方便可以使用windows rdp)
   - `yum install epel-release xrdp xorgxrdp -y`
   - 需先安裝此套件再行安裝NVIDIA驅動程式
@@ -163,6 +215,7 @@
         ResultActive=yes
         ```
       - 重啟該服務 `systemctl restart polkit`
+
 - 安裝**NV顯示卡驅動**
   - 首先要具備一些依賴包 `yum install libglvnd* dkms gcc kernel-devel kernel-headers`
   - 開啟dkms `dkms autoinstall`
@@ -186,43 +239,8 @@
         # 找到 Identifier "libinput touchscreen catchall" 新增
         Option "Ignore" "on"
     ```
-- 安裝下載的RPM包\
-  `yum localinstall *.rpm`
-- 安裝epel
-  - epel 提供許多實用套件，安裝僅需下指令\
-    `yum install epel-release`
-  - CENTOS 8 官方建議開啟 powertools `dnf install dnf-plugins-core` `dnf config-manager --set-enabled PowerTools`
-- 安裝 [GCC](https://gcc.gnu.org/mirrors.html) (編譯原始碼的工具)
-  - 選擇其中一個站點，進入releases/ 之下 選擇一個版本下載，檔案為.tar.gz檔案\
-    直接用 `yum install gcc*` 比較快
-- 安裝 **chromium** `yum install chromium`
-- 通用解 **fcitx 輸入法殼層** 配套新酷音
-  `sudo dnf install fcitx fcitx-configtool fcitx-chewing`
-  - fcitx-configtool 可能會找不到，可以到 [fedora project](https://src.fedoraproject.org/projects/rpms/*) 下載 rpm 安裝(fc33版本)
-  - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
-  - centos 使用 gnome 介面的話，可使用 `dnf install im-chooser`
-  - `mv /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop.backup` (wayland 3.x 版才需要)
-  - 使用 `imsettings-switch fcitx`
-  - `mv /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop.backup /etc/xdg/autostart/org.gnome.SettingsDaemon.Keyboard.desktop` (wayland 3.x 版才需要)
-  - 很酷的功能 ctrl+： 可以有剪貼簿暫存功能
-- 安裝可以遠端rdp的client端 `sudo dnf install remmina`
-  - centos 8 要額外執行指令 `dnf copr enable castor/remmina`
-  - 關於 copr 額外套件說明:
-    - First, make sure you have installed dnf core plugins:\
-      `dnf install dnf-plugins-core`
-    - Enable your repository:\
-      `dnf copr enable your_name/test-project`
-    - And install the package:\
-      `dnf install package`
-    - To uninstall your package:\
-      `dnf remove package`
-    - And to disable your repository:\
-      `dnf copr disable your_name/test-project`
-- 要解h264問題直接安裝vlc撥放器
-- **home底下資料夾語言**
-  - 執行 `LANG=en_US.UTF-8 xdg-user-dirs-update --force`
 
-### 檔案與檔案系統管理
+### 檔案系統與磁碟管理
 
 - **rclone**
   - 先到官網下載[rclone](https://rclone.org/downloads/)\
@@ -267,6 +285,62 @@
   -
 - 支援**NTFS**隨身碟
   - `sudo dnf install ntfs-3g`
+
+- 列出目前硬碟掛載與結構
+  `lsblk -f`
+  `df -h`
+- 檢視目前資料夾佔用的空間與大小
+  `du -h --max-depth=1 ./`
+- 將硬碟先切出partition
+  - `gdisk /dev/sdb` 選擇n新增分割(以下為常用)
+    - **8300** Linux filesystem
+    - **fd00** Linux RAID
+    - **8e00** Linux LVM
+  - `mkfs.xfs -f -b size=4096 /dev/sdb1`將分割區格式化成xfs系統
+- 組raid陣列
+  - 使用 `gdisk /dev/sda` 將硬碟 format 成 **Linux RAID**
+  - `mdadm --create /dev/md1 --auto=yes --level=6 --raid-devices=4 /dev/sda1 /dev/sdb1`
+  - 列出詳細資料 `mdadm --detail /dev/md1`
+  - 從 RAID 陣列移除一個元件分割區。例如，若要移除 /dev/sda1，請輸入 `sudo mdadm /dev/md1 --fail /dev/sda1 --remove /dev/sda1`
+  - 再次將分割區新增至 RAID 陣列。例如，若要新增 /dev/sda1，請輸入 `sudo mdadm -a /dev/md1 /dev/sda1`
+  - 上述新增會是成為 spare ，使用此指令加入成員 `mdadm -v --grow --raid-devices=[總共幾顆硬碟] /dev/md1`
+  - 若是擴大硬碟，或是**全部更換更大硬碟**，可以使用 `mdadm --grow /dev/md1 -z max`
+    - Change the active size of devices in an array.
+    - This is useful if all devices have been replaced with larger devices.
+    - Value is in Kilobytes, or the special word 'max' meaning 'as large as possible'.
+  - mount 至需要的位置，修改 /etc/fstab 新增 `UUID=[array UUID] /raid6_array            xfs     defaults        0 0`
+  - 原有磁碟陣列的硬碟，因重灌OS須恢復陣列 `mdadm --assemble --scan [或知道那些硬碟直接列出]`
+- 依序組 PV VG LV
+  - PV (實體 partion) `pvcreate /dev/md1`
+    - 更新空間 `pvresize /dev/md1`，需要使用這個之前，請使用`parted`更改實體硬碟大小
+    - `pvs` 列出目前 pv 狀況
+  - VG (建立在PV之上，虛擬的硬碟，可以整合多個PV成為一個VG) `vgcreate backup /dev/md1`
+    - vgcreate ：就是主要建立 VG 的指令啦！他的參數比較多，等一下介紹。
+    - vgscan ：搜尋系統上面是否有 VG 存在？
+    - vgdisplay ：顯示目前系統上面的 VG 狀態
+    - vgextend ：在 VG 內增加額外的 **PV**
+    - vgreduce ：在 VG 內移除 **PV**
+    - vgchange ：設定 VG 是否啟動 (active)
+    - vgremove ：刪除 VG
+  - LV (邏輯磁區，從VG中分割出的一塊空間) `lvcreate -l 100%FREE -n lvbackup backup`
+    - 刪除邏輯磁區 `lvremove /dev/vg_raid6/lv_raid6`
+    - 若需要加大邏輯磁區 `lvresize -r -l +100%FREE /dev/vg_raid6/lv_raid6`
+    - 其中 -r 表示在擴充完畢後自動調整檔案系統大小
+    - 已經有格式化的磁區也一併擴大 `xfs_growfs /mountpoint`
+- 將組好的LV 切成 xfs 分割區
+  - `mkfs.xfs /dev/backup/lvbackup`
+- mount 到 指定路徑
+  - `mkdir /backup && mount /dev/backup/lvbackup /backup`
+  - 需要修改 `/etc/fstab` 開機掛載硬碟
+  - `/dev/mapper/backup-lvbackup   /backup           xfs     defaults        0 0`
+- 使用 sshfs mount 遠端資料夾
+  - `sshfs [user@]hostname:[directory] mountpoint`
+    - `sshfs 192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/`
+  - `fusermount -u mountpoint`
+    - `fusermount -u /home/jason/remote/192.168.55.200/`
+  - 開機時 mount (修改 /etc/fstab 檔案)
+    - `jason@192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/ fuse.sshfs defaults,allow_other,_netdev 0 0`
+    - `mount -a`
 
 ### SSL 憑證自動更新透過 haproxy
 
@@ -483,64 +557,6 @@
        - 編譯問題:
          - ldconfig: /usr/local/gcc-9.1.0/lib64/libstdc++.so.6.0.26-gdb.py 不是一個 ELF 檔 - 其開頭的魔術位元組是錯的。-> 直接將這個檔案刪除，然後再重新ldconfig即可 dkmsmake gcc-gfortran libquadmath-deve libtool systemtap systemtap-devel
 
-### 檔案與磁碟管理
-
-- 列出目前硬碟掛載與結構
-  `lsblk -f`
-  `df -h`
-- 檢視目前資料夾佔用的空間與大小
-  `du -h --max-depth=1 ./`
-- 將硬碟先切出partition
-  - `gdisk /dev/sdb` 選擇n新增分割(以下為常用)
-    - **8300** Linux filesystem
-    - **fd00** Linux RAID
-    - **8e00** Linux LVM
-  - `mkfs.xfs -f -b size=4096 /dev/sdb1`將分割區格式化成xfs系統
-- 組raid陣列
-  - 使用 `gdisk /dev/sda` 將硬碟 format 成 **Linux RAID**
-  - `mdadm --create /dev/md1 --auto=yes --level=6 --raid-devices=4 /dev/sda1 /dev/sdb1`
-  - 列出詳細資料 `mdadm --detail /dev/md1`
-  - 從 RAID 陣列移除一個元件分割區。例如，若要移除 /dev/sda1，請輸入 `sudo mdadm /dev/md1 --fail /dev/sda1 --remove /dev/sda1`
-  - 再次將分割區新增至 RAID 陣列。例如，若要新增 /dev/sda1，請輸入 `sudo mdadm -a /dev/md1 /dev/sda1`
-  - 上述新增會是成為 spare ，使用此指令加入成員 `mdadm -v --grow --raid-devices=[總共幾顆硬碟] /dev/md1`
-  - 若是擴大硬碟，或是**全部更換更大硬碟**，可以使用 `mdadm --grow /dev/md1 -z max`
-    - Change the active size of devices in an array.
-    - This is useful if all devices have been replaced with larger devices.
-    - Value is in Kilobytes, or the special word 'max' meaning 'as large as possible'.
-  - mount 至需要的位置，修改 /etc/fstab 新增 `UUID=[array UUID] /raid6_array            xfs     defaults        0 0`
-  - 原有磁碟陣列的硬碟，因重灌OS須恢復陣列 `mdadm --assemble --scan [或知道那些硬碟直接列出]`
-- 依序組 PV VG LV
-  - PV (實體 partion) `pvcreate /dev/md1`
-    - 更新空間 `pvresize /dev/md1`，需要使用這個之前，請使用`parted`更改實體硬碟大小
-    - `pvs` 列出目前 pv 狀況
-  - VG (建立在PV之上，虛擬的硬碟，可以整合多個PV成為一個VG) `vgcreate backup /dev/md1`
-    - vgcreate ：就是主要建立 VG 的指令啦！他的參數比較多，等一下介紹。
-    - vgscan ：搜尋系統上面是否有 VG 存在？
-    - vgdisplay ：顯示目前系統上面的 VG 狀態
-    - vgextend ：在 VG 內增加額外的 **PV**
-    - vgreduce ：在 VG 內移除 **PV**
-    - vgchange ：設定 VG 是否啟動 (active)
-    - vgremove ：刪除 VG
-  - LV (邏輯磁區，從VG中分割出的一塊空間) `lvcreate -l 100%FREE -n lvbackup backup`
-    - 刪除邏輯磁區 `lvremove /dev/vg_raid6/lv_raid6`
-    - 若需要加大邏輯磁區 `lvresize -r -l +100%FREE /dev/vg_raid6/lv_raid6`
-    - 其中 -r 表示在擴充完畢後自動調整檔案系統大小
-    - 已經有格式化的磁區也一併擴大 `xfs_growfs /mountpoint`
-- 將組好的LV 切成 xfs 分割區
-  - `mkfs.xfs /dev/backup/lvbackup`
-- mount 到 指定路徑
-  - `mkdir /backup && mount /dev/backup/lvbackup /backup`
-  - 需要修改 `/etc/fstab` 開機掛載硬碟
-  - `/dev/mapper/backup-lvbackup   /backup           xfs     defaults        0 0`
-- 使用 sshfs mount 遠端資料夾
-  - `sshfs [user@]hostname:[directory] mountpoint`
-    - `sshfs 192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/`
-  - `fusermount -u mountpoint`
-    - `fusermount -u /home/jason/remote/192.168.55.200/`
-  - 開機時 mount (修改 /etc/fstab 檔案)
-    - `jason@192.168.55.200:/home/jason/developEnv/ /home/jason/remote/192.168.55.200/ fuse.sshfs defaults,allow_other,_netdev 0 0`
-    - `mount -a`
-
 ### 排程、資料同步
 
 - 例行性排程
@@ -662,6 +678,24 @@
 - 通用解 fcitx 配套新酷音 `sudo apt install fcitx fcitx-chewing`
   - fcitx是一個在X Window中使用的輸入法框架，直接新增新酷音輸入法就可以使用了
 
+### 遠端設定
+- 安裝dconf，可以修改相關桌面參數
+  - `sudo apt-get -y install dconf-editor`
+- 安裝 vino vnc
+  - `sudo apt-get install vino`
+- 設定remote項目
+  - 須先關閉以下項目
+  - `gsettings set org.gnome.Vino require-encryption false`
+  - `dbus-launch gsettings set org.gnome.Vino prompt-enabled false`
+  - `dbus-launch gsettings set org.gnome.Vino prompt-enabled false`
+  - `dbus-launch gsettings set org.gnome.Vino vnc-password $(echo -n "mypassword"|base64)`
+  - 修改 gdm config 檔案，這邊以 ubuntu mate 為例
+    - `vi /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf`
+    - 新增以下兩行
+    - ```conf
+        autologin-user=username
+        autologin-user-timeout=0
+    ```
 ### git
 
 - For the latest stable version for your release of Debian/Ubuntu
@@ -669,7 +703,7 @@
 - For Ubuntu, this PPA provides the latest stable upstream Git version
   `add-apt-repository ppa:git-core/ppa # apt update; apt install git`
 
-### raspberry pi 專屬
+## raspberry pi 專屬
 
 - (mate ubuntu 20.04)更新韌體後，需要先執行
   `cd /boot/firmware/`
