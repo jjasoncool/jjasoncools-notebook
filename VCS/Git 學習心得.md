@@ -79,6 +79,7 @@
 
 更改 remote url
 >   `git remote set-url <remote-name> <remote-url>`
+>   `git remote set-url --add --push <remote-name> <remote-url>`
 
 更改 remote name
 >   `git remote rename <old-name> <new-name>`

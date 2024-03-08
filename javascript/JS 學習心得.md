@@ -3,6 +3,18 @@
   - (一元運算子)加號 (+) 一元運算子。嘗試將運算元轉換成數字，假如它還不是數字的話。
     - +"3" 回傳 3
     - +true 回傳 1
+  - Bitwise NOT (~)
+    ```js
+    const a = 5; // 00000000000000000000000000000101
+    const b = -3; // 11111111111111111111111111111101
+
+    console.log(~a); // 11111111111111111111111111111010
+    // Expected output: -6
+
+    console.log(~b); // 00000000000000000000000000000010
+    // Expected output: 2
+    ```
+    - 時常利用 `~~` 來做為將小數點去除之動作 Math.floor 的替代品，缺點是數字不能太大
 
 - 宣告變數
 
@@ -32,58 +44,82 @@
 
     `JSON.parse()`
 
+### 基本常用流程
+
+- for
+    ```js
+    let numbers = [1, 2, 3, 4, 5];
+
+    // 找出 index
+    for (let index in numbers) {
+        console.log(`Index: ${index}, Value: ${numbers[index]}`);
+    }
+
+    // 找出value，並且可以assign index 與 value
+    for (const [index, value] of numbers.entries()) {
+        console.log(`Index: ${index}, Value: ${value}`);jas
+    }
+
+    ```
+
+- recursion (遞迴)
+    ```js
+      function rangeOfNumbers(startNum, endNum) {
+          // rangeOfNumbers(1,5) = [1,2,3,4,5]
+          if (startNum == endNum) {
+              return [startNum];
+          }
+          return [startNum, ...rangeOfNumbers(startNum + 1, endNum)];
+      };
+    ```
+
+### 資料型別
+
 - array
   - 清除陣列
     `arr.length = 0`
 
-- arr.reduce(callback[accumulator, currentValue, currentIndex, array], initialValue)
-  - 參數
+  - Array.prototype.shift()
 
-        callback
-            用於處理陣列中每個元素的函式，可傳入四個參數：
-            accumulator
-                用來累積回呼函式回傳值的累加器（accumulator）或 initialValue（若有提供的話，詳如下敘）。累加器是**上一次呼叫後，所回傳的累加數值**。
-            currentValue
-                原陣列目前所迭代處理中的元素。
-            currentIndex(選擇性)
-                原陣列目前所迭代處理中的元素之索引。若**有傳入 initialValue，則由索引 0 之元素開始，若無則自索引 1 之元素開始**。
-            array(選擇性)
-                呼叫 reduce() 方法的陣列。
+  - arr.reduce(callback[accumulator, currentValue, currentIndex, array], initialValue)
+    - 參數
 
-        initialValue(選擇性)
-            於第一次呼叫 callback 時要傳入的累加器初始值。若沒有提供初始值，則原陣列的第一個元素將會被當作初始的累加器。假如**於一個空陣列呼叫 reduce() 方法且沒有提供累加器初始值，將會發生錯誤**。
-    ```js
-    const result = {
-        success: ["max-length", "no-amd", "prefer-arrow-functions"],
-        failure: ["no-var", "var-on-top", "linebreak"],
-        skipped: ["no-extra-semi", "no-dup-keys"]
-    };
-    function makeList(arr) {
-        // Only change code below this line
-        const failureItems = [];
-        let result = arr.reduce((initValue, currentValue) => {
-            failureItems.push(`<li class="text-warning">${currentValue}</li>`);
-            // return 會變成下一次的 initValue
-            return [...initValue, currentValue];
-        }, []);
-        console.log(result);
+          callback
+              用於處理陣列中每個元素的函式，可傳入四個參數：
+              accumulator
+                  用來累積回呼函式回傳值的累加器（accumulator）或 initialValue（若有提供的話，詳如下敘）。累加器是**上一次呼叫後，所回傳的累加數值**。
+              currentValue
+                  原陣列目前所迭代處理中的元素。
+              currentIndex(選擇性)
+                  原陣列目前所迭代處理中的元素之索引。若**有傳入 initialValue，則由索引 0 之元素開始，若無則自索引 1 之元素開始**。
+              array(選擇性)
+                  呼叫 reduce() 方法的陣列。
 
-        return failureItems;
-    }
+          initialValue(選擇性)
+              於第一次呼叫 callback 時要傳入的累加器初始值。若沒有提供初始值，則原陣列的第一個元素將會被當作初始的累加器。假如**於一個空陣列呼叫 reduce() 方法且沒有提供累加器初始值，將會發生錯誤**。
+      ```js
+      const result = {
+          success: ["max-length", "no-amd", "prefer-arrow-functions"],
+          failure: ["no-var", "var-on-top", "linebreak"],
+          skipped: ["no-extra-semi", "no-dup-keys"]
+      };
+      function makeList(arr) {
+          // Only change code below this line
+          const failureItems = [];
+          let result = arr.reduce((initValue, currentValue) => {
+              failureItems.push(`<li class="text-warning">${currentValue}</li>`);
+              // return 會變成下一次的 initValue
+              return [...initValue, currentValue];
+          }, []);
+          console.log(result);
 
-    const failuresList = makeList(result.failure);
-    ```
+          return failureItems;
+      }
 
-- recursion
-  ```js
-    function rangeOfNumbers(startNum, endNum) {
-        // rangeOfNumbers(1,5) = [1,2,3,4,5]
-        if (startNum == endNum) {
-            return [startNum];
-        }
-        return [startNum, ...rangeOfNumbers(startNum + 1, endNum)];
-    };
-  ```
+      const failuresList = makeList(result.failure);
+      ```
+
+- Object
 
 ## javascript ES6 ##
 ### arrow function ###
@@ -143,6 +179,40 @@ let a = 'foo',
 // Shorthand property names (ES2015)
 // 等同 let o = {a :a, b: b, c: c}
 let o = {a, b, c}
+
+// 取陣列值，但沒有回傳值
+array.forEach((value,index) => {
+    console.log(index +" " + value);
+});
+// object key value
+Object.keys(obj).forEach((key, index) => {
+    console.log(`${key} - ${obj[key]}`);
+});
+
+var obj = { foo: 'bar'};
+
+obj.hasOwnProperty('foo'); // true
+obj.hasOwnProperty('toString'); // false
+'toString' in obj; // true
+
+// 函式簡寫(箭頭函式)
+// 主要差異是沒有 this
+var materials = [
+    'Hydrogen',
+    'Helium',
+    'Lithium',
+    'Beryllium'
+];
+
+materials.map(function(material) {
+    return material.length;
+}); // [8, 6, 7, 9]
+
+materials.map((material) => {
+    return material.length;
+}); // [8, 6, 7, 9]
+
+materials.map(({length}) => length); // [8, 6, 7, 9]
 ```
 
 ### Class (Function with constructor) ###

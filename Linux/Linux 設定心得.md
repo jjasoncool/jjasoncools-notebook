@@ -634,6 +634,11 @@
 - 移除已安裝的windows程式
   `wine uninstaller`
 
+### bottles
+- 兩種安裝方式
+  1. 使用官方推薦 flathub
+  2. 使用linux repo
+
 ### 除錯
 
 - YUM 安裝到一半重開機 (導致無法順利更新)

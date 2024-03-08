@@ -232,7 +232,11 @@ ENV key=value
 ## docker-compose ##
 - 安裝有三種方式，可自選，arm只能用第三種
   1. x86_64
+     1. v1
      - `sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+     - `sudo chmod +x /usr/local/bin/docker-compose`
+     2. v2
+     - `sudo curl -L "https://github.com/docker/compose/releases/download/v1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
      - `sudo chmod +x /usr/local/bin/docker-compose`
   2. INSTALL AS A CONTAINER (x86_64)
      - `sudo curl -L --fail https://github.com/docker/compose/releases/download/1.29.2/run.sh -o /usr/local/bin/docker-compose`
