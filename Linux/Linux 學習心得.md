@@ -34,6 +34,30 @@
     | --exclude=PATTERN | exclude files matching PATTERN                                                             |
     | -n                | perform a trial run with no changes made                                                   |
     | --progress        | show progress during transfer                                                              |
+- 通常rsync資料夾後，也需要做刪除管理，以下為範例
+
+    ```bash
+    #!/bin/bash
+
+    log_file="/f/backup/deleteLog.txt"
+
+    # 檢查日誌文件是否存在，如果不存在則創建它
+    if [ ! -f "$log_file" ]; then
+        touch "$log_file"
+    fi
+
+    # 移除7天內VM
+    # find /f/backup/* -maxdepth 0 -type d -ctime +5 -exec rm -r {} \; >> "$log_file"
+    find /f/backup/* -maxdepth 0 -type d -ctime +5 | while read -r dir; do
+        if [ -d "$dir" ]; then
+            echo "Deleting directory: $dir" >> "$log_file";
+            rm -r "$dir"
+        fi;
+    done
+
+    # 備份VM資料
+    rsync -av /d/VM/yamada/ /f/backup/yamada_$(date +%Y%m%d)
+    ```
 
 - 建立連結(link)
   - Hard Link:連結至同一個inode區塊，故實際上的檔案與內容完全相同，且若多個硬連結其中一個消失，並不影響檔案完整性

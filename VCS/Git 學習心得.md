@@ -197,6 +197,11 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
 ### cherry-pick ###
 cherry-pick 是一個類似 commit 的指令，但更活用
 
+- cherry-pick 命令可以用來只挑選你想要的 commit 並應用到 master 分支，而不需要進行完整的合併操作
+
+    `git cherry-pick 3174f89`
+
+
 ### git commit message guide:
     feat: a new feature
     fix: a bug fix
