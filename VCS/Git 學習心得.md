@@ -60,11 +60,14 @@
 
 # git bash 語法參考 #
 ## clone ##
-克隆倉庫的命令格式是 git clone [url]
+克隆倉庫的命令格式是 `git clone <git url>`
 若你想要將倉儲克隆到「libgit2」以外名字的資料夾，只需要再多指定一個參數即可：
 >   `git clone https://github.com/libgit2/libgit2 mylibgit`
 
 這個命令做的事與上一個命令大致相同，只不過在本地創建的倉庫名字變為 mylibgit
+
+如果不要創建資料夾，要在當前資料夾clone，使用`git clone <git url> .`
+點代表當前目錄，且該目錄下不得有其他任何檔案
 
 ## 連線到remote repository(簡稱repo) ##
 
