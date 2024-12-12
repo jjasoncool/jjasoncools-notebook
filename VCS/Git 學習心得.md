@@ -56,7 +56,7 @@
 - 列出目前加入清單的私鑰 `ssh-add -l`
 - 手動加入私鑰`ssh-add <私鑰位置>`
   - 用指令一次加入的方式 (**加入~/.bashrc下**) `ls ~/.ssh/id_rsa* | grep -v "\.pub" | xargs ssh-add > /dev/null 2>&1`
-- 記得 `git remote add <使用ssh位址>`
+- 記得 `git remote add <repo名稱> <使用ssh位址>`
 
 # git bash 語法參考 #
 ## clone ##
@@ -383,6 +383,18 @@ a11bef0 - Scott Chacon, 6 years ago : first commit
 
     清除某資料夾之下檔案
     >   `git filter-repo --path-regex '^file/[\.\w-]+\.exe$' --invert-paths`
+
+    修改 repo 的原始作者
+    ```bash
+    git filter-repo --commit-callback '
+        if commit.author_name == b"ori":
+            commit.author_name = b"jjasoncool"
+            commit.author_email = b"forwork.jan@gmail.com"
+        if commit.committer_name == b"ori":
+            commit.committer_name = b"jjasoncool"
+            commit.committer_email = b"forwork.jan@gmail.com"
+    '
+    ```
 
 ## add將本地已有檔案 與線上commit歷程合併
 >   `git reset --hard <remote>/<branch_name>`

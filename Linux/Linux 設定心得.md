@@ -2,7 +2,7 @@
 
 - 以下設定若為 fedora 專有套件管理 將會使用dnf指令
 
-### 系統設定
+## 系統設定
 
 - **最小型安裝**設定螢幕省電
   - 建立一個bash file (ex:/usr/local/sbin/screenblank.sh)
@@ -73,7 +73,7 @@
 - **home底下資料夾語言**
   - 執行 `LANG=en_US.UTF-8 xdg-user-dirs-update --force`
 
-### 安全設定
+## 安全設定
 - 禁止 root 使用 ssh 登入
 
   > CentOS 7 預設容許任何帳號透過 ssh 登入，包括 root 和一般帳號，為了不讓 root 帳號被黑客暴力入侵，我們必須禁止 root 帳號的 ssh 功能，事實上 root 也沒有必要 ssh 登入伺服器，因為只要使用 su 或 sudo (當然需要輸入 root 的密碼) 普通帳號便可以擁有 root 的權限。
@@ -85,33 +85,63 @@
     `systemctl restart sshd.service`
   - 指令自動完成 `yum install bash-completion*`
 
-### 啟用/設定網路
-  - linux native 內建
-    - `ip link` 列出所有網路卡
-    - `ip link set eth0 up` 開啟 eth0 的網路卡
-    - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
-    - 如果已經有nmcli指令，就可以不用手動作上面的動作
-    - `nmcli connection modify enp0s3 ipv4.addresses 192.168.55.200/24` 設定DHCP取固定IP
-    - `nmcli connection up enp0s3` 開啟網卡
-    - `systemctl restart NetworkManager`
+## 啟用/設定網路
+  ### linux native 內建
+  - `ip link` 列出所有網路卡
+  - `ip link set eth0 up` 開啟 eth0 的網路卡
+  - `vi /etc/sysconfig/network-scripts/ifcfg-enp0s3` 將ONBOOT改為=yes
+  - 如果已經有nmcli指令，就可以不用手動作上面的動作
+  - `nmcli connection modify enp0s3 ipv4.addresses 192.168.55.200/24` 設定DHCP取固定IP
+  - `nmcli connection up enp0s3` 開啟網卡
+  - `systemctl restart NetworkManager`
 
-  - openvswitch
+  ### openvswitch
+  - [此為從原始碼安裝的步驟](https://docs.openvswitch.org/en/latest/intro/install/general/#general-build-reqs)
+  - 下載 openvswitch source code
+  - 安裝編譯工具與依賴 `dnf install autoconf automake libtool numactl-devel`
+  - 原始碼目錄下執行 `./boot.sh`
+  - 設定編譯選項 `./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc CFLAGS="-g -O2 -march=native"`
+    - 選擇項目:安裝目錄建議如上設定，安裝在系統目錄可避免一些問題
+  - 編譯 `make -j $(nproc)`
+  - 安裝 `sudo make install`
+  - **注意** SELinux 會檔自己安裝的服務，需要進行設定
+    - 上下文
+  - 設定服務 **(因為 ovs-ctl會自己管理進程，所以使用 oneshot)**
+    - `/etc/systemd/system/openvswitch.service`
+      ```ini
+      [Unit]
+      Description=Open vSwitch
+      After=network-online.target
+      Wants=network-online.target
 
-    ```bash
-    # 先安裝 NetworkManager-ovs
-    sudo dnf install NetworkManager-ovs -y
-    # 新增 switch
-    sudo nmcli con add type ovs-bridge conn.interface ovs-bridge con-name ovs-bridge
-    sudo nmcli con add type ovs-port conn.interface ovs-bridge-port master ovs-bridge con-name ovs-bridge-port
-    sudo nmcli con add type ovs-interface slave-type ovs-port conn.interface ovs-bridge master ovs-bridge-port con-name ovs-bridge-int
-    # 新增介面 (enp5s0)
-    sudo nmcli con add type ovs-port conn.interface ovs-port-eth master ovs-bridge con-name ovs-port-eth
-    sudo nmcli con add type ethernet conn.interface enp5s0 master ovs-port-eth con-name ovs-port-eth-int
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=/usr/share/openvswitch/scripts/ovs-ctl start --system-id=random
+      ExecStop=/usr/share/openvswitch/scripts/ovs-ctl stop
+      ExecReload=/usr/share/openvswitch/scripts/ovs-ctl restart --system-id=random
 
-    sudo nmcli con down enp5s0 ; \
-    sudo nmcli con up ovs-port-eth-int ; \
-    sudo nmcli con up ovs-bridge-int
-    ```
+      [Install]
+      WantedBy=multi-user.target
+      ```
+  - 使用 `systemctl enable openvswitch --now`
+
+  - 使用 nmcli 結合 ovs 管理工具
+      ```bash
+      # 先安裝 NetworkManager-ovs
+      sudo dnf install NetworkManager-ovs -y
+      # 新增 switch
+      sudo nmcli con add type ovs-bridge conn.interface ovs-bridge con-name ovs-bridge
+      sudo nmcli con add type ovs-port conn.interface ovs-bridge-port master ovs-bridge con-name ovs-bridge-port
+      sudo nmcli con add type ovs-interface slave-type ovs-port conn.interface ovs-bridge master ovs-bridge-port con-name ovs-bridge-int
+      # 新增介面 (enp5s0)
+      sudo nmcli con add type ovs-port conn.interface ovs-port-eth master ovs-bridge con-name ovs-port-eth
+      sudo nmcli con add type ethernet conn.interface enp5s0 master ovs-port-eth con-name ovs-port-eth-int
+
+      sudo nmcli con down enp5s0 ; \
+      sudo nmcli con up ovs-port-eth-int ; \
+      sudo nmcli con up ovs-bridge-int
+      ```
 
   - 出現UG 跟 U 才是對的
     `route -n`
@@ -125,16 +155,17 @@
     192.168.50.0    0.0.0.0         255.255.255.0   U     800    0        0 ovs-bridge
     192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
     ```
-- 設定 dnf / http_proxy
-  1. dnf 使用 proxy
-  - `sudo vi /etc/dnf/dnf.conf` 修改套件檔設定
-  - 在 [main] 區塊新增 `proxy=http://servername:port`
-  2. 網路透過 proxy (使用root權限建立 http_proxy 與 https_proxy 變數)
-  - `echo -e "export http_proxy=http://servername:port\nexport https_proxy=http://servername:port" > /etc/profile.d/proxy.sh`
 
-- 同步網際網路時間
-  - `dnf install chrony`
-  - `systemctl enable chronyd`
+  - 設定 dnf / http_proxy
+    1. dnf 使用 proxy
+       - `sudo vi /etc/dnf/dnf.conf` 修改套件檔設定
+       - 在 [main] 區塊新增 `proxy=http://servername:port`
+    2. 網路透過 proxy (使用root權限建立 http_proxy 與 https_proxy 變數)
+       - `echo -e "export http_proxy=http://servername:port\nexport https_proxy=http://servername:port" > /etc/profile.d/proxy.sh`
+
+  - 同步網際網路時間
+    - `dnf install chrony`
+    - `systemctl enable chronyd`
 
 ### 遠端設定
 
@@ -572,7 +603,7 @@
 - CENTOS 8 最小安裝後，安裝 GNOME，後面需要安裝xorg 驅動才可以縮放螢幕(檢視->縮放顯示->將VM自動縮放...大小) `dnf install xorg*drv* spice-vdagent`
 - bridge 設定
   - nmcli connection add type bridge autoconnect yes con-name virbr0 ifname virbr0
-  - nmcli connection add type bridge-slave autoconnect yes con-name enp5s0 ifname enp5s0 master br0
+  - nmcli connection add type bridge-slave autoconnect yes con-name enp5s0 ifname enp5s0 master virbr0
 
 ### WINE
 

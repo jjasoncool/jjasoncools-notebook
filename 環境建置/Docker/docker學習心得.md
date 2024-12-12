@@ -268,6 +268,12 @@ ENV key=value
         - "somehost:162.242.195.82"
         - "otherhost:50.31.209.229"
     ```
+
+  - container
+    其實container就是獨立的docker，只是在compose裡面可以在相同網路內，設定也比較方便，以下講解各個container的相關設定
+    -
+
+
   - network
 
     In the example below, three services are provided (web, worker, and db), along with two networks (new and legacy). The db service is reachable at the hostname db or database on the new network, and at db or mysql on the legacy network.

@@ -11,3 +11,5 @@
 ### agent
 - 安裝
 >   `sudo /usr/local/bin/k3s-uninstall.sh ; /usr/local/bin/k3s-agent-uninstall.sh`
+
+### 設定與config
