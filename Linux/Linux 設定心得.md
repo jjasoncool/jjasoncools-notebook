@@ -104,25 +104,27 @@
     - 選擇項目:安裝目錄建議如上設定，安裝在系統目錄可避免一些問題
   - 編譯 `make -j $(nproc)`
   - 安裝 `sudo make install`
-  - **注意** SELinux 會檔自己安裝的服務，需要進行設定
-    - 上下文
-  - 設定服務 **(因為 ovs-ctl會自己管理進程，所以使用 oneshot)**
-    - `/etc/systemd/system/openvswitch.service`
+  - **注意 SELinux 會檔自己安裝的服務，需要進行設定規則，可以由 SELinux 排錯管理器查詢原因**
+    -
+  - 設定服務
+    - **(注意 PIDFile 的位置需要符合服務的啟動設定位置，否則從script查詢)**
+    - PIDFile 預設放在 /usr/local/var/run/openvswitch 之下，會受到 --localstatedir 影響
+    - 新增 `/etc/systemd/system/openvswitch.service`
       ```ini
-      [Unit]
-      Description=Open vSwitch
-      After=network-online.target
-      Wants=network-online.target
+        [Unit]
+        Description=Open vSwitch
 
-      [Service]
-      Type=oneshot
-      RemainAfterExit=yes
-      ExecStart=/usr/share/openvswitch/scripts/ovs-ctl start --system-id=random
-      ExecStop=/usr/share/openvswitch/scripts/ovs-ctl stop
-      ExecReload=/usr/share/openvswitch/scripts/ovs-ctl restart --system-id=random
+        [Service]
+        Type=forking
+        ExecStart=/usr/share/openvswitch/scripts/ovs-ctl start --system-id=random
+        ExecStop=/usr/share/openvswitch/scripts/ovs-ctl stop
+        ExecReload=/usr/share/openvswitch/scripts/ovs-ctl restart --system-id=random
+        PIDFile=/var/run/openvswitch/ovsdb-server.pid
+        Restart=on-failure
+        RestartSec=5
 
-      [Install]
-      WantedBy=multi-user.target
+        [Install]
+        WantedBy=multi-user.target
       ```
   - 使用 `systemctl enable openvswitch --now`
 
@@ -142,6 +144,16 @@
       sudo nmcli con up ovs-port-eth-int ; \
       sudo nmcli con up ovs-bridge-int
       ```
+
+  - KVM 的 XML 設定
+    - 網路介面的 XML 新增 `<virtualport type="openvswitch">`
+
+  - VM內的網路interface啟用
+    ```sh
+    sudo dhclient enp7s0
+    ip addr show enp7s0
+    ```
+    確認是否有取得 正確的 ip 位址
 
   - 出現UG 跟 U 才是對的
     `route -n`
