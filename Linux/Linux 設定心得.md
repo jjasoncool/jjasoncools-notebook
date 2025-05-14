@@ -134,36 +134,47 @@
       ```
   - 使用 `systemctl enable openvswitch --now`
 
+  - 使用原生的 openvswith
+    ```bash
+    sudo ovs-vsctl add-br ovs-bridge
+    sudo ovs-vsctl add-port ovs-bridge enp0s20f0u3c2
+    ```
+
   - 使用 nmcli 結合 ovs 管理工具
     #### 安裝 NetworkManager-ovs
       ```bash
       sudo dnf install NetworkManager-ovs -y
       ```
+    #### 參數意義
+    - `conn.interface-name`
+      1. type ovs-port：創建新的 OVS 邏輯端口（例如 ovs-port-eth）。
+      2. type ethernet：指定已存在的物理介面（例如 enp5s0）。
+    - `con-name` NetworkManager 參考用的名稱
+    - `master` 這個東西連接到哪個地方
     #### 新增 OVS Bridge
       1. 新增 OVS Bridge
       ```bash
-      sudo nmcli con add type ovs-bridge conn.interface ovs-bridge con-name ovs-bridge
+      sudo nmcli con add type ovs-bridge conn.interface-name ovs-bridge con-name ovs-bridge
       ```
       2. 新增 OVS Port (像是網路插口)
       ```bash
-      sudo nmcli con add type ovs-port conn.interface ovs-bridge-port master ovs-bridge con-name ovs-bridge-port`
+      sudo nmcli con add type ovs-port conn.interface-name ovs-bridge-port master ovs-bridge con-name ovs-bridge-port
       ```
       3. 新增 OVS Interface (像是網路插頭)
       ```bash
-      # 但不知道為什麼KVM是抓這個名稱 ovs-bridge 與 bridge 的名稱?
-      sudo nmcli con add type ovs-interface slave-type ovs-port conn.interface ovs-bridge master ovs-bridge-port con-name ovs-bridge-int
+      sudo nmcli con add type ovs-interface slave-type ovs-port conn.interface-name ovs-bridge master ovs-bridge-port con-name ovs-bridge-int
       # 如果沒有DHCP加上 ipv4.method disabled
       ```
 
     #### 新增網路介面 (enp5s0)
     1. 新增 OVS Port 給 Ethernet
       ```bash
-      sudo nmcli con add type ovs-port conn.interface ovs-port-eth master ovs-bridge con-name ovs-port-eth
+      sudo nmcli con add type ovs-port conn.interface-name ovs-port-eth master ovs-bridge con-name ovs-port-eth
       ```
     2. 新增 Ethernet 介面
       ```bash
-      sudo nmcli con add type ethernet conn.interface enp5s0 master ovs-port-eth con-name ovs-port-eth-int
-      ```
+      sudo nmcli con add type ethernet conn.interface-name enp5s0 master ovs-port-eth con-name ovs-port-eth-int
+      ```0
 
     #### 啟動網路
       ```bash
