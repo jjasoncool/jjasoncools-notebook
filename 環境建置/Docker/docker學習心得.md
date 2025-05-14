@@ -224,8 +224,14 @@ ENTRYPOINT
 # Copy the rest of your app's source code from your host to your image filesystem.
 COPY . .
 
-# 新增環境變數
+# 新增環境變數，此變數在container執行時期依然有效
 ENV key=value
+
+# 新增build變數，此變數僅在build時期可用
+ARG key=value
+
+# 使用ARG或者ENV變數時，使用 ${變數名稱來使用}
+RUN sed -i "s|opcache.memory_consumption=.*|opcache.memory_consumption=${key}|g;" /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 ```
 
@@ -271,8 +277,7 @@ ENV key=value
 
   - container
     其實container就是獨立的docker，只是在compose裡面可以在相同網路內，設定也比較方便，以下講解各個container的相關設定
-    -
-
+    需要注意的是，compose設定的環境變數會比dockerfile晚設定，因此會覆蓋掉dockerfile指定的環境變數
 
   - network
 

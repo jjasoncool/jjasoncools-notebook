@@ -85,6 +85,12 @@
     `systemctl restart sshd.service`
   - 指令自動完成 `yum install bash-completion*`
 
+## 音訊管理
+### 虛擬麥克風
+- `sudo dnf install pulseaudio-utils pavucontrol`
+- `pactl info` 確認已經安裝 **Pulseaudio**
+-
+
 ## 啟用/設定網路
   ### linux native 內建
   - `ip link` 列出所有網路卡
@@ -129,24 +135,46 @@
   - 使用 `systemctl enable openvswitch --now`
 
   - 使用 nmcli 結合 ovs 管理工具
+    #### 安裝 NetworkManager-ovs
       ```bash
-      # 先安裝 NetworkManager-ovs
       sudo dnf install NetworkManager-ovs -y
-      # 新增 switch
+      ```
+    #### 新增 OVS Bridge
+      1. 新增 OVS Bridge
+      ```bash
       sudo nmcli con add type ovs-bridge conn.interface ovs-bridge con-name ovs-bridge
-      sudo nmcli con add type ovs-port conn.interface ovs-bridge-port master ovs-bridge con-name ovs-bridge-port
+      ```
+      2. 新增 OVS Port (像是網路插口)
+      ```bash
+      sudo nmcli con add type ovs-port conn.interface ovs-bridge-port master ovs-bridge con-name ovs-bridge-port`
+      ```
+      3. 新增 OVS Interface (像是網路插頭)
+      ```bash
+      # 但不知道為什麼KVM是抓這個名稱 ovs-bridge 與 bridge 的名稱?
       sudo nmcli con add type ovs-interface slave-type ovs-port conn.interface ovs-bridge master ovs-bridge-port con-name ovs-bridge-int
-      # 新增介面 (enp5s0)
-      sudo nmcli con add type ovs-port conn.interface ovs-port-eth master ovs-bridge con-name ovs-port-eth
-      sudo nmcli con add type ethernet conn.interface enp5s0 master ovs-port-eth con-name ovs-port-eth-int
+      # 如果沒有DHCP加上 ipv4.method disabled
+      ```
 
-      sudo nmcli con down enp5s0 ; \
-      sudo nmcli con up ovs-port-eth-int ; \
+    #### 新增網路介面 (enp5s0)
+    1. 新增 OVS Port 給 Ethernet
+      ```bash
+      sudo nmcli con add type ovs-port conn.interface ovs-port-eth master ovs-bridge con-name ovs-port-eth
+      ```
+    2. 新增 Ethernet 介面
+      ```bash
+      sudo nmcli con add type ethernet conn.interface enp5s0 master ovs-port-eth con-name ovs-port-eth-int
+      ```
+
+    #### 啟動網路
+      ```bash
+      sudo nmcli con down enp5s0
+      sudo nmcli con up ovs-port-eth-int
       sudo nmcli con up ovs-bridge-int
       ```
 
   - KVM 的 XML 設定
-    - 網路介面的 XML 新增 `<virtualport type="openvswitch">`
+    - 網路介面的 XML 新增 `<virtualport type="openvswitch"/>`
+    - 注意，如果先前已經有產生過ID然後網路有重新設定，請把ID移除掉，重新套用後會重新產生新的ID
 
   - VM內的網路interface啟用
     ```sh
@@ -259,7 +287,7 @@
         ```
       - 重啟該服務 `systemctl restart polkit`
 
-- 安裝**NV顯示卡驅動**
+### 安裝NV顯示卡驅動
   - 首先要具備一些依賴包 `yum install libglvnd* dkms gcc kernel-devel kernel-headers`
   - 開啟dkms `dkms autoinstall`
   - 新增檔案 /etc/modprobe.d/blacklist.conf 這檔案預設應該不存在
