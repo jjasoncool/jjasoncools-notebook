@@ -136,6 +136,7 @@
 
   - 使用原生的 openvswith
     ```bash
+    # 列出網路介面
     sudo ovs-vsctl add-br ovs-bridge
     sudo ovs-vsctl add-port ovs-bridge enp0s20f0u3c2
     ```

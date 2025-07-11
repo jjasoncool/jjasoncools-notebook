@@ -191,8 +191,16 @@ Git 另外提供一個簡潔輸出的選項，因此你可以以一種較精簡�
 修改最後一個 commit 的作者與 email
 >   `git commit --amend --reset-author --no-edit`
 同理，修改很多個commit 的作者與 email
->   `git commit --amend --reset-author --no-edit`
-
+```bash
+export TARGET_COMMIT="69b038925d693f122257b4e36b510559a8eaab3f"
+echo $TARGET_COMMIT  # 確認變數已設定，應該輸出 abc123
+git filter-repo --commit-callback '
+    commit.author_name = b"jjasoncool"
+    commit.author_email = b"forwork.jan@gmail.com"
+    commit.committer_name = b"jjasoncool"
+    commit.committer_email = b"forwork.jan@gmail.com"
+' --refs "$TARGET_COMMIT"..HEAD --force
+```
 
 修正該commit，跟--amend同，但不問你commit message(不新增新的node)
 >   `git commit --fixup=<commit>`

@@ -242,7 +242,7 @@ RUN sed -i "s|opcache.memory_consumption=.*|opcache.memory_consumption=${key}|g;
      - `sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
      - `sudo chmod +x /usr/local/bin/docker-compose`
      2. v2
-     - `sudo curl -L "https://github.com/docker/compose/releases/download/v1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+     - `sudo curl -L "https://github.com/docker/compose/releases/download/v2.37.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
      - `sudo chmod +x /usr/local/bin/docker-compose`
   2. INSTALL AS A CONTAINER (x86_64)
      - `sudo curl -L --fail https://github.com/docker/compose/releases/download/1.29.2/run.sh -o /usr/local/bin/docker-compose`
@@ -318,10 +318,14 @@ RUN sed -i "s|opcache.memory_consumption=.*|opcache.memory_consumption=${key}|g;
 
 - 操作指令
   - `build` 重新建立 image file
-  - `config` 檢視要執行的 config 檔案，會將所有參數套用的結果顯示出來
+    - `service_name` 指定服務重新 build
   - `up` 啟動 docker-compose 服務
     - `-d` 背景執行
     - `--build` 重新依據 dockerfile build image
     - `--force-recreate` 強制重新 create container
+      - `service_name` 指定服務啟動
+  - `stop` 停止 docker-compose 服務
+    - `service_name` 指定服務停止
+  - `config` 檢視要執行的 config 檔案，會將所有參數套用的結果顯示出來
   - `run`
     - `-d` 背景執行
