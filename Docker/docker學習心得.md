@@ -329,3 +329,81 @@ RUN sed -i "s|opcache.memory_consumption=.*|opcache.memory_consumption=${key}|g;
   - `config` 檢視要執行的 config 檔案，會將所有參數套用的結果顯示出來
   - `run`
     - `-d` 背景執行
+
+## docker-compose 的 env 使用說明
+
+### 簡介
+- docker-compose 支援在 compose 檔案中使用變數插值（interpolation），常見來源是專案根目錄下的 `.env` 檔案，以及啟動 compose 的 shell 環境變數。
+
+### 變數來源與優先順序
+- 變數插值（寫在 `docker-compose.yml` 的 `${VAR}`）會先從 shell 環境讀取，找不到才會讀 `.env` 檔案（位於 compose 檔案同一目錄）。
+- 在 container 的環境（container runtime）方面，compose 提供兩種方式：`env_file`（讀取 key=value 檔案）與 `environment`（在 compose 檔內直接指定）。在 container 內生效的優先順序通常是：`environment` 裡的值會覆蓋 `env_file` 裡的值。
+
+### 常見插值語法與行為
+- ${VAR:-default}：當 VAR 未設定或為空字串時，回傳 default。
+- ${VAR-default}：只有在 VAR 完全未設定（unset）時回傳 default；若 VAR 已設定但為空，會回傳空字串。
+- ${VAR:?err}：若 VAR 未設定則報錯（用於強制失敗），${VAR:?err} 會在 unset 或空字串時報錯並印出 err。
+- ${VAR?err}：只有在 unset 時報錯；若已設定但為空則不報錯。
+
+範例說明：
+- 要在未設定或空值時套用預設（常用）： `image: "mariadb:${DB_VERSION:-latest}"`
+- 只在未設定時套用預設（允許空字串）： `DB_HOST=${DB_HOST-mariadb}`
+- 要在未設定或空值就直接失敗（強制輸入）： `MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Please set MYSQL_ROOT_PASSWORD}`
+
+避免混淆：`:=' 與 ':-' 的差別
+
+- `${VAR:-default}` 只在回傳時使用預設值，但不會改變變數本身（沒有副作用）。
+- `${VAR:=default}` 在變數未設定或為空時，除了回傳預設值外，還會把該變數設定（assign）為預設值（有副作用）。
+
+範例（bash）：
+- VAR 未設定時：
+  - `echo "${VAR:-x}"` 會輸出 `x`；之後 `echo "$VAR"` 仍為空（未被設定）。
+  - `echo "${VAR:=x}"` 會輸出 `x`；之後 `echo "$VAR"` 會輸出 `x`（變數已被設定）。
+
+docker-compose 建議：不要依賴 `${VAR:=...}` 在解析時會有設定副作用；實務上請使用 `${VAR:-...}` 提供預設，或在 `.env`、CI/CD 或 secrets 中明確設定變數。
+
+### 範例：`.env` 與 `docker-compose.yml`
+.env:
+```
+DB_HOST=mariadb
+DB_PORT=3306
+# 不要把 secret 放在這裡（建議使用 secrets 或外部管理）
+# MYSQL_ROOT_PASSWORD=supersecret
+```
+
+docker-compose.yml 範例：
+```yaml
+version: '3.9'
+services:
+  db:
+    image: mariadb:${DB_VERSION:-latest}
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+
+  web:
+    image: my-web:${WEB_VERSION:-latest}
+    env_file:
+      - .env
+    environment:
+      DB_HOST: ${DB_HOST:-mariadb}
+      DB_PORT: ${DB_PORT:-3306}
+```
+
+說明：`
+- 上面示範同時使用 `.env`、`env_file` 與 `environment`。在 container 中，`environment` 的設定會覆蓋 `env_file` 的值；而 `docker-compose` 在處理插值時會先檢查 shell env，再檢查 `.env` 檔案。
+
+### 注意事項與建議
+- 不要把機敏資料（密碼、金鑰）直接提交到版本控制的 `.env` 檔；可改用 Docker secrets、環境變數注入在 CI/CD，或使用外部秘密管理（Vault、AWS Secrets Manager 等）。
+- `.env` 檔格式為 `KEY=VALUE`，不要加 `export`。若值有空白或特殊字元，請使用引號，例如 `TITLE="My App"`。
+- YAML 的字串處理與 shell 不完全相同，若有複雜字元或需要換行，請使用 YAML 的多行字串語法（| 或 >）。
+- 若需要在 CI 上覆蓋 `.env`，可在 pipeline 透過 shell export 環境變數，因為 shell 變數會優先於 `.env`。
+- 若要避免意外的空字串被視為已設定，請使用帶冒號的擴展（例如 `:-` 或 `:?`）來處理空值情況。
+
+### 小技巧
+- 在本地開發可保留 `.env.example` 放範例值，實際 `.env` 放在 `.gitignore`。
+- 使用 `docker compose config` 或 `docker-compose config` 檢查插值後的最終配置（可幫助除錯）。
+- 若在同專案中需要多份 env（例如不同環境），可建立 `.env.dev`、`.env.prod` 並在啟動前用 script 或 CI 來切換／載入。
+
+---
